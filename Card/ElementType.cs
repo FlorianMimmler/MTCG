@@ -8,7 +8,7 @@ public enum ElementType
 
 public static class ElementEffectiveness
 {
-    // Effectiveness map (attacker -> defender -> multiplier)
+
     private static readonly Dictionary<ElementType, Dictionary<ElementType, double>> effectivenessMap;
 
     static ElementEffectiveness()

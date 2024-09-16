@@ -11,6 +11,8 @@ namespace MTCG
         protected Credentials Credentials { get; set; }
         protected string Token { get; set; }
 
+        public int coins { get; set; }
+
         protected Deck Deck { get; set; }
 
         protected Stack Stack { get; set; }
