@@ -20,12 +20,24 @@ namespace MTCG
 
         public bool AddCard(Card newCard)
         {
-            throw new NotImplementedException();
+            if (this.Cards.Count >= this.MaxCards)
+            {
+                return false; 
+            }
+
+            this.Cards.Add(newCard);
+
+            return this.Cards.Contains(newCard);
         }
 
         public bool RemoveCard(Card oldCard)
         {
-            throw new NotImplementedException();
+            return this.Cards.Remove(oldCard);
+        }
+
+        public Card GetCard(int index)
+        {
+            return this.Cards[index];
         }
     }
 }

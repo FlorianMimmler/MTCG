@@ -14,5 +14,7 @@ namespace MTCG
 
         bool RemoveCard(Card oldCard);
 
+        Card GetCard(int index);
+
     }
 }
