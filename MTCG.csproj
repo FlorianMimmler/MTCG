@@ -43,9 +43,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Auth\Authentication.cs" />
+    <Compile Include="Auth\AuthToken.cs" />
     <Compile Include="Battle\Battle.cs" />
     <Compile Include="CalculateUtils\ICalculateStrategy.cs" />
     <Compile Include="CalculateUtils\GoblinCalculateStrategy.cs" />
+    <Compile Include="CardWrapper\CardWrapper.cs" />
+    <Compile Include="CardWrapper\ICardWrapper.cs" />
     <Compile Include="Card\Card.cs" />
     <Compile Include="Card\ElementType.cs" />
     <Compile Include="Card\MonsterType.cs" />

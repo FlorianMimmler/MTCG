@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MTCG.Card
+namespace MTCG
 {
     internal class MonsterCard : Card
     {

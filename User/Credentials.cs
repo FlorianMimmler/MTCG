@@ -8,7 +8,7 @@ namespace MTCG
 {
     internal class Credentials
     {
-        protected string Username { get; set; }
-        protected string Password { get; set; }
+        public string Username { get; set; }
+        public string Password { get; set; }
     }
 }

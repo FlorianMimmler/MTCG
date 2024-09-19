@@ -11,10 +11,10 @@ namespace MTCG
         protected Credentials Credentials { get; set; }
         protected string Token { get; set; }
 
-        public int coins { get; set; }
+        public int Coins { get; set; }
 
-        protected Deck Deck { get; set; }
+        protected ICardWrapper Deck { get; set; } = new Deck();
 
-        protected Stack Stack { get; set; }
+        protected ICardWrapper Stack { get; set; } = new Stack();
     }
 }

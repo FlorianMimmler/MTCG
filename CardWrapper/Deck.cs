@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace MTCG
 {
-    internal class Deck
+    internal class Deck : CardWrapper
     {
-        public List<Card> Cards { get; set; }
+        public Deck() : base(4) {}
     }
 }
