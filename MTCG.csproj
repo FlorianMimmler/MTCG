@@ -43,29 +43,32 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Auth\Authentication.cs" />
-    <Compile Include="Auth\AuthToken.cs" />
-    <Compile Include="Battle\Battle.cs" />
-    <Compile Include="CalculateUtils\ICalculateStrategy.cs" />
-    <Compile Include="CalculateUtils\GoblinCalculateStrategy.cs" />
-    <Compile Include="CardWrapper\CardWrapper.cs" />
-    <Compile Include="CardWrapper\ICardWrapper.cs" />
-    <Compile Include="Card\Card.cs" />
-    <Compile Include="Card\ElementType.cs" />
-    <Compile Include="Card\MonsterType.cs" />
-    <Compile Include="User\Credentials.cs" />
-    <Compile Include="CardWrapper\Deck.cs" />
-    <Compile Include="Card\MonsterCard.cs" />
-    <Compile Include="CardWrapper\Package.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="BusinessLayer\Controller\AuthenticationController.cs" />
+    <Compile Include="BusinessLayer\Model\Auth\AuthToken.cs" />
+    <Compile Include="BusinessLayer\Controller\BattleController.cs" />
+    <Compile Include="BusinessLayer\Interface\ICalculateStrategy.cs" />
+    <Compile Include="BusinessLayer\Model\CalculateUtils\GoblinCalculateStrategy.cs" />
+    <Compile Include="BusinessLayer\Model\CardWrapper\CardWrapper.cs" />
+    <Compile Include="BusinessLayer\Interface\ICardWrapper.cs" />
+    <Compile Include="BusinessLayer\Model\Card\Card.cs" />
+    <Compile Include="BusinessLayer\Model\Card\ElementType.cs" />
+    <Compile Include="BusinessLayer\Model\Card\MonsterType.cs" />
+    <Compile Include="BusinessLayer\Model\User\Credentials.cs" />
+    <Compile Include="BusinessLayer\Model\CardWrapper\Deck.cs" />
+    <Compile Include="BusinessLayer\Model\Card\MonsterCard.cs" />
+    <Compile Include="BusinessLayer\Model\CardWrapper\Package.cs" />
+    <Compile Include="PresentationLayer\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Card\SpellCard.cs" />
-    <Compile Include="CardWrapper\Stack.cs" />
-    <Compile Include="User\User.cs" />
+    <Compile Include="BusinessLayer\Model\Card\SpellCard.cs" />
+    <Compile Include="BusinessLayer\Model\CardWrapper\Stack.cs" />
+    <Compile Include="BusinessLayer\Model\User\User.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="ClassDiagram1.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="DataAccessLayer\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
