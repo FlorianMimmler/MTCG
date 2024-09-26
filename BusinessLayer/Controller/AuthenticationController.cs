@@ -6,8 +6,14 @@ using System.Threading.Tasks;
 
 namespace MTCG.Auth
 {
-    internal class Authentication
+    internal class AuthenticationController
     {
+
+        private static AuthenticationController _instance;
+        public static AuthenticationController Instance => _instance ?? (_instance = new AuthenticationController());
+
+        private AuthenticationController(){}
+
 
         public static AuthToken Login(Credentials creds)
         {
@@ -17,9 +23,9 @@ namespace MTCG.Auth
             }
 
             if (creds.Username == "username" && creds.Password == "password")
-                {
-                    return new AuthToken();
-                }
+            {
+                return new AuthToken();
+            }
 
             return new AuthToken();
         }
