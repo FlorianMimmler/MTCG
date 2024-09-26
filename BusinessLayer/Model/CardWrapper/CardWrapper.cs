@@ -39,5 +39,13 @@ namespace MTCG
         {
             return this.Cards[index];
         }
+
+        public void PrintCards()
+        {
+            foreach (var card in this.Cards)
+            {
+                Console.WriteLine(card.ToString());   
+            }
+        }
     }
 }

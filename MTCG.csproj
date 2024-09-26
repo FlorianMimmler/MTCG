@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BusinessLayer\Controller\AuthenticationController.cs" />
+    <Compile Include="BusinessLayer\Controller\CardController.cs" />
     <Compile Include="BusinessLayer\Model\Auth\AuthToken.cs" />
     <Compile Include="BusinessLayer\Controller\BattleController.cs" />
     <Compile Include="BusinessLayer\Interface\ICalculateStrategy.cs" />
