@@ -8,7 +8,7 @@ namespace MTCG
 {
     internal class MonsterCard : Card
     {
-        public MonsterCard(int damage, ElementType elementType, MonsterType monsterType) : base(damage, elementType)
+        public MonsterCard(int damage, ElementType elementType, MonsterType monsterType) : base(elementType.GetString() + monsterType.ToString(), damage, elementType)
         {
             this.MonsterType = monsterType;
         }

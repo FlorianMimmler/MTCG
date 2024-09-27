@@ -16,6 +16,22 @@ namespace MTCG.BusinessLayer.Controller
 
         private CardController(){}
 
+        private static Random random;
+        private static readonly object syncObj = new object();
+        private static void InitRandomNumber(int seed)
+        {
+            random = new Random(seed);
+        }
+        private static int GenerateRandomNumber(int max)
+        {
+            lock (syncObj)
+            {
+                if (random == null)
+                    random = new Random(); // Or exception...
+                return random.Next(max);
+            }
+        }
+
         public List<Card> GetCards(int count)
         {
             var cards = new List<Card>();
@@ -30,8 +46,8 @@ namespace MTCG.BusinessLayer.Controller
 
         private static Card GenerateCard()
         {
-            var cardType = new Random().Next(2);
-            var damage = new Random().Next(200);
+            var cardType = GenerateRandomNumber(2);
+            var damage = GenerateRandomNumber(200);
 
             if (cardType == 0)
             {
@@ -45,13 +61,13 @@ namespace MTCG.BusinessLayer.Controller
         private static ElementType GetRandomElement()
         {
             var elements = (ElementType[])Enum.GetValues(typeof(ElementType));
-            return elements[new Random().Next(elements.Length)];
+            return elements[GenerateRandomNumber(elements.Length)];
         }
 
         private static MonsterType GetRandomMonsterType()
         {
             var monsterTypes = (MonsterType[])Enum.GetValues(typeof(MonsterType));
-            return monsterTypes[new Random().Next(monsterTypes.Length)];
+            return monsterTypes[GenerateRandomNumber(monsterTypes.Length)];
         }
 
 

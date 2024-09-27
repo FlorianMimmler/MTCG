@@ -8,8 +8,9 @@ namespace MTCG
 {
     internal abstract class Card
     {
-        protected Card(int damage, ElementType elementType)
+        protected Card(string name, int damage, ElementType elementType)
         {
+            Name = name;
             Damage = damage;
             ElementType = elementType;
         }

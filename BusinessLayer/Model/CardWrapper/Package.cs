@@ -9,9 +9,14 @@ namespace MTCG.BusinessLayer.Model
 {
     internal class Package : CardWrapper
     {
-        public Package() : base(5)
+        public static int Price { get; set; } = 5;
+        public new static int MaxCards { get; set; } = 5;
+        public Package() : base(MaxCards)
         {
             this.Cards = CardController.Instance.GetCards(MaxCards);
         }
+
+        
+
     }
 }

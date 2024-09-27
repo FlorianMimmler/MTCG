@@ -14,6 +14,15 @@ namespace MTCG
             var package = new Package();
             package.PrintCards();
 
+            var user = new User();
+
+            user.PrintStack();
+
+            Console.WriteLine("Buy Package");
+            user.BuyPackage();
+
+            user.PrintStack();
+
             Console.ReadKey();
         }
     }

@@ -6,6 +6,22 @@ public enum ElementType
     FIRE, WATER, NORMAL
 }
 
+public static class ElementTypeMethods
+{
+    public static String GetString(this ElementType type)
+    {
+        switch(type)
+        {
+            case ElementType.FIRE:
+                return "Fire ";
+            case ElementType.WATER:
+                return "Water ";
+            default:
+                return "";
+        }
+    }
+}
+
 public static class ElementEffectiveness
 {
 
