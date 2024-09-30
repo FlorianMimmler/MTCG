@@ -8,9 +8,9 @@ namespace MTCG
     {
         List<Card> Cards { get; set; }
 
-        int MaxCards { get; set; }
-
         bool AddCard(Card newCard);
+
+        bool AddCards(List<Card> newCards);
 
         bool RemoveCard(Card oldCard);
 

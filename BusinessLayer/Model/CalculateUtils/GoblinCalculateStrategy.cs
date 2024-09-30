@@ -1,13 +1,13 @@
-﻿using MTCG.Card;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MTCG.BusinessLayer;
 
-namespace MTCG.CalculateUtils
+namespace MTCG
 {
-    internal class GoblinCalculateStrategy : MTCG.Card.ICalculateStrategy
+    internal class GoblinCalculateStrategy : ICalculateStrategy
     {
         public double CalculateAgainst(Card oppponent)
         {

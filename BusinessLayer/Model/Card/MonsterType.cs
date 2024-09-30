@@ -1,4 +1,6 @@
-﻿public enum MonsterType {
+﻿using System;
+
+public enum MonsterType {
     Goblin,
     Dragon,
     Ork,

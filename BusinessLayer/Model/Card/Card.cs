@@ -21,5 +21,10 @@ namespace MTCG
 
         public abstract double CalculateDamageAgainst(Card opponent);
 
+        public override string ToString()
+        {
+            return $"Card: {Name}, Damage: {Damage}";
+        }
+
     }
 }
