@@ -3,6 +3,7 @@ using MTCG.BusinessLayer.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,9 +16,9 @@ namespace MTCG
 
         public int Coins { get; set; } = 20;
 
-        protected Deck Deck { get; set; } = new Deck();
+        protected ICardWrapper Deck { get; set; } = new Deck();
 
-        protected Stack Stack { get; set; } = new Stack();
+        protected ICardWrapper Stack { get; set; } = new Stack();
 
         public void BuyPackage()
         {
@@ -36,6 +37,25 @@ namespace MTCG
         {
             Console.WriteLine("User's stack:");
             this.Stack.PrintCards();
+        }
+
+        public void PrintDeck()
+        {
+            Console.WriteLine("User's deck:");
+            this.Deck.PrintCards();
+        }
+
+        public void SelectDeck(string selection)
+        {
+            foreach(var selectedCardIndex in selection.Split(';'))
+            {
+                AddCardToDeckFromStack(int.Parse(selectedCardIndex));
+            }
+        }
+
+        private void AddCardToDeckFromStack(int stackIndex)
+        {
+            this.Deck.AddCard(this.Stack.GetCard(stackIndex));
         }
     }
 }

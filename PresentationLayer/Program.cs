@@ -20,8 +20,13 @@ namespace MTCG
 
             Console.WriteLine("Buy Package");
             user.BuyPackage();
+            user.BuyPackage();
 
             user.PrintStack();
+
+            user.SelectDeck("1;3;5;7");
+
+            user.PrintDeck();
 
             Console.ReadKey();
         }

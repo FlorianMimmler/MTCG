@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MTCG.BusinessLayer;
 
 namespace MTCG
 {
@@ -13,9 +14,11 @@ namespace MTCG
             this.MonsterType = monsterType;
         }
 
+        private ICalculateStrategy CalculateStrategy;
         public MonsterType MonsterType { get; set; }
         public override double CalculateDamageAgainst(Card opponent)
         {
+
             throw new NotImplementedException();
         }
     }
