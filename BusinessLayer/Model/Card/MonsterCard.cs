@@ -18,6 +18,7 @@ namespace MTCG
         public MonsterType MonsterType { get; set; }
         public override double CalculateDamageAgainst(Card opponent)
         {
+            int specialAttackOption = CalculateStrategy.CalculateAgainst(opponent,);
 
             throw new NotImplementedException();
         }

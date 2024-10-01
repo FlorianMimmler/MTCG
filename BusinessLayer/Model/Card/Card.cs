@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MTCG.BusinessLayer.Interface;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MTCG
 {
-    internal abstract class Card
+    internal abstract class Card : ICard
     {
         protected Card(string name, int damage, ElementType elementType)
         {
@@ -15,9 +16,9 @@ namespace MTCG
             ElementType = elementType;
         }
 
-        protected string Name { get; set; }
-        protected int Damage { get; set; }
-        protected ElementType ElementType { get; set; }
+        public string Name { get; set; }
+        public int Damage { get; set; }
+        public ElementType ElementType { get; set; }
 
         public abstract double CalculateDamageAgainst(Card opponent);
 
