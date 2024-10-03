@@ -29,6 +29,11 @@ namespace MTCG
             Credentials = new Credentials(username, "test");
         }
 
+        public User(Credentials creds)
+        {
+            Credentials = creds;
+        }
+
         public void BuyPackage()
         {
 
@@ -80,6 +85,11 @@ namespace MTCG
         public string GetName()
         {
             return this.Credentials.Username;
+        }
+
+        public bool IsPasswordEqual(string password)
+        {
+            return this.Credentials.Password == password;
         }
     }
 }
