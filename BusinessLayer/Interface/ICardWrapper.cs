@@ -16,5 +16,7 @@ namespace MTCG
 
         Card GetCard(int index);
 
+        void PrintCards();
+
     }
 }

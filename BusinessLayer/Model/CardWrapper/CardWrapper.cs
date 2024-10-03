@@ -14,7 +14,7 @@ namespace MTCG
 
         protected CardWrapper(int maxCards = 25)
         {
-            MaxCards = maxCards;
+            this.MaxCards = maxCards;
             this.Cards = new List<Card>(MaxCards);
         }
 

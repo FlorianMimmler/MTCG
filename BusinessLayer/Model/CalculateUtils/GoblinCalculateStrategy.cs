@@ -12,8 +12,19 @@ namespace MTCG
         public double CalculateAgainst(Card oppponent)
         {
             
-
+            
             return 0;
+        }
+
+        public double CalculateAgainstMonster(Card oppponent, MonsterType opponentMonster)
+        {
+
+            if (opponentMonster == MonsterType.Dragon)
+            {
+                return 0;
+            }
+
+            return 1;
         }
     }
 }
