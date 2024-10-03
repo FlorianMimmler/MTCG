@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using MTCG.BusinessLayer.Interface;
 
 namespace MTCG.BusinessLayer.Controller
 {
@@ -32,9 +33,9 @@ namespace MTCG.BusinessLayer.Controller
             }
         }
 
-        public List<Card> GetCards(int count)
+        public List<ICard> GetCards(int count)
         {
-            var cards = new List<Card>();
+            var cards = new List<ICard>();
 
             for (var i = 0; i < count; i++)
             {

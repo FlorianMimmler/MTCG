@@ -4,21 +4,22 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using MTCG.BusinessLayer.Interface;
 
 namespace MTCG
 {
     internal abstract class CardWrapper : ICardWrapper
     {
-        public List<Card> Cards { get; set; }
+        public List<ICard> Cards { get; set; }
         public virtual int MaxCards { get; set; }
 
         protected CardWrapper(int maxCards = 25)
         {
             this.MaxCards = maxCards;
-            this.Cards = new List<Card>(MaxCards);
+            this.Cards = new List<ICard>(MaxCards);
         }
 
-        public bool AddCard(Card newCard)
+        public bool AddCard(ICard newCard)
         {
             if (this.Cards.Count >= MaxCards)
             {
@@ -30,7 +31,7 @@ namespace MTCG
             return this.Cards.Contains(newCard);
         }
 
-        public bool AddCards(List<Card> newCards)
+        public bool AddCards(List<ICard> newCards)
         {
             if (this.Cards.Count + newCards.Count > MaxCards)
             {
@@ -42,13 +43,20 @@ namespace MTCG
             return newCards.All(card => this.Cards.Contains(card));
         }
 
-        public bool RemoveCard(Card oldCard)
+        public bool RemoveCard(ICard oldCard)
         {
             return this.Cards.Remove(oldCard);
         }
 
-        public Card GetCard(int index)
+        public ICard GetCard(int index)
         {
+            return this.Cards[index];
+        }
+
+        public ICard GetRandomCard()
+        {
+            var rand = new Random();
+            var index = rand.Next(this.Cards.Count);
             return this.Cards[index];
         }
 
@@ -58,6 +66,11 @@ namespace MTCG
             {
                 Console.WriteLine(card.ToString());   
             }
+        }
+
+        public bool IsEmpty()
+        {
+            return this.Cards.Count <= 0;
         }
     }
 }

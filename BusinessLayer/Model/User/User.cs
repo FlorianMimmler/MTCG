@@ -6,6 +6,8 @@ using System.Linq;
 using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using System.Text;
 using System.Threading.Tasks;
+using MTCG.BusinessLayer.Interface;
+using MTCG.BusinessLayer.Model.User;
 
 namespace MTCG
 {
@@ -15,6 +17,8 @@ namespace MTCG
         protected string Token { get; set; }
 
         public int Coins { get; set; } = 20;
+
+        public Elo Elo = new Elo();
 
         protected ICardWrapper Deck { get; set; } = new Deck();
 
@@ -56,6 +60,16 @@ namespace MTCG
         private void AddCardToDeckFromStack(int stackIndex)
         {
             this.Deck.AddCard(this.Stack.GetCard(stackIndex));
+        }
+
+        public ICard GetRandomCardFromDeck()
+        {
+            return this.Deck.GetRandomCard();
+        }
+
+        public ICardWrapper GetDeck()
+        {
+            return this.Deck;
         }
     }
 }
