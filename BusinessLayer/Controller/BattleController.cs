@@ -26,8 +26,11 @@ namespace MTCG
 
         public void StartBattle()
         {
+            Console.WriteLine($"--------| Start Battle |--------");
+            Console.WriteLine($"{Player1.GetName()} Vs {Player2.GetName()}");
             for (var battleRoundIndex = 0; battleRoundIndex < MaxBattleRounds; battleRoundIndex++)
-            {   
+            {
+                Console.WriteLine($">> Round {battleRoundIndex} <<");
                 ProcessBattleRound();
 
                 //Check Decks for winner
@@ -45,6 +48,8 @@ namespace MTCG
             //pick two random Cards
             var card1 = Player1.GetRandomCardFromDeck();
             var card2 = Player2.GetRandomCardFromDeck();
+
+            Console.WriteLine($"{card1.Name} Vs {card2.Name}");
 
             //Set Strategy
             SetBattleRoundStrategy(card1, card2);
@@ -79,12 +84,15 @@ namespace MTCG
                 case BattleResult.Player1Wins:
                     Player1.GetDeck().AddCard(card2);
                     Player2.GetDeck().RemoveCard(card2);
+                    Console.WriteLine($"{card1.Name} wins");
                     break;
                 case BattleResult.Player2Wins:
                     Player2.GetDeck().AddCard(card1);
                     Player1.GetDeck().RemoveCard(card1);
+                    Console.WriteLine($"{card2.Name} wins");
                     break;
                 case BattleResult.Tie:
+                    Console.WriteLine($"Tie");
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(result), result, null);

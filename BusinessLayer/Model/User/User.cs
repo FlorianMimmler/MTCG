@@ -24,6 +24,11 @@ namespace MTCG
 
         protected ICardWrapper Stack { get; set; } = new Stack();
 
+        public User(string username)
+        {
+            Credentials = new Credentials(username, "test");
+        }
+
         public void BuyPackage()
         {
 
@@ -70,6 +75,11 @@ namespace MTCG
         public ICardWrapper GetDeck()
         {
             return this.Deck;
+        }
+
+        public string GetName()
+        {
+            return this.Credentials.Username;
         }
     }
 }

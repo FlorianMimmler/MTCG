@@ -14,8 +14,8 @@ namespace MTCG
             var package = new Package();
             package.PrintCards();
 
-            var user = new User();
-            var user2 = new User();
+            var user = new User("player1");
+            var user2 = new User("player2");
 
             user.PrintStack();
 
