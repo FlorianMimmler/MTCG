@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using MTCG.BusinessLayer.Model;
@@ -11,6 +12,7 @@ namespace MTCG
     {
         static void Main(string[] args)
         {
+            /*
             var package = new Package();
             package.PrintCards();
 
@@ -38,6 +40,14 @@ namespace MTCG
             user2.PrintDeck();
 
             Console.ReadKey();
+            */
+
+            var server = new HttpServer();
+            server.StartAsync();
+
+            Console.WriteLine("Press ENTER to stop the server...");
+            Console.ReadLine(); // Wartet darauf, dass der Benutzer ENTER drückt
+
         }
     }
 }

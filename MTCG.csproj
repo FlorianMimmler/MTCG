@@ -68,6 +68,8 @@
     <Compile Include="BusinessLayer\Model\CardWrapper\Package.cs" />
     <Compile Include="BusinessLayer\Model\User\Elo.cs" />
     <Compile Include="PresentationLayer\Program.cs" />
+    <Compile Include="PresentationLayer\HttpServer.cs" />
+    <Compile Include="PresentationLayer\RequestHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="BusinessLayer\Model\Card\SpellCard.cs" />
     <Compile Include="BusinessLayer\Model\CardWrapper\Stack.cs" />
