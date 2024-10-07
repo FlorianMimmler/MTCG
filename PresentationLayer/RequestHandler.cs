@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
-using System.Web;
 using MTCG.Auth;
 using MTCG.BusinessLayer.Model.Card;
 
@@ -27,10 +23,6 @@ namespace MTCG.PresentationLayer
                         !requestData.TryGetValue("Password", out var password))
                         return Tuple.Create(HttpStatusCode.Unauthorized, "Invalid username/password provided");
 
-
-                    Console.WriteLine($"Username: {username}");
-                    Console.WriteLine($"Password: {password}");
-
                     var authToken = AuthenticationController.Instance.Login(new Credentials(username.ToString(), password.ToString()));
 
                     return authToken.Valid ? Tuple.Create(HttpStatusCode.Created, $"{{ \"Token\": {authToken.Value} }}") : Tuple.Create(HttpStatusCode.Unauthorized, "Invalid username/password provided");
@@ -43,10 +35,6 @@ namespace MTCG.PresentationLayer
                     if (!requestData.TryGetValue("Username", out var username) ||
                         !requestData.TryGetValue("Password", out var password))
                         return Tuple.Create(HttpStatusCode.BadRequest, "Wrong arguments");
-
-
-                    Console.WriteLine($"Username: {username}");
-                    Console.WriteLine($"Password: {password}");
 
                     var success = AuthenticationController.Instance.Signup(new Credentials(username.ToString(), password.ToString()));
 
@@ -72,14 +60,6 @@ namespace MTCG.PresentationLayer
 
             if (httpMethod == "GET")
             {
-                if (request == "/user")
-                {
-                    var user = new User("player1");
-                    var result = "<html><body>";
-                    result += $"<p>username: {user.GetName()}, coins: {user.Coins}</p>";
-                    result += "</body></html>";
-                    return Tuple.Create(HttpStatusCode.OK, result);
-                }
 
                 if (request == "/cards")
                 {

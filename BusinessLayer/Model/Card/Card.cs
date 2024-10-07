@@ -1,9 +1,4 @@
 ﻿using MTCG.BusinessLayer.Interface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MTCG
 {
@@ -19,8 +14,6 @@ namespace MTCG
         public string Name { get; set; }
         public int Damage { get; set; }
         public ElementType ElementType { get; set; }
-
-        public abstract double CalculateDamageAgainst(Card opponent);
 
         public override string ToString()
         {
