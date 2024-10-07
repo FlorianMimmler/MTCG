@@ -20,8 +20,6 @@ namespace MTCG
         public int Damage { get; set; }
         public ElementType ElementType { get; set; }
 
-        public abstract double CalculateDamageAgainst(Card opponent);
-
         public override string ToString()
         {
             return $"Card: {Name}, Damage: {Damage}";

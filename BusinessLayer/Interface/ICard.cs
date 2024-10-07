@@ -12,7 +12,6 @@ namespace MTCG.BusinessLayer.Interface
         string Name { get; set; }
         int Damage { get; set; }
         ElementType ElementType { get; set; }
-
         string ToString();
 
     }

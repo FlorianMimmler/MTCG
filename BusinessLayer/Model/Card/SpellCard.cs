@@ -12,10 +12,6 @@ namespace MTCG
         {
         }
 
-        public override double CalculateDamageAgainst(Card opponent)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
 
