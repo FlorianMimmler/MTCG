@@ -8,7 +8,7 @@ public enum ElementType
 
 public static class ElementTypeMethods
 {
-    public static String GetString(this ElementType type)
+    public static string GetString(this ElementType type)
     {
         switch(type)
         {
@@ -33,20 +33,20 @@ public static class ElementEffectiveness
         {
             { ElementType.FIRE, new Dictionary<ElementType, double>()
                 {
-                    { ElementType.NORMAL, 2.0 },   // Fire > Normal
-                    { ElementType.WATER, 0.5 }    // Fire < Water
+                    { ElementType.NORMAL, 2.0 },  
+                    { ElementType.WATER, 0.5 }    
                 }
             },
             { ElementType.WATER, new Dictionary<ElementType, double>()
                 {
-                    { ElementType.FIRE, 2.0 },    // Water > Fire
-                    { ElementType.NORMAL, 0.5 }   // Water < Normal
+                    { ElementType.FIRE, 2.0 },   
+                    { ElementType.NORMAL, 0.5 }
                 }
             },
             { ElementType.NORMAL, new Dictionary<ElementType, double>()
                 {
-                    { ElementType.WATER, 2.0 },   // Normal > Water
-                    { ElementType.FIRE, 0.5 }     // Normal < Fire
+                    { ElementType.WATER, 2.0 },  
+                    { ElementType.FIRE, 0.5 }    
                 }
             }
         };
@@ -58,7 +58,7 @@ public static class ElementEffectiveness
         {
             return effectivenessMap[attacker][defender];
         }
-        return 1.0; // No effect
+        return 1.0;
     }
 }
 

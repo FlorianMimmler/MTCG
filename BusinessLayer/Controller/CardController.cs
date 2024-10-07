@@ -13,7 +13,7 @@ namespace MTCG.BusinessLayer.Controller
 
         private static CardController _instance;
 
-        public static CardController Instance => _instance ?? (_instance = new CardController());
+        public static CardController Instance => _instance ??= new CardController();
 
         private CardController(){}
 
@@ -27,8 +27,7 @@ namespace MTCG.BusinessLayer.Controller
         {
             lock (syncObj)
             {
-                if (random == null)
-                    random = new Random(); // Or exception...
+                random ??= new Random();
                 return random.Next(max);
             }
         }

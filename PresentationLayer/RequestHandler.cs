@@ -1,73 +1,108 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Web;
 using MTCG.Auth;
+using MTCG.BusinessLayer.Model.Card;
 
 namespace MTCG.PresentationLayer
 {
     internal class RequestHandler
     {
-        public Tuple<HttpStatusCode, string> HandleRequest(string request, string httpMethod, string body)
+        public Tuple<HttpStatusCode, string> HandleRequest(string request, string httpMethod, string body, string requestAuthToken)
         {
             Console.WriteLine($"Handle Request {request} {httpMethod}");
 
-            // Unterscheidung nach HTTP-Methode
-            if (httpMethod == "POST" && request.StartsWith("/sessions"))
+            if (httpMethod == "POST")
             {
-                var requestData = JsonSerializer.Deserialize<Dictionary<string, object>>(body);
+                if (request.StartsWith("/sessions"))
+                {
+                    var requestData = JsonSerializer.Deserialize<Dictionary<string, object>>(body);
 
-                if (!requestData.TryGetValue("Username", out var username) ||
-                    !requestData.TryGetValue("Password", out var password))
-                    return Tuple.Create(HttpStatusCode.Unauthorized, "Invalid username/password provided");
+                    if (!requestData.TryGetValue("Username", out var username) ||
+                        !requestData.TryGetValue("Password", out var password))
+                        return Tuple.Create(HttpStatusCode.Unauthorized, "Invalid username/password provided");
 
 
-                Console.WriteLine($"Username: {username}");
-                Console.WriteLine($"Password: {password}");
+                    Console.WriteLine($"Username: {username}");
+                    Console.WriteLine($"Password: {password}");
 
-                var authToken = AuthenticationController.Instance.Login(new Credentials(username.ToString(), password.ToString()));
+                    var authToken = AuthenticationController.Instance.Login(new Credentials(username.ToString(), password.ToString()));
 
-                return authToken.Valid ? Tuple.Create(HttpStatusCode.OK, $"{{ \"Token\": {authToken.Token} }}") : Tuple.Create(HttpStatusCode.Unauthorized, "Invalid username/password provided");
+                    return authToken.Valid ? Tuple.Create(HttpStatusCode.Created, $"{{ \"Token\": {authToken.Value} }}") : Tuple.Create(HttpStatusCode.Unauthorized, "Invalid username/password provided");
+                }
+
+                if (request.StartsWith("/users"))
+                {
+                    var requestData = JsonSerializer.Deserialize<Dictionary<string, object>>(body);
+
+                    if (!requestData.TryGetValue("Username", out var username) ||
+                        !requestData.TryGetValue("Password", out var password))
+                        return Tuple.Create(HttpStatusCode.BadRequest, "Wrong arguments");
+
+
+                    Console.WriteLine($"Username: {username}");
+                    Console.WriteLine($"Password: {password}");
+
+                    var success = AuthenticationController.Instance.Signup(new Credentials(username.ToString(), password.ToString()));
+
+                    return success ? Tuple.Create(HttpStatusCode.OK, "User successfully created") : Tuple.Create(HttpStatusCode.Conflict, " User already exists");
+
+                }
+
+                if (request.StartsWith("/transactions/packages"))
+                {
+                    if (!AuthenticationController.Instance.IsAuthorized(requestAuthToken))
+                    {
+                        return Tuple.Create(HttpStatusCode.Unauthorized, "Not authorized");
+                    }
+
+                    var user = AuthenticationController.Instance.GetUserByToken(requestAuthToken);
+
+                    var success = user.BuyPackage();
+
+                    return success ? Tuple.Create(HttpStatusCode.OK, "A package has been successfully bought") : Tuple.Create(HttpStatusCode.Forbidden, "Not enough money");
+
+                }
             }
 
-            if (httpMethod == "POST" && request.StartsWith("/users"))
+            if (httpMethod == "GET")
             {
-                var requestData = JsonSerializer.Deserialize<Dictionary<string, object>>(body);
+                if (request == "/user")
+                {
+                    var user = new User("player1");
+                    var result = "<html><body>";
+                    result += $"<p>username: {user.GetName()}, coins: {user.Coins}</p>";
+                    result += "</body></html>";
+                    return Tuple.Create(HttpStatusCode.OK, result);
+                }
 
-                if (!requestData.TryGetValue("Username", out var username) ||
-                    !requestData.TryGetValue("Password", out var password))
-                    return Tuple.Create(HttpStatusCode.BadRequest, "Wrong arguments");
+                if (request == "/cards")
+                {
+                    if (!AuthenticationController.Instance.IsAuthorized(requestAuthToken))
+                    {
+                        return Tuple.Create(HttpStatusCode.Unauthorized, "Not authorized");
+                    }
 
+                    var user = AuthenticationController.Instance.GetUserByToken(requestAuthToken);
 
-                Console.WriteLine($"Username: {username}");
-                Console.WriteLine($"Password: {password}");
+                    var usersCardDtos = user.Stack.Cards.Select(card => new CardDTO()
+                    {
+                        name = card.Name,
+                        damage = card.Damage
+                    });
 
-                var success = AuthenticationController.Instance.Signup(new Credentials(username.ToString(), password.ToString()));
+                    var jsonResult = JsonSerializer.Serialize(usersCardDtos);
 
-                return success ? Tuple.Create(HttpStatusCode.OK, "User successfully created") : Tuple.Create(HttpStatusCode.Conflict, "User with same username already registered");
-
+                    return Tuple.Create(HttpStatusCode.OK, jsonResult);
+                }
             }
-
-            if (httpMethod == "GET" && request == "/user")
-            {
-                var user = new User("player1");
-                var result = "<html><body>";
-                result += $"<p>username: {user.GetName()}, coins: {user.Coins}</p>";
-                result += "</body></html>";
-                return Tuple.Create(HttpStatusCode.OK, result);
-            }
-
+            
             return Tuple.Create(HttpStatusCode.NotFound, "No Enpoint  found");
-        }
-
-        private string? ExtractQueryParam(string request, string param)
-        {
-            var uri = new Uri("http://localhost:8080" + request);
-            var query = HttpUtility.ParseQueryString(uri.Query);
-            return query.Get(param);
         }
     }
 }

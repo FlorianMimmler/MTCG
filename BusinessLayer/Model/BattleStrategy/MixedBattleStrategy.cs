@@ -27,7 +27,6 @@ namespace MTCG.BusinessLayer.Model.BattleStrategy
                     return BattleResult.Player2Wins;
             }
 
-            // Default effectiveness-based comparison
             var effectiveness1 = ElementEffectiveness.GetEffectiveness(card1.ElementType, card2.ElementType);
             var effectiveness2 = ElementEffectiveness.GetEffectiveness(card2.ElementType, card1.ElementType);
 
