@@ -14,12 +14,10 @@ namespace MTCG
             this.MonsterType = monsterType;
         }
 
-        private ICalculateStrategy CalculateStrategy;
+        private IBattleStrategy CalculateStrategy;
         public MonsterType MonsterType { get; set; }
         public override double CalculateDamageAgainst(Card opponent)
         {
-            int specialAttackOption = CalculateStrategy.CalculateAgainst(opponent,);
-
             throw new NotImplementedException();
         }
     }

@@ -6,6 +6,8 @@ using System.Linq;
 using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using System.Text;
 using System.Threading.Tasks;
+using MTCG.BusinessLayer.Interface;
+using MTCG.BusinessLayer.Model.User;
 
 namespace MTCG
 {
@@ -16,9 +18,21 @@ namespace MTCG
 
         public int Coins { get; set; } = 20;
 
+        public Elo Elo = new Elo();
+
         protected ICardWrapper Deck { get; set; } = new Deck();
 
         protected ICardWrapper Stack { get; set; } = new Stack();
+
+        public User(string username)
+        {
+            Credentials = new Credentials(username, "test");
+        }
+
+        public User(Credentials creds)
+        {
+            Credentials = creds;
+        }
 
         public void BuyPackage()
         {
@@ -56,6 +70,26 @@ namespace MTCG
         private void AddCardToDeckFromStack(int stackIndex)
         {
             this.Deck.AddCard(this.Stack.GetCard(stackIndex));
+        }
+
+        public ICard GetRandomCardFromDeck()
+        {
+            return this.Deck.GetRandomCard();
+        }
+
+        public ICardWrapper GetDeck()
+        {
+            return this.Deck;
+        }
+
+        public string GetName()
+        {
+            return this.Credentials.Username;
+        }
+
+        public bool IsPasswordEqual(string password)
+        {
+            return this.Credentials.Password == password;
         }
     }
 }

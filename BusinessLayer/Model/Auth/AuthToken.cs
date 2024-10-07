@@ -8,8 +8,8 @@ namespace MTCG.Auth
 {
     internal class AuthToken
     {
-        protected string Token { get; set; } = "";
-        protected bool Valid { get; set; } = false;
+        public string Token { get; set; } = "";
+        public bool Valid { get; set; } = false;
 
         public AuthToken(bool valid = false) 
         {

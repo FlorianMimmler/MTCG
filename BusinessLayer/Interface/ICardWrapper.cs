@@ -1,22 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using MTCG.BusinessLayer.Interface;
 
 
 namespace MTCG
 {
     internal interface ICardWrapper
     {
-        List<Card> Cards { get; set; }
+        List<ICard> Cards { get; set; }
 
-        bool AddCard(Card newCard);
+        bool AddCard(ICard newCard);
 
-        bool AddCards(List<Card> newCards);
+        bool AddCards(List<ICard> newCards);
 
-        bool RemoveCard(Card oldCard);
+        bool RemoveCard(ICard oldCard);
 
-        Card GetCard(int index);
+        ICard GetCard(int index);
+        ICard GetRandomCard();
 
         void PrintCards();
+
+        bool IsEmpty();
 
     }
 }
