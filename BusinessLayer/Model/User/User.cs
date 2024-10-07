@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using System.Text;
 using System.Threading.Tasks;
+using MTCG.Auth;
 using MTCG.BusinessLayer.Interface;
 using MTCG.BusinessLayer.Model.User;
 
@@ -14,7 +15,7 @@ namespace MTCG
     internal class User
     {
         protected Credentials Credentials { get; set; }
-        protected string Token { get; set; }
+        public AuthToken Token { get; set; }
 
         public int Coins { get; set; } = 20;
 
@@ -22,7 +23,7 @@ namespace MTCG
 
         protected ICardWrapper Deck { get; set; } = new Deck();
 
-        protected ICardWrapper Stack { get; set; } = new Stack();
+        public ICardWrapper Stack { get; set; } = new Stack();
 
         public User(string username)
         {
@@ -34,16 +35,18 @@ namespace MTCG
             Credentials = creds;
         }
 
-        public void BuyPackage()
+        public bool BuyPackage()
         {
 
             if (Coins >= Package.Price)
             {
                 Stack.AddCards(CardController.Instance.GetCards(Package.MaxCards));
                 Coins -= Package.Price;
+                return true;
             } else
             {
                 Console.WriteLine("Not enough coins available");
+                return false;
             }
         }
 

@@ -11,7 +11,7 @@ namespace MTCG.PresentationLayer
 {
     internal class RequestHandler
     {
-        public Tuple<HttpStatusCode, string> HandleRequest(string request, string httpMethod, string body)
+        public Tuple<HttpStatusCode, string> HandleRequest(string request, string httpMethod, string body, string requestAuthToken)
         {
             Console.WriteLine($"Handle Request {request} {httpMethod}");
 
@@ -30,7 +30,7 @@ namespace MTCG.PresentationLayer
 
                 var authToken = AuthenticationController.Instance.Login(new Credentials(username.ToString(), password.ToString()));
 
-                return authToken.Valid ? Tuple.Create(HttpStatusCode.OK, $"{{ \"Token\": {authToken.Token} }}") : Tuple.Create(HttpStatusCode.Unauthorized, "Invalid username/password provided");
+                return authToken.Valid ? Tuple.Create(HttpStatusCode.Created, $"{{ \"Token\": {authToken.Value} }}") : Tuple.Create(HttpStatusCode.Unauthorized, "Invalid username/password provided");
             }
 
             if (httpMethod == "POST" && request.StartsWith("/users"))
@@ -47,7 +47,22 @@ namespace MTCG.PresentationLayer
 
                 var success = AuthenticationController.Instance.Signup(new Credentials(username.ToString(), password.ToString()));
 
-                return success ? Tuple.Create(HttpStatusCode.OK, "User successfully created") : Tuple.Create(HttpStatusCode.Conflict, "User with same username already registered");
+                return success ? Tuple.Create(HttpStatusCode.OK, "User successfully created") : Tuple.Create(HttpStatusCode.Conflict, " User already exists");
+
+            }
+
+            if (httpMethod == "POST" && request.StartsWith("/transactions/packages"))
+            {
+                if (!IsAuthorized(requestAuthToken))
+                {
+                    return Tuple.Create(HttpStatusCode.Unauthorized, "Not authorized");
+                }
+
+                var user = AuthenticationController.Instance.GetUserByToken(requestAuthToken);
+
+                var success = user.BuyPackage();
+
+                return success ? Tuple.Create(HttpStatusCode.OK, "A package has been successfully bought") : Tuple.Create(HttpStatusCode.Forbidden, "Not enough money");
 
             }
 
@@ -60,7 +75,26 @@ namespace MTCG.PresentationLayer
                 return Tuple.Create(HttpStatusCode.OK, result);
             }
 
+            if (httpMethod == "GET" && request == "/cards")
+            {
+                if (!IsAuthorized(requestAuthToken))
+                {
+                    return Tuple.Create(HttpStatusCode.Unauthorized, "Not authorized");
+                }
+
+                var user = AuthenticationController.Instance.GetUserByToken(requestAuthToken);
+
+                var result = user.Stack.Cards;
+
+                //return Tuple.Create(HttpStatusCode.OK, result);
+            }
+
             return Tuple.Create(HttpStatusCode.NotFound, "No Enpoint  found");
+        }
+
+        private bool IsAuthorized(string authToken)
+        {
+            return AuthenticationController.Instance.IsAuthorized(authToken);
         }
 
         private string? ExtractQueryParam(string request, string param)

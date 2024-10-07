@@ -46,7 +46,7 @@ namespace MTCG
             server.StartAsync();
 
             Console.WriteLine("Press ENTER to stop the server...");
-            Console.ReadLine(); // Wartet darauf, dass der Benutzer ENTER drückt
+            Console.ReadLine();
 
         }
     }

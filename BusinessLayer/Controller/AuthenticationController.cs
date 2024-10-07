@@ -37,7 +37,13 @@ namespace MTCG.Auth
                 return new AuthToken();
             }
 
-            return user.IsPasswordEqual(creds.Password) ? new AuthToken(true) : new AuthToken();
+            if (!user.IsPasswordEqual(creds.Password)) return new AuthToken();
+            {
+                var authToken = new AuthToken(true);
+                this._users.Find(u => u.GetName() == creds.Username).Token = authToken;
+                return authToken;
+            }
+
         }
 
         public bool Signup(Credentials creds)
@@ -54,6 +60,21 @@ namespace MTCG.Auth
             this._users.Add(newUser);
 
             return true;
+        }
+
+        public bool IsAuthorized(string authToken)
+        {
+            var user = this._users.FirstOrDefault(u => u.Token.Value == authToken);
+
+            return user != null;
+
+        }
+
+        public User GetUserByToken(string authToken)
+        {
+            var user = this._users.FirstOrDefault(u => u.Token.Value == authToken);
+
+            return user;
         }
 
     }
