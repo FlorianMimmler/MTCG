@@ -89,6 +89,7 @@
     <Compile Include="BusinessLayer\Model\CardWrapper\CardWrapper.cs" />
     <Compile Include="BusinessLayer\Interface\ICardWrapper.cs" />
     <Compile Include="BusinessLayer\Model\Card\Card.cs" />
+    <Compile Include="BusinessLayer\Model\Card\CardDTO.cs" />
     <Compile Include="BusinessLayer\Model\Card\ElementType.cs" />
     <Compile Include="BusinessLayer\Model\Card\MonsterType.cs" />
     <Compile Include="BusinessLayer\Model\User\Credentials.cs" />

@@ -22,6 +22,8 @@ namespace MTCG.Auth
 
         private List<User> _users;
 
+        /* _____ */
+
 
         public AuthToken Login(Credentials creds)
         {
@@ -55,7 +57,6 @@ namespace MTCG.Auth
                 return false;
             }
 
-            //perform signup
             var newUser = new User(creds);
             this._users.Add(newUser);
 
