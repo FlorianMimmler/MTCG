@@ -74,5 +74,15 @@ namespace MTCG.Auth
             return user;
         }
 
+        public bool UserExists(string username)
+        {
+            return this._users.FirstOrDefault(u => u.GetName() == username) != null;
+        }
+
+        public User GetUserByName(string username)
+        {
+            return this._users.FirstOrDefault(u => u.GetName() == username);
+        }
+
     }
 }

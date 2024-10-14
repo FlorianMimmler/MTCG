@@ -11,6 +11,7 @@ namespace MTCG
     {
         protected Credentials Credentials { get; set; }
         public AuthToken Token { get; set; }
+        public bool Admin { get; set; } = true;
 
         public int Coins { get; set; } = 20;
 

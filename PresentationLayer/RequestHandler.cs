@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.Json;
 using MTCG.Auth;
 using MTCG.BusinessLayer.Model.Card;
+using MTCG.BusinessLayer.Model.User;
 
 namespace MTCG.PresentationLayer
 {
@@ -60,6 +61,43 @@ namespace MTCG.PresentationLayer
 
             if (httpMethod == "GET")
             {
+
+                if (request.StartsWith("/users/"))
+                {
+                    if (!AuthenticationController.Instance.IsAuthorized(requestAuthToken))
+                    {
+                        return Tuple.Create(HttpStatusCode.Unauthorized, "Not authorized");
+                    }
+
+                    User user = null;
+                    if ((user = AuthenticationController.Instance.GetUserByToken(requestAuthToken)) == null)
+                    {
+                        return Tuple.Create(HttpStatusCode.Unauthorized, "Not authorized");
+                    }
+
+                    var username = request.Substring(request.LastIndexOf("/", StringComparison.Ordinal)+1);
+
+                    if (!AuthenticationController.Instance.UserExists(username))
+                    {
+                        return user.Admin ? Tuple.Create(HttpStatusCode.NotFound, "User not found") : Tuple.Create(HttpStatusCode.Unauthorized, "Not authorized");
+                    }
+
+                    if (username != user.GetName() && !user.Admin) return Tuple.Create(HttpStatusCode.Unauthorized, "Not authorized");
+
+                    var resultUser = AuthenticationController.Instance.GetUserByName(username);
+
+                    var result = new UserDTO()
+                    {
+                        Username = resultUser.GetName(),
+                        Coins = resultUser.Coins,
+                        CardCount = resultUser.Stack.Cards.Count,
+                        EloPoints = resultUser.Elo.EloScore,
+                        EloName = resultUser.Elo.GetEloName()
+                    };
+
+                    return Tuple.Create(HttpStatusCode.OK, JsonSerializer.Serialize(result));
+
+                }
 
                 if (request == "/cards")
                 {
