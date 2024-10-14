@@ -10,7 +10,7 @@ namespace MTCG.PresentationLayer
 {
     internal class RequestHandler
     {
-        public Tuple<HttpStatusCode, string> HandleRequest(string request, string httpMethod, string body, string requestAuthToken)
+        public HttpResponse HandleRequest(string request, string httpMethod, string body, string requestAuthToken)
         {
             Console.WriteLine($"Handle Request {request} {httpMethod}");
 
@@ -22,11 +22,25 @@ namespace MTCG.PresentationLayer
 
                     if (!requestData.TryGetValue("Username", out var username) ||
                         !requestData.TryGetValue("Password", out var password))
-                        return Tuple.Create(HttpStatusCode.Unauthorized, "Invalid username/password provided");
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.Unauthorized,
+                            ResponseText = "Invalid username/password provided"
+                        };
 
                     var authToken = AuthenticationController.Instance.Login(new Credentials(username.ToString(), password.ToString()));
 
-                    return authToken.Valid ? Tuple.Create(HttpStatusCode.Created, $"{{ \"Token\": {authToken.Value} }}") : Tuple.Create(HttpStatusCode.Unauthorized, "Invalid username/password provided");
+                    return authToken.Valid
+                        ? new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.Created,
+                            ResponseText = $"{{ \"Token\": {authToken.Value} }}"
+                        }
+                        : new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.Unauthorized,
+                            ResponseText = "Invalid username/password provided"
+                        };
                 }
 
                 if (request.StartsWith("/users"))
@@ -35,11 +49,25 @@ namespace MTCG.PresentationLayer
 
                     if (!requestData.TryGetValue("Username", out var username) ||
                         !requestData.TryGetValue("Password", out var password))
-                        return Tuple.Create(HttpStatusCode.BadRequest, "Wrong arguments");
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.BadRequest,
+                            ResponseText = "Wrong arguments"
+                        };
 
                     var success = AuthenticationController.Instance.Signup(new Credentials(username.ToString(), password.ToString()));
 
-                    return success ? Tuple.Create(HttpStatusCode.OK, "User successfully created") : Tuple.Create(HttpStatusCode.Conflict, " User already exists");
+                    return success ?
+                        new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.OK,
+                            ResponseText = "User successfully created"
+                        }:
+                        new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.Conflict,
+                            ResponseText = "User already exists"
+                        };
 
                 }
 
@@ -47,14 +75,27 @@ namespace MTCG.PresentationLayer
                 {
                     if (!AuthenticationController.Instance.IsAuthorized(requestAuthToken))
                     {
-                        return Tuple.Create(HttpStatusCode.Unauthorized, "Not authorized");
+                        return 
+                            new HttpResponse()
+                            {
+                                StatusCode = HttpStatusCode.Unauthorized, 
+                                ResponseText = "Not authorized"
+                            };
                     }
 
                     var user = AuthenticationController.Instance.GetUserByToken(requestAuthToken);
 
                     var success = user.BuyPackage();
 
-                    return success ? Tuple.Create(HttpStatusCode.OK, "A package has been successfully bought") : Tuple.Create(HttpStatusCode.Forbidden, "Not enough money");
+                    return success ? new HttpResponse()
+                    {
+                        StatusCode = HttpStatusCode.OK, 
+                        ResponseText = "A package has been successfully bought"
+                    } : new HttpResponse()
+                    {
+                        StatusCode = HttpStatusCode.Forbidden, 
+                        ResponseText = "Not enough money"
+                    };
 
                 }
             }
@@ -66,23 +107,45 @@ namespace MTCG.PresentationLayer
                 {
                     if (!AuthenticationController.Instance.IsAuthorized(requestAuthToken))
                     {
-                        return Tuple.Create(HttpStatusCode.Unauthorized, "Not authorized");
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.Unauthorized, 
+                            ResponseText = "Not authorized"
+                        };
                     }
 
                     User user = null;
                     if ((user = AuthenticationController.Instance.GetUserByToken(requestAuthToken)) == null)
                     {
-                        return Tuple.Create(HttpStatusCode.Unauthorized, "Not authorized");
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.Unauthorized, 
+                            ResponseText = "Not authorized"
+                        };
                     }
 
                     var username = request.Substring(request.LastIndexOf("/", StringComparison.Ordinal)+1);
 
                     if (!AuthenticationController.Instance.UserExists(username))
                     {
-                        return user.Admin ? Tuple.Create(HttpStatusCode.NotFound, "User not found") : Tuple.Create(HttpStatusCode.Unauthorized, "Not authorized");
+                        return user.Admin ? 
+                            new HttpResponse()
+                            {
+                                StatusCode = HttpStatusCode.NotFound, 
+                                ResponseText = "User not found"
+                            } : new HttpResponse()
+                            {
+                                StatusCode = HttpStatusCode.Unauthorized, 
+                                ResponseText = "Not authorized"
+                            };
                     }
 
-                    if (username != user.GetName() && !user.Admin) return Tuple.Create(HttpStatusCode.Unauthorized, "Not authorized");
+                    if (username != user.GetName() && !user.Admin) return 
+                        new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.Unauthorized, 
+                            ResponseText = "Not authorized"
+                        };
 
                     var resultUser = AuthenticationController.Instance.GetUserByName(username);
 
@@ -95,7 +158,12 @@ namespace MTCG.PresentationLayer
                         EloName = resultUser.Elo.GetEloName()
                     };
 
-                    return Tuple.Create(HttpStatusCode.OK, JsonSerializer.Serialize(result));
+                    return 
+                        new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.OK,
+                            ResponseText = JsonSerializer.Serialize(result)
+                        };
 
                 }
 
@@ -103,7 +171,11 @@ namespace MTCG.PresentationLayer
                 {
                     if (!AuthenticationController.Instance.IsAuthorized(requestAuthToken))
                     {
-                        return Tuple.Create(HttpStatusCode.Unauthorized, "Not authorized");
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.Unauthorized, 
+                            ResponseText = "Not authorized"
+                        };
                     }
 
                     var user = AuthenticationController.Instance.GetUserByToken(requestAuthToken);
@@ -116,7 +188,48 @@ namespace MTCG.PresentationLayer
 
                     var jsonResult = JsonSerializer.Serialize(usersCardDtos);
 
-                    return Tuple.Create(HttpStatusCode.OK, jsonResult);
+                    return new HttpResponse()
+                    {
+                        StatusCode = HttpStatusCode.OK, 
+                        ResponseText = jsonResult
+                    };
+                }
+
+                if (request == "/deck")
+                {
+                    if (!AuthenticationController.Instance.IsAuthorized(requestAuthToken))
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.Unauthorized,
+                            ResponseText = "Not authorized"
+                        };
+                    }
+
+                    var user = AuthenticationController.Instance.GetUserByToken(requestAuthToken);
+
+                    if (user.Deck.IsEmpty())
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.NoContent,
+                            ResponseText = "Deck is empty"
+                        };
+                    }
+
+                    var usersCardDtos = user.Deck.Cards.Select(card => new CardDTO()
+                    {
+                        name = card.Name,
+                        damage = card.Damage
+                    });
+
+                    var jsonResult = JsonSerializer.Serialize(usersCardDtos);
+
+                    return new HttpResponse()
+                    {
+                        StatusCode = HttpStatusCode.OK,
+                        ResponseText = jsonResult
+                    };
                 }
             }
 
@@ -126,18 +239,34 @@ namespace MTCG.PresentationLayer
                 {
                     if (!AuthenticationController.Instance.IsAuthorized(requestAuthToken))
                     {
-                        return Tuple.Create(HttpStatusCode.Unauthorized, "Not authorized");
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.Unauthorized, 
+                            ResponseText = "Not authorized"
+                        };
                     }
 
                     var result = AuthenticationController.Instance.Logout(requestAuthToken);
 
                     return result
-                        ? Tuple.Create(HttpStatusCode.OK, "Successfully logged out")
-                        : Tuple.Create(HttpStatusCode.InternalServerError, "Some Error occured");
+                        ? new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.OK, 
+                            ResponseText = "Successfully logged out"
+                        }
+                        : new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.InternalServerError, 
+                            ResponseText = "Some Error occured"
+                        };
                 }
             }
             
-            return Tuple.Create(HttpStatusCode.NotFound, "No Enpoint  found");
+            return new HttpResponse()
+            {
+                StatusCode = HttpStatusCode.NotFound, 
+                ResponseText = "No Endpoint found"
+            };
         }
     }
 }

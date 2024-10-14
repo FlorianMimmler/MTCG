@@ -17,7 +17,7 @@ namespace MTCG
 
         public Elo Elo = new Elo();
 
-        protected ICardWrapper Deck { get; set; } = new Deck();
+        public ICardWrapper Deck { get; set; } = new Deck();
 
         public ICardWrapper Stack { get; set; } = new Stack();
 
