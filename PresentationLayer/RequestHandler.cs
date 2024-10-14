@@ -119,6 +119,23 @@ namespace MTCG.PresentationLayer
                     return Tuple.Create(HttpStatusCode.OK, jsonResult);
                 }
             }
+
+            if (httpMethod == "DELETE")
+            {
+                if (request.StartsWith("/sessions"))
+                {
+                    if (!AuthenticationController.Instance.IsAuthorized(requestAuthToken))
+                    {
+                        return Tuple.Create(HttpStatusCode.Unauthorized, "Not authorized");
+                    }
+
+                    var result = AuthenticationController.Instance.Logout(requestAuthToken);
+
+                    return result
+                        ? Tuple.Create(HttpStatusCode.OK, "Successfully logged out")
+                        : Tuple.Create(HttpStatusCode.InternalServerError, "Some Error occured");
+                }
+            }
             
             return Tuple.Create(HttpStatusCode.NotFound, "No Enpoint  found");
         }

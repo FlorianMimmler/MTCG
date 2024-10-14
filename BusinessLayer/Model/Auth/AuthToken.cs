@@ -16,5 +16,11 @@ namespace MTCG.Auth
 
             Valid = valid;
         }
+
+        public void Reset()
+        {
+            this.Valid = false;
+            this.Value = "";
+        }
     }
 }

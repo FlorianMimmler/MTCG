@@ -59,6 +59,20 @@ namespace MTCG.Auth
             return true;
         }
 
+        public bool Logout(string authToken)
+        {
+            var user = this._users.FirstOrDefault(u => u.Token.Value == authToken);
+
+            if (user == null)
+            {
+                return false;
+            }
+
+            user.Token.Reset();
+
+            return user.Token.Valid == false;
+        }
+
         public bool IsAuthorized(string authToken)
         {
             var user = this._users.FirstOrDefault(u => u.Token.Value == authToken);
