@@ -233,6 +233,60 @@ namespace MTCG.PresentationLayer
                 }
             }
 
+            if (httpMethod == "PUT")
+            {
+                if (request.StartsWith("/deck"))
+                {
+                    if (!AuthenticationController.Instance.IsAuthorized(requestAuthToken))
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.Unauthorized,
+                            ResponseText = "Not authorized"
+                        };
+                    }
+
+                    var user = AuthenticationController.Instance.GetUserByToken(requestAuthToken);
+
+                    var requestData = JsonSerializer.Deserialize<Dictionary<string, object>>(body);
+
+                    if (!requestData.TryGetValue("cards", out var cards))
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.Unauthorized,
+                            ResponseText = "Invalid username/password provided"
+                        };
+
+                    
+                    var cardIDs = cards.ToString();
+
+                    if (cardIDs.Split(';').Length < 4)
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.BadRequest,
+                            ResponseText = "Not enough cards provided"
+                        };
+                    }
+
+                    if (user.SelectDeck(cardIDs))
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.OK,
+                            ResponseText = "Deck successfully configured"
+                        };
+                    }
+
+                    return new HttpResponse()
+                    {
+                        StatusCode = HttpStatusCode.Forbidden,
+                        ResponseText = "Card not found"
+                    };
+                    
+                }
+            }
+
             if (httpMethod == "DELETE")
             {
                 if (request.StartsWith("/sessions"))

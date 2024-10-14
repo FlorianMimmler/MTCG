@@ -1,6 +1,7 @@
 ﻿using MTCG.BusinessLayer.Controller;
 using MTCG.BusinessLayer.Model;
 using System;
+using System.Linq;
 using MTCG.Auth;
 using MTCG.BusinessLayer.Interface;
 using MTCG.BusinessLayer.Model.User;
@@ -58,17 +59,31 @@ namespace MTCG
             this.Deck.PrintCards();
         }
 
-        public void SelectDeck(string selection)
+        public bool SelectDeck(string selection)
         {
-            foreach(var selectedCardIndex in selection.Split(';'))
+            this.Deck.Cards.Clear();
+
+            try
             {
-                AddCardToDeckFromStack(int.Parse(selectedCardIndex));
+                return selection.Split(';').All(selectedCardIndex => AddCardToDeckFromStack(int.Parse(selectedCardIndex)));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+                
             }
         }
 
-        private void AddCardToDeckFromStack(int stackIndex)
+        private bool AddCardToDeckFromStack(int stackIndex)
         {
+            
+            if (stackIndex < 0 || stackIndex >= this.Stack.Cards.Count)
+            {
+                return false;
+            }
             this.Deck.AddCard(this.Stack.GetCard(stackIndex));
+            return true;
         }
 
         public ICard GetRandomCardFromDeck()
