@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using MTCG.Auth;
+using MTCG.BusinessLayer.Controller;
 using MTCG.BusinessLayer.Model.Card;
 using MTCG.BusinessLayer.Model.User;
 
@@ -264,6 +265,25 @@ namespace MTCG.PresentationLayer
                     };
                 }
 
+                if (request == "/scoreboard")
+                {
+                    if (!AuthenticationController.Instance.IsAuthorized(requestAuthToken))
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.Unauthorized,
+                            ResponseText = "Not authorized"
+                        };
+                    }
+
+                    var result = ScoreboardController.Instance.GetScoreboardDTOs();
+
+                    return new HttpResponse()
+                    {
+                        StatusCode = HttpStatusCode.OK,
+                        ResponseText = JsonSerializer.Serialize(result)
+                    };
+                }
 
             }
 
