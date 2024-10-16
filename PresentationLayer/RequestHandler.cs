@@ -154,8 +154,8 @@ namespace MTCG.PresentationLayer
                         Username = resultUser.GetName(),
                         Coins = resultUser.Coins,
                         CardCount = resultUser.Stack.Cards.Count,
-                        EloPoints = resultUser.Elo.EloScore,
-                        EloName = resultUser.Elo.GetEloName()
+                        EloPoints = resultUser.Stats.Elo.EloScore,
+                        EloName = resultUser.Stats.Elo.GetEloName()
                     };
 
                     return 
@@ -164,6 +164,36 @@ namespace MTCG.PresentationLayer
                             StatusCode = HttpStatusCode.OK,
                             ResponseText = JsonSerializer.Serialize(result)
                         };
+
+                }
+
+                if (request == "/stats")
+                {
+                    if (!AuthenticationController.Instance.IsAuthorized(requestAuthToken))
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.Unauthorized,
+                            ResponseText = "Not authorized"
+                        };
+                    }
+
+                    var user = AuthenticationController.Instance.GetUserByToken(requestAuthToken);
+
+                    var userStats = new UserStatsDTO()
+                    {
+                        Username = user.GetName(),
+                        Wins = user.Stats.Wins,
+                        Losses = user.Stats.Losses,
+                        EloPoints = user.Stats.Elo.EloScore,
+                        EloName = user.Stats.Elo.GetEloName()
+                    };
+
+                    return new HttpResponse()
+                    {
+                        StatusCode = HttpStatusCode.OK,
+                        ResponseText = JsonSerializer.Serialize(userStats)
+                    };
 
                 }
 
@@ -233,6 +263,8 @@ namespace MTCG.PresentationLayer
                         ResponseText = jsonResult
                     };
                 }
+
+
             }
 
             if (httpMethod == "PUT")

@@ -97,6 +97,7 @@
     <Compile Include="BusinessLayer\Model\Card\MonsterCard.cs" />
     <Compile Include="BusinessLayer\Model\CardWrapper\Package.cs" />
     <Compile Include="BusinessLayer\Model\User\Elo.cs" />
+    <Compile Include="BusinessLayer\Model\User\Stats.cs" />
     <Compile Include="BusinessLayer\Model\User\UserDTO.cs" />
     <Compile Include="PresentationLayer\HttpResponse.cs" />
     <Compile Include="PresentationLayer\Program.cs" />

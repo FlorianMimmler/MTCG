@@ -16,7 +16,7 @@ namespace MTCG
 
         public int Coins { get; set; } = 20;
 
-        public Elo Elo = new Elo();
+        public Stats Stats = new Stats();
 
         public ICardWrapper Deck { get; set; } = new Deck();
 

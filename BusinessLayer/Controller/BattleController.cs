@@ -121,13 +121,13 @@ namespace MTCG
             switch(result)
             {
                 case BattleResult.Player1Wins:
-                    Player1.Elo.Increase();
-                    Player2.Elo.Decrease();
+                    Player1.Stats.AddWin();
+                    Player2.Stats.AddLoss();
                     Console.WriteLine("Player 1 wins");
                     break;
                 case BattleResult.Player2Wins:
-                    Player2.Elo.Increase();
-                    Player1.Elo.Decrease();
+                    Player2.Stats.AddWin();
+                    Player1.Stats.AddLoss();
                     Console.WriteLine("Player 2 wins");
                     break;
                 case BattleResult.Tie:
