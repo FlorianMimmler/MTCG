@@ -59,13 +59,13 @@ namespace MTCG
             this.Deck.PrintCards();
         }
 
-        public bool SelectDeck(string selection)
+        public bool SelectDeck(string[] selection)
         {
             this.Deck.Cards.Clear();
 
             try
             {
-                return selection.Split(';').All(selectedCardIndex => AddCardToDeckFromStack(int.Parse(selectedCardIndex)));
+                return selection.All(AddCardToDeckFromStack);
             }
             catch (Exception e)
             {
@@ -75,14 +75,17 @@ namespace MTCG
             }
         }
 
-        private bool AddCardToDeckFromStack(int stackIndex)
+        private bool AddCardToDeckFromStack(string cardID)
         {
-            
-            if (stackIndex < 0 || stackIndex >= this.Stack.Cards.Count)
+            var cardToAdd = this.Stack.GetCard(cardID);
+
+            if (cardToAdd == null)
             {
                 return false;
             }
-            this.Deck.AddCard(this.Stack.GetCard(stackIndex));
+
+            this.Deck.AddCard(cardToAdd);
+
             return true;
         }
 

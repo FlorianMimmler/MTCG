@@ -182,8 +182,9 @@ namespace MTCG.PresentationLayer
 
                     var usersCardDtos = user.Stack.Cards.Select(card => new CardDTO()
                     {
-                        name = card.Name,
-                        damage = card.Damage
+                        Id = card.Id,
+                        Name = card.Name,
+                        Damage = card.Damage
                     });
 
                     var jsonResult = JsonSerializer.Serialize(usersCardDtos);
@@ -219,8 +220,9 @@ namespace MTCG.PresentationLayer
 
                     var usersCardDtos = user.Deck.Cards.Select(card => new CardDTO()
                     {
-                        name = card.Name,
-                        damage = card.Damage
+                        Id = card.Id,
+                        Name = card.Name,
+                        Damage = card.Damage
                     });
 
                     var jsonResult = JsonSerializer.Serialize(usersCardDtos);
@@ -250,17 +252,16 @@ namespace MTCG.PresentationLayer
 
                     var requestData = JsonSerializer.Deserialize<Dictionary<string, object>>(body);
 
-                    if (!requestData.TryGetValue("cards", out var cards))
+                    if (!requestData.TryGetValue("cards", out var cardsObj))
                         return new HttpResponse()
                         {
-                            StatusCode = HttpStatusCode.Unauthorized,
-                            ResponseText = "Invalid username/password provided"
+                            StatusCode = HttpStatusCode.BadRequest,
+                            ResponseText = "Bad Request"
                         };
 
-                    
-                    var cardIDs = cards.ToString();
+                    var cards = JsonSerializer.Deserialize<string[]>(cardsObj.ToString());
 
-                    if (cardIDs.Split(';').Length < 4)
+                    if (cards.Length != 4)
                     {
                         return new HttpResponse()
                         {
@@ -269,7 +270,7 @@ namespace MTCG.PresentationLayer
                         };
                     }
 
-                    if (user.SelectDeck(cardIDs))
+                    if (user.SelectDeck(cards))
                     {
                         return new HttpResponse()
                         {
