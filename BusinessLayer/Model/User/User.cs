@@ -10,7 +10,8 @@ namespace MTCG
 {
     internal class User
     {
-        protected Credentials Credentials { get; set; }
+        public int Id { get; set; }
+        public Credentials Credentials { get; set; }
         public AuthToken Token { get; set; }
         public bool Admin { get; set; } = true;
 
