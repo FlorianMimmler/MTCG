@@ -78,7 +78,7 @@ namespace MTCG
                 
                 var response = _requestHandler.HandleRequest(requestUrl, httpMethod, body, authorizationToken);
 
-                var responseBuffer = Encoding.UTF8.GetBytes($"HTTP/1.1 {(int) response.Item1} {response.Item1.GetDescription()}\r\nContent-Length: {response.Item2.Length}\r\nContent-Type: application/json\r\n\r\n{response.Item2}");
+                var responseBuffer = Encoding.UTF8.GetBytes(response.ToString());
                 await stream.WriteAsync(responseBuffer, 0, responseBuffer.Length);
             }
         }

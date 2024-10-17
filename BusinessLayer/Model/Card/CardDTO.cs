@@ -3,9 +3,10 @@ namespace MTCG.BusinessLayer.Model.Card
 {
     internal class CardDTO
     {
-        public string name { get; set; }
+        public string Id { get; set; }
+        public string Name { get; set; }
 
-        public int damage { get; set; }
+        public int Damage { get; set; }
 
 
     }

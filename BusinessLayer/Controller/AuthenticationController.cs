@@ -18,6 +18,11 @@ namespace MTCG.Auth
 
         private List<User> _users;
 
+        public List<User> GetUsers()
+        {
+            return _users;
+        }
+
         /* _____ */
 
 
@@ -57,6 +62,20 @@ namespace MTCG.Auth
             this._users.Add(newUser);
 
             return true;
+        }
+
+        public bool Logout(string authToken)
+        {
+            var user = this._users.FirstOrDefault(u => u.Token.Value == authToken);
+
+            if (user == null)
+            {
+                return false;
+            }
+
+            user.Token.Reset();
+
+            return user.Token.Valid == false;
         }
 
         public bool IsAuthorized(string authToken)

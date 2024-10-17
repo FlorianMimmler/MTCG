@@ -16,4 +16,13 @@ namespace MTCG.BusinessLayer.Model.User
         public int CardCount { get; set; }
 
     }
+
+    internal class UserStatsDTO
+    {
+        public string Username { get; set; }
+        public int Wins { get; set; }
+        public int Losses { get; set; }
+        public int EloPoints { get; set; }
+        public string EloName { get; set; }
+    }
 }

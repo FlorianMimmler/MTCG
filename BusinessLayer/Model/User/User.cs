@@ -1,6 +1,7 @@
 ﻿using MTCG.BusinessLayer.Controller;
 using MTCG.BusinessLayer.Model;
 using System;
+using System.Linq;
 using MTCG.Auth;
 using MTCG.BusinessLayer.Interface;
 using MTCG.BusinessLayer.Model.User;
@@ -15,9 +16,9 @@ namespace MTCG
 
         public int Coins { get; set; } = 20;
 
-        public Elo Elo = new Elo();
+        public Stats Stats = new Stats();
 
-        protected ICardWrapper Deck { get; set; } = new Deck();
+        public ICardWrapper Deck { get; set; } = new Deck();
 
         public ICardWrapper Stack { get; set; } = new Stack();
 
@@ -58,17 +59,34 @@ namespace MTCG
             this.Deck.PrintCards();
         }
 
-        public void SelectDeck(string selection)
+        public bool SelectDeck(string[] selection)
         {
-            foreach(var selectedCardIndex in selection.Split(';'))
+            this.Deck.Cards.Clear();
+
+            try
             {
-                AddCardToDeckFromStack(int.Parse(selectedCardIndex));
+                return selection.All(AddCardToDeckFromStack);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+                
             }
         }
 
-        private void AddCardToDeckFromStack(int stackIndex)
+        private bool AddCardToDeckFromStack(string cardID)
         {
-            this.Deck.AddCard(this.Stack.GetCard(stackIndex));
+            var cardToAdd = this.Stack.GetCard(cardID);
+
+            if (cardToAdd == null)
+            {
+                return false;
+            }
+
+            this.Deck.AddCard(cardToAdd);
+
+            return true;
         }
 
         public ICard GetRandomCardFromDeck()

@@ -45,9 +45,9 @@ namespace MTCG
             return this.Cards.Remove(oldCard);
         }
 
-        public ICard GetCard(int index)
+        public ICard GetCard(string cardID)
         {
-            return this.Cards[index];
+            return this.Cards.Find(card => card.Id == cardID);
         }
 
         public ICard GetRandomCard()
