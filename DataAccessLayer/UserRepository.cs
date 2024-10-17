@@ -1,17 +1,14 @@
-﻿using System;
+﻿using Npgsql;
+using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Npgsql;
 
 namespace MTCG.DataAccessLayer
 {
     internal class UserRepository : IRepository<User>
     {
 
-        private readonly string connectionString;
+        private readonly string ConnectionString;
 
         public UserRepository _instance;
 
@@ -20,12 +17,13 @@ namespace MTCG.DataAccessLayer
 
         private UserRepository()
         {
-            connectionString = "Host=localhost;Username=admin;Password=password;Database=MTCG";
+            ConnectionString = "Host=localhost;Username=admin;Password=password;Database=MTCG";
         }
 
-        public void Add(User entity, int statsID)
+        public void Add(User entity)
         {
-            using IDbConnection connection = new NpgsqlConnection(connectionString);
+            
+            using IDbConnection connection = new NpgsqlConnection(ConnectionString);
             using var command = connection.CreateCommand();
             connection.Open();
 
@@ -34,7 +32,7 @@ namespace MTCG.DataAccessLayer
             AddParameterWithValue(command, "username", DbType.String, entity.GetName());
             AddParameterWithValue(command, "password", DbType.Int32, entity.Credentials.Password);
             AddParameterWithValue(command, "salt", DbType.String, entity.Credentials.Salt);
-            AddParameterWithValue(command, "statsID", DbType.String, statsID);
+            AddParameterWithValue(command, "statsID", DbType.String, entity.Stats.Id);
             entity.Id = (int)(command.ExecuteScalar() ?? 0);
         }
 

@@ -9,7 +9,7 @@ namespace MTCG.BusinessLayer.Model.User
 {
     internal class Stats
     {
-
+        public int Id { get; set; }
         public int Wins { get; set; } = 0;
         public int Losses { get; set; } = 0;
 
