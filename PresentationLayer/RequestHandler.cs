@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.Json;
-using MTCG.Auth;
+﻿using MTCG.Auth;
 using MTCG.BusinessLayer.Controller;
 using MTCG.BusinessLayer.Model.Card;
 using MTCG.BusinessLayer.Model.User;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json;
 
 namespace MTCG.PresentationLayer
 {
@@ -63,7 +63,7 @@ namespace MTCG.PresentationLayer
                         {
                             StatusCode = HttpStatusCode.OK,
                             ResponseText = "User successfully created"
-                        }:
+                        } :
                         new HttpResponse()
                         {
                             StatusCode = HttpStatusCode.Conflict,
@@ -76,10 +76,10 @@ namespace MTCG.PresentationLayer
                 {
                     if (!AuthenticationController.Instance.IsAuthorized(requestAuthToken))
                     {
-                        return 
+                        return
                             new HttpResponse()
                             {
-                                StatusCode = HttpStatusCode.Unauthorized, 
+                                StatusCode = HttpStatusCode.Unauthorized,
                                 ResponseText = "Not authorized"
                             };
                     }
@@ -90,11 +90,11 @@ namespace MTCG.PresentationLayer
 
                     return success ? new HttpResponse()
                     {
-                        StatusCode = HttpStatusCode.OK, 
+                        StatusCode = HttpStatusCode.OK,
                         ResponseText = "A package has been successfully bought"
                     } : new HttpResponse()
                     {
-                        StatusCode = HttpStatusCode.Forbidden, 
+                        StatusCode = HttpStatusCode.Forbidden,
                         ResponseText = "Not enough money"
                     };
 
@@ -110,7 +110,7 @@ namespace MTCG.PresentationLayer
                     {
                         return new HttpResponse()
                         {
-                            StatusCode = HttpStatusCode.Unauthorized, 
+                            StatusCode = HttpStatusCode.Unauthorized,
                             ResponseText = "Not authorized"
                         };
                     }
@@ -120,31 +120,31 @@ namespace MTCG.PresentationLayer
                     {
                         return new HttpResponse()
                         {
-                            StatusCode = HttpStatusCode.Unauthorized, 
+                            StatusCode = HttpStatusCode.Unauthorized,
                             ResponseText = "Not authorized"
                         };
                     }
 
-                    var username = request.Substring(request.LastIndexOf("/", StringComparison.Ordinal)+1);
+                    var username = request.Substring(request.LastIndexOf("/", StringComparison.Ordinal) + 1);
 
                     if (!AuthenticationController.Instance.UserExists(username))
                     {
-                        return user.Admin ? 
+                        return user.Admin ?
                             new HttpResponse()
                             {
-                                StatusCode = HttpStatusCode.NotFound, 
+                                StatusCode = HttpStatusCode.NotFound,
                                 ResponseText = "User not found"
                             } : new HttpResponse()
                             {
-                                StatusCode = HttpStatusCode.Unauthorized, 
+                                StatusCode = HttpStatusCode.Unauthorized,
                                 ResponseText = "Not authorized"
                             };
                     }
 
-                    if (username != user.GetName() && !user.Admin) return 
+                    if (username != user.GetName() && !user.Admin) return
                         new HttpResponse()
                         {
-                            StatusCode = HttpStatusCode.Unauthorized, 
+                            StatusCode = HttpStatusCode.Unauthorized,
                             ResponseText = "Not authorized"
                         };
 
@@ -159,7 +159,7 @@ namespace MTCG.PresentationLayer
                         EloName = resultUser.Stats.Elo.GetEloName()
                     };
 
-                    return 
+                    return
                         new HttpResponse()
                         {
                             StatusCode = HttpStatusCode.OK,
@@ -204,7 +204,7 @@ namespace MTCG.PresentationLayer
                     {
                         return new HttpResponse()
                         {
-                            StatusCode = HttpStatusCode.Unauthorized, 
+                            StatusCode = HttpStatusCode.Unauthorized,
                             ResponseText = "Not authorized"
                         };
                     }
@@ -222,7 +222,7 @@ namespace MTCG.PresentationLayer
 
                     return new HttpResponse()
                     {
-                        StatusCode = HttpStatusCode.OK, 
+                        StatusCode = HttpStatusCode.OK,
                         ResponseText = jsonResult
                     };
                 }
@@ -336,7 +336,7 @@ namespace MTCG.PresentationLayer
                         StatusCode = HttpStatusCode.Forbidden,
                         ResponseText = "Card not found"
                     };
-                    
+
                 }
             }
 
@@ -348,7 +348,7 @@ namespace MTCG.PresentationLayer
                     {
                         return new HttpResponse()
                         {
-                            StatusCode = HttpStatusCode.Unauthorized, 
+                            StatusCode = HttpStatusCode.Unauthorized,
                             ResponseText = "Not authorized"
                         };
                     }
@@ -358,20 +358,20 @@ namespace MTCG.PresentationLayer
                     return result
                         ? new HttpResponse()
                         {
-                            StatusCode = HttpStatusCode.OK, 
+                            StatusCode = HttpStatusCode.OK,
                             ResponseText = "Successfully logged out"
                         }
                         : new HttpResponse()
                         {
-                            StatusCode = HttpStatusCode.InternalServerError, 
+                            StatusCode = HttpStatusCode.InternalServerError,
                             ResponseText = "Some Error occured"
                         };
                 }
             }
-            
+
             return new HttpResponse()
             {
-                StatusCode = HttpStatusCode.NotFound, 
+                StatusCode = HttpStatusCode.NotFound,
                 ResponseText = "No Endpoint found"
             };
         }

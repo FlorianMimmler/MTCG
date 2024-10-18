@@ -43,7 +43,7 @@ namespace MTCG.Auth
             if (!user.IsPasswordEqual(creds.Password)) return new AuthToken();
             {
                 var authToken = new AuthToken(true);
-                this._users.Find(u => u.GetName() == creds.Username).Token = authToken;
+                _users.Find(u => u.GetName() == creds.Username).Token = authToken;
                 return authToken;
             }
 

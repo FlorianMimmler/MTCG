@@ -12,7 +12,7 @@ namespace MTCG.BusinessLayer.Model
             this.Cards = CardController.Instance.GetCards(MaxCards);
         }
 
-        
+
 
     }
 }

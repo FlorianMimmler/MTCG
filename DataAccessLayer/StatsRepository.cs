@@ -15,7 +15,8 @@ namespace MTCG.DataAccessLayer
 
         public StatsRepository Instance => _instance ??= new StatsRepository();
 
-        private StatsRepository() {
+        private StatsRepository()
+        {
             ConnectionString = "Host=localhost;Username=admin;Password=password;Database=MTCG";
         }
 

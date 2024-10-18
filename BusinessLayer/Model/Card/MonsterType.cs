@@ -1,5 +1,6 @@
 ﻿
-public enum MonsterType {
+public enum MonsterType
+{
     Goblin,
     Dragon,
     Ork,

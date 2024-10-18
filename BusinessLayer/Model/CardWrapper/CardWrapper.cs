@@ -1,7 +1,7 @@
-﻿using System;
+﻿using MTCG.BusinessLayer.Interface;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using MTCG.BusinessLayer.Interface;
 
 namespace MTCG
 {
@@ -20,7 +20,7 @@ namespace MTCG
         {
             if (this.Cards.Count >= MaxCards)
             {
-                return false; 
+                return false;
             }
 
             this.Cards.Add(newCard);
@@ -61,7 +61,7 @@ namespace MTCG
         {
             foreach (var card in this.Cards)
             {
-                Console.WriteLine(card.ToString());   
+                Console.WriteLine(card.ToString());
             }
         }
 

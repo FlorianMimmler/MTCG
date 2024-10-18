@@ -5,7 +5,7 @@ namespace MTCG
     {
         public Stack() : base()
         {
-            
+
         }
     }
 }

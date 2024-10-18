@@ -7,7 +7,7 @@ namespace MTCG.Auth
         public string Value { get; set; } = "";
         public bool Valid { get; set; } = false;
 
-        public AuthToken(bool valid = false) 
+        public AuthToken(bool valid = false)
         {
             if (valid)
             {

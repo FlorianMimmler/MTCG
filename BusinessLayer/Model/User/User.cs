@@ -1,10 +1,10 @@
-﻿using MTCG.BusinessLayer.Controller;
+﻿using MTCG.Auth;
+using MTCG.BusinessLayer.Controller;
+using MTCG.BusinessLayer.Interface;
 using MTCG.BusinessLayer.Model;
+using MTCG.BusinessLayer.Model.User;
 using System;
 using System.Linq;
-using MTCG.Auth;
-using MTCG.BusinessLayer.Interface;
-using MTCG.BusinessLayer.Model.User;
 
 namespace MTCG
 {
@@ -41,7 +41,8 @@ namespace MTCG
                 Stack.AddCards(CardController.Instance.GetCards(Package.MaxCards));
                 Coins -= Package.Price;
                 return true;
-            } else
+            }
+            else
             {
                 Console.WriteLine("Not enough coins available");
                 return false;
@@ -72,7 +73,7 @@ namespace MTCG
             {
                 Console.WriteLine(e);
                 return false;
-                
+
             }
         }
 

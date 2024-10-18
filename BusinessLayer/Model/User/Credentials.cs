@@ -14,7 +14,8 @@ namespace MTCG
         public Credentials(string username, string password)
         {
             Username = username;
-            HashPassword(password);
+            Password = password;
+            //HashPassword(password);
         }
 
         private void HashPassword(string password)

@@ -22,7 +22,7 @@ namespace MTCG.DataAccessLayer
 
         public void Add(User entity)
         {
-            
+
             using IDbConnection connection = new NpgsqlConnection(ConnectionString);
             using var command = connection.CreateCommand();
             connection.Open();

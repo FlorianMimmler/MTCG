@@ -1,7 +1,7 @@
-﻿using MTCG.BusinessLayer.Interface;
-using System;
-using MTCG.BusinessLayer;
+﻿using MTCG.BusinessLayer;
+using MTCG.BusinessLayer.Interface;
 using MTCG.BusinessLayer.Model.BattleStrategy;
+using System;
 
 namespace MTCG
 {
@@ -105,7 +105,8 @@ namespace MTCG
             if (Player1.GetDeck().IsEmpty())
             {
                 return BattleResult.Player2Wins;
-            } else if (Player2.GetDeck().IsEmpty())
+            }
+            else if (Player2.GetDeck().IsEmpty())
             {
                 return BattleResult.Player1Wins;
             }
@@ -118,7 +119,7 @@ namespace MTCG
         private void ProcessBattleResult()
         {
             var result = GetBattleResult();
-            switch(result)
+            switch (result)
             {
                 case BattleResult.Player1Wins:
                     Player1.Stats.AddWin();
