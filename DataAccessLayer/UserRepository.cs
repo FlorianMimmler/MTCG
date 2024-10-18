@@ -8,8 +8,6 @@ namespace MTCG.DataAccessLayer
     internal class UserRepository : IRepository<User>
     {
 
-        private readonly string ConnectionString;
-
         public static UserRepository _instance;
 
         public static UserRepository Instance => _instance ??= new UserRepository();
@@ -17,12 +15,11 @@ namespace MTCG.DataAccessLayer
 
         private UserRepository()
         {
-            ConnectionString = "Host=localhost;Port=5432;Username=admin;Password=password;Database=MTCG";
         }
 
         public async Task<int> Add(User entity)
         {
-            await using var conn = new NpgsqlConnection(ConnectionString);
+            await using var conn = ConnectionController.CreateConnection();
             await conn.OpenAsync();
             using var command = conn.CreateCommand();
 
@@ -49,6 +46,37 @@ namespace MTCG.DataAccessLayer
         public User GetById(int id)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<User?> GetByUsername(string username)
+        {
+            await using var conn = ConnectionController.CreateConnection();
+            await conn.OpenAsync();
+            using var command = conn.CreateCommand();
+
+            command.CommandText = "SELECT id, username, password, salt FROM \"User\" WHERE username = @username";
+            AddParameterWithValue(command, "username", DbType.String, username);
+
+            await using var reader = await command.ExecuteReaderAsync();
+
+            if (await reader.ReadAsync())
+            {
+                var user = new User
+                {
+                    Id = reader.GetInt32(reader.GetOrdinal("id")),
+                    Credentials = new Credentials() {
+                        Username = reader.GetString("username"),
+                    }
+                };
+
+                user.Credentials.SetSalt(reader.GetString("salt"));
+                user.Credentials.SetPassword(reader.GetString("password"));
+
+                return user; // Return the populated user object
+            }
+
+            return null;
+
         }
 
         public void Update(User entity)

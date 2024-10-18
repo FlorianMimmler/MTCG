@@ -28,8 +28,10 @@ namespace MTCG.PresentationLayer
                             StatusCode = HttpStatusCode.Unauthorized,
                             ResponseText = "Invalid username/password provided"
                         };
+                    var userCreds = new Credentials() { Username = username.ToString() };
+                    userCreds.SetPassword(password.ToString());
 
-                    var authToken = AuthenticationController.Instance.Login(new Credentials(username.ToString(), password.ToString()));
+                    var authToken = await AuthenticationController.Instance.Login(userCreds);
 
                     return authToken.Valid
                         ? new HttpResponse()

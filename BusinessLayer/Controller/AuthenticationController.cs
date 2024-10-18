@@ -27,24 +27,27 @@ namespace MTCG.Auth
         /* _____ */
 
 
-        public AuthToken Login(Credentials creds)
+        public async Task<AuthToken> Login(Credentials creds)
         {
             if (creds == null)
             {
                 return new AuthToken();
             }
 
-            var user = this._users.FirstOrDefault(u => u.GetName() == creds.Username);
+            var dbUser = await UserRepository.Instance.GetByUsername(creds.Username);
 
-            if (user == null)
+            if (dbUser == null)
             {
                 return new AuthToken();
             }
 
-            if (!user.IsPasswordEqual(creds.Password)) return new AuthToken();
+            creds.HashPasswordWithSalt(dbUser.Credentials.Salt);
+
+            if (!dbUser.IsPasswordEqual(creds.Password)) return new AuthToken();
             {
                 var authToken = new AuthToken(true);
-                _users.Find(u => u.GetName() == creds.Username).Token = authToken;
+                //_users.Find(u => u.GetName() == creds.Username).Token = authToken;
+                _ = await UserTokenRepository.Instance.Add(new UserToken(dbUser.Id, authToken));
                 return authToken;
             }
 

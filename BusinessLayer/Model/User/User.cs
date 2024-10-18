@@ -28,6 +28,8 @@ namespace MTCG
             Credentials = new Credentials(username, "test");
         }
 
+        public User() { }
+
         public User(Credentials creds)
         {
             Credentials = creds;

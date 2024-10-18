@@ -19,6 +19,8 @@ namespace MTCG
             HashPassword(password);  // Hash the password with the salt
         }
 
+        public Credentials() { }
+
         private void HashPassword(string password)
         {
             // Combine password and salt before hashing
@@ -42,6 +44,22 @@ namespace MTCG
             }
             // Convert salt to a string for storage (e.g., Base64 encoding)
             return Convert.ToBase64String(saltBytes);
+        }
+
+        public void HashPasswordWithSalt(string salt)
+        {
+            Salt = salt;
+            HashPassword(Password);
+        }
+
+        public void SetPassword(string password)
+        {
+            Password = password;
+        }
+
+        public void SetSalt(string salt)
+        {
+            Salt = salt;
         }
     }
 }

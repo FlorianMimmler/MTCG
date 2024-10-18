@@ -11,7 +11,6 @@ namespace MTCG.DataAccessLayer
 {
     internal class StatsRepository : IRepository<Stats>
     {
-        private string ConnectionString;
 
         private static StatsRepository _instance;
 
@@ -19,12 +18,11 @@ namespace MTCG.DataAccessLayer
 
         private StatsRepository()
         {
-            ConnectionString = "Host=localhost;Username=admin;Password=password;Database=MTCG";
         }
 
         public async Task<int> Add(Stats entity)
         {
-            await using var conn = new NpgsqlConnection(ConnectionString);
+            await using var conn = ConnectionController.CreateConnection();
             await conn.OpenAsync();
             using var command = conn.CreateCommand();
 
