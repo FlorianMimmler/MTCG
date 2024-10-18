@@ -10,30 +10,30 @@ namespace MTCG.DataAccessLayer
 
         private readonly string ConnectionString;
 
-        public UserRepository _instance;
+        public static UserRepository _instance;
 
-        public UserRepository Instance => _instance ??= new UserRepository();
+        public static UserRepository Instance => _instance ??= new UserRepository();
 
 
         private UserRepository()
         {
-            ConnectionString = "Host=localhost;Username=admin;Password=password;Database=MTCG";
+            ConnectionString = "Host=localhost;Port=5432;Username=admin;Password=password;Database=MTCG";
         }
 
-        public void Add(User entity)
+        public async Task<int> Add(User entity)
         {
+            await using var conn = new NpgsqlConnection(ConnectionString);
+            await conn.OpenAsync();
+            using var command = conn.CreateCommand();
 
-            using IDbConnection connection = new NpgsqlConnection(ConnectionString);
-            using var command = connection.CreateCommand();
-            connection.Open();
-
-            command.CommandText = "INSERT INTO User (username, password, salt, statsID) " +
+            command.CommandText = "INSERT INTO \"User\" (username, password, salt, \"statsID\") " +
                                   "VALUES (@username, @password, @salt, @statsID) RETURNING id";
             AddParameterWithValue(command, "username", DbType.String, entity.GetName());
-            AddParameterWithValue(command, "password", DbType.Int32, entity.Credentials.Password);
+            AddParameterWithValue(command, "password", DbType.String, entity.Credentials.Password);
             AddParameterWithValue(command, "salt", DbType.String, entity.Credentials.Salt);
-            AddParameterWithValue(command, "statsID", DbType.String, entity.Stats.Id);
-            entity.Id = (int)(command.ExecuteScalar() ?? 0);
+            AddParameterWithValue(command, "statsID", DbType.Int32, entity.Stats.Id);
+            return (int)(await command.ExecuteScalarAsync() ?? 0);
+    
         }
 
         public void Delete(User entity)

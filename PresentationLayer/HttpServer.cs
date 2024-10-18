@@ -75,7 +75,7 @@ namespace MTCG
                 var requestUrl = requestLines[0].Split(' ')[1];
 
 
-                var response = _requestHandler.HandleRequest(requestUrl, httpMethod, body, authorizationToken);
+                var response = await _requestHandler.HandleRequest(requestUrl, httpMethod, body, authorizationToken);
 
                 var responseBuffer = Encoding.UTF8.GetBytes(response.ToString());
                 await stream.WriteAsync(responseBuffer, 0, responseBuffer.Length);

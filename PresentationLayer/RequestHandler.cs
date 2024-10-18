@@ -11,7 +11,7 @@ namespace MTCG.PresentationLayer
 {
     internal class RequestHandler
     {
-        public HttpResponse HandleRequest(string request, string httpMethod, string body, string requestAuthToken)
+        public async Task<HttpResponse> HandleRequest(string request, string httpMethod, string body, string requestAuthToken)
         {
             Console.WriteLine($"Handle Request {request} {httpMethod}");
 
@@ -56,9 +56,9 @@ namespace MTCG.PresentationLayer
                             ResponseText = "Wrong arguments"
                         };
 
-                    var success = AuthenticationController.Instance.Signup(new Credentials(username.ToString(), password.ToString()));
+                    var userID = await AuthenticationController.Instance.Signup(new Credentials(username.ToString(), password.ToString()));
 
-                    return success ?
+                    return userID >= 0 ?
                         new HttpResponse()
                         {
                             StatusCode = HttpStatusCode.OK,

@@ -1,6 +1,8 @@
 ﻿using MTCG.BusinessLayer.Model.User;
+using Npgsql;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,18 +13,24 @@ namespace MTCG.DataAccessLayer
     {
         private string ConnectionString;
 
-        private StatsRepository _instance;
+        private static StatsRepository _instance;
 
-        public StatsRepository Instance => _instance ??= new StatsRepository();
+        public static StatsRepository Instance => _instance ??= new StatsRepository();
 
         private StatsRepository()
         {
             ConnectionString = "Host=localhost;Username=admin;Password=password;Database=MTCG";
         }
 
-        public void Add(Stats entity)
+        public async Task<int> Add(Stats entity)
         {
-            throw new NotImplementedException();
+            await using var conn = new NpgsqlConnection(ConnectionString);
+            await conn.OpenAsync();
+            using var command = conn.CreateCommand();
+
+            command.CommandText = "INSERT INTO \"Stats\" default values RETURNING id";
+
+            return (int) (await command.ExecuteScalarAsync() ?? -1);
         }
 
         public void Delete(Stats entity)

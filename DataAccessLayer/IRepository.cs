@@ -9,7 +9,7 @@ namespace MTCG.DataAccessLayer
     internal interface IRepository<T>
     {
 
-        public void Add(T entity);
+        public Task<int> Add(T entity);
 
         public void Update(T entity);
 

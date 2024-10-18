@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using MTCG.DataAccessLayer;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace MTCG.Auth
@@ -11,7 +12,7 @@ namespace MTCG.Auth
 
         private AuthenticationController()
         {
-            this._users = new List<User>();
+            this._users = [];
         }
 
         /* ONLY FOR USAGE WITHOUT DB */
@@ -49,19 +50,20 @@ namespace MTCG.Auth
 
         }
 
-        public bool Signup(Credentials creds)
+        public async Task<int> Signup(Credentials creds)
         {
             var user = this._users.FirstOrDefault(u => u.GetName() == creds.Username);
 
             if (user != null)
             {
-                return false;
+                return -1;
             }
 
             var newUser = new User(creds);
             this._users.Add(newUser);
 
-            return true;
+            newUser.Stats.Id = await StatsRepository.Instance.Add(newUser.Stats);
+            return await UserRepository.Instance.Add(newUser);
         }
 
         public bool Logout(string authToken)
