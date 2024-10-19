@@ -296,7 +296,9 @@ namespace MTCG.PresentationLayer
                         };
                     }
 
-                    if (user.Deck.IsEmpty())
+                    var deck = await StackRepository.Instance.GetDeckByUser(user.Id);
+
+                    if (deck is not { Count: > 0 })
                     {
                         return new HttpResponse()
                         {
@@ -305,7 +307,7 @@ namespace MTCG.PresentationLayer
                         };
                     }
 
-                    var usersCardDtos = user.Deck.Cards.Select(card => new CardDTO()
+                    var usersCardDtos = deck.Select(card => new CardDTO()
                     {
                         Id = card.Id,
                         Name = card.Name,
@@ -397,7 +399,7 @@ namespace MTCG.PresentationLayer
                         };
                     }
 
-                    if (user.SelectDeck(cards))
+                    if (await user.SelectDeck(cards))
                     {
                         return new HttpResponse()
                         {

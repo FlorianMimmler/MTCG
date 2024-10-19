@@ -136,9 +136,67 @@ namespace MTCG.DataAccessLayer
             return null;
         }
 
+        public async Task<List<ICard>?> GetDeckByUser(int userId)
+        {
+            await using var conn = ConnectionController.CreateConnection();
+            await conn.OpenAsync();
+            await using var command = conn.CreateCommand();
+
+            command.CommandText = "SELECT * FROM \"Card\" WHERE \"userID\" = @userID AND \"isDeck\"";
+
+            ConnectionController.AddParameterWithValue(command, "userID", DbType.Int32, userId);
+
+            await using var reader = await command.ExecuteReaderAsync();
+
+            if (await reader.ReadAsync())
+            {
+                var cards = new List<ICard>();
+                do
+                {
+
+                    cards.Add(reader.GetInt32("cardType") == 1 ?
+                        new MonsterCard(reader.GetInt32("damage"), (ElementType)reader.GetInt32("elementType"), (MonsterType)reader.GetInt32("monsterType"), reader.GetString("cardID"), reader.GetString("name"))
+                        : new SpellCard(reader.GetInt32("damage"), (ElementType)reader.GetInt32("elementType"), reader.GetString("cardID"), reader.GetString("name"))
+                    );
+
+                } while (await reader.ReadAsync());
+
+                return cards;
+            }
+
+            return null;
+        }
+
         public ICard GetById(int id)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<int> ClearDeckFromUser(int userId)
+        {
+            await using var conn = ConnectionController.CreateConnection();
+            await conn.OpenAsync();
+            await using var command = conn.CreateCommand();
+
+            command.CommandText = "UPDATE \"Card\" SET \"isDeck\" = false WHERE \"userID\" = @useriD";
+            ConnectionController.AddParameterWithValue(command, "userID", DbType.Int32, userId);
+
+            return (int)(await command.ExecuteNonQueryAsync());
+        }
+
+        public async Task<int> SetDeckByCards(string[] cards)
+        {
+            await using var conn = ConnectionController.CreateConnection();
+            await conn.OpenAsync();
+            await using var command = conn.CreateCommand();
+
+            command.CommandText = "UPDATE \"Card\" SET \"isDeck\" = true WHERE \"cardID\" IN (@card1, @card2, @card3, @card4)";
+            ConnectionController.AddParameterWithValue(command, "card1", DbType.String, cards[0]);
+            ConnectionController.AddParameterWithValue(command, "card2", DbType.String, cards[1]);
+            ConnectionController.AddParameterWithValue(command, "card3", DbType.String, cards[2]);
+            ConnectionController.AddParameterWithValue(command, "card4", DbType.String, cards[3]);
+
+            return (int)(await command.ExecuteNonQueryAsync());
         }
     }
 }

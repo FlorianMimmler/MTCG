@@ -67,20 +67,14 @@ namespace MTCG
             this.Deck.PrintCards();
         }
 
-        public bool SelectDeck(string[] selection)
-        {
-            this.Deck.Cards.Clear();
+        public async Task<bool> SelectDeck(string[] selection)
+        {   
+            Console.WriteLine(selection);
+            _ = await StackRepository.Instance.ClearDeckFromUser(Id);
 
-            try
-            {
-                return selection.All(AddCardToDeckFromStack);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                return false;
+            var result = await StackRepository.Instance.SetDeckByCards(selection);
+            return result == 4;
 
-            }
         }
 
         private bool AddCardToDeckFromStack(string cardID)
