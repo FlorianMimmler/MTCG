@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using MTCG.BusinessLayer.Model.User;
 
 namespace MTCG.DataAccessLayer
 {
@@ -33,7 +34,7 @@ namespace MTCG.DataAccessLayer
     
         }
 
-        public void Delete(User entity)
+        public async Task<int> Delete(User entity)
         {
             throw new NotImplementedException();
         }
@@ -52,7 +53,7 @@ namespace MTCG.DataAccessLayer
         {
             await using var conn = ConnectionController.CreateConnection();
             await conn.OpenAsync();
-            using var command = conn.CreateCommand();
+            await using var command = conn.CreateCommand();
 
             command.CommandText = "SELECT id, username, password, salt FROM \"User\" WHERE username = @username";
             AddParameterWithValue(command, "username", DbType.String, username);
@@ -72,11 +73,103 @@ namespace MTCG.DataAccessLayer
                 user.Credentials.SetSalt(reader.GetString("salt"));
                 user.Credentials.SetPassword(reader.GetString("password"));
 
-                return user; // Return the populated user object
+                return user;
             }
 
             return null;
 
+        }
+
+        public async Task<User?> GetUserDataByUsername(string username)
+        {
+            await using var conn = ConnectionController.CreateConnection();
+            await conn.OpenAsync();
+            await using var command = conn.CreateCommand();
+
+            command.CommandText = """
+                                  SELECT u.id, username, password, salt, admin, coins, stats.id as statsid, stats.eloscore, stats.wins, stats.losses
+                                  FROM "User" as u
+                                  LEFT JOIN "Stats" as stats on u."statsID" = stats."id"
+                                  WHERE u."username" = @username
+                                  """;
+            AddParameterWithValue(command, "username", DbType.String, username);
+
+            await using var reader = await command.ExecuteReaderAsync();
+
+            if (await reader.ReadAsync())
+            {
+                var user = new User
+                {
+                    Id = reader.GetInt32(reader.GetOrdinal("id")),
+                    Credentials = new Credentials()
+                    {
+                        Username = reader.GetString("username"),
+                    },
+                    Coins = reader.GetInt32("coins"),
+                    Stats = new Stats()
+                    {
+                        Elo = new Elo() { EloScore = reader.GetInt32("eloscore") },
+                        Wins = reader.GetInt32("wins"),
+                        Losses = reader.GetInt32("losses"),
+                        Id = reader.GetInt32("statsid")
+                    },
+                    Admin = reader.GetBoolean("admin")
+                };
+
+                user.Credentials.SetSalt(reader.GetString("salt"));
+                user.Credentials.SetPassword(reader.GetString("password"));
+
+                return user;
+            }
+
+            return null;
+
+        }
+
+        public async Task<User?> GetByAuthToken(string authToken)
+        {
+            await using var conn = ConnectionController.CreateConnection();
+            await conn.OpenAsync();
+            await using var command = conn.CreateCommand();
+
+            command.CommandText = """
+                                   SELECT u.id, username, password, salt, admin, coins, stats.id as statsid, stats.eloscore, stats.wins, stats.losses
+                                   FROM "User" as u
+                                   LEFT JOIN "UserToken" as uT on u.id = uT."userID"
+                                   LEFT JOIN "Stats" as stats on u."statsID" = stats."id"
+                                   WHERE uT."authToken" = @authToken
+                                   """;
+            AddParameterWithValue(command, "authToken", DbType.String, authToken);
+
+            await using var reader = await command.ExecuteReaderAsync();
+
+            if (await reader.ReadAsync())
+            {
+                var user = new User
+                {
+                    Id = reader.GetInt32(reader.GetOrdinal("id")),
+                    Credentials = new Credentials()
+                    {
+                        Username = reader.GetString("username"),
+                    },
+                    Coins = reader.GetInt32("coins"),
+                    Stats = new Stats()
+                    {
+                        Elo = new Elo() { EloScore = reader.GetInt32("eloscore") },
+                        Wins = reader.GetInt32("wins"),
+                        Losses = reader.GetInt32("losses"),
+                        Id = reader.GetInt32("statsid")
+                    },
+                    Admin = reader.GetBoolean("admin")
+                };
+
+                user.Credentials.SetSalt(reader.GetString("salt"));
+                user.Credentials.SetPassword(reader.GetString("password"));
+
+                return user;
+            }
+
+            return null;
         }
 
         public void Update(User entity)

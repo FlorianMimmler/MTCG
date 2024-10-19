@@ -1,6 +1,7 @@
 ﻿using MTCG.DataAccessLayer;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 
 namespace MTCG.Auth
 {
@@ -29,10 +30,6 @@ namespace MTCG.Auth
 
         public async Task<AuthToken> Login(Credentials creds)
         {
-            if (creds == null)
-            {
-                return new AuthToken();
-            }
 
             var dbUser = await UserRepository.Instance.GetByUsername(creds.Username);
 
@@ -46,8 +43,11 @@ namespace MTCG.Auth
             if (!dbUser.IsPasswordEqual(creds.Password)) return new AuthToken();
             {
                 var authToken = new AuthToken(true);
-                //_users.Find(u => u.GetName() == creds.Username).Token = authToken;
-                _ = await UserTokenRepository.Instance.Add(new UserToken(dbUser.Id, authToken));
+                var authTokenId = await UserTokenRepository.Instance.Add(new UserToken(dbUser.Id, authToken));
+                if (authTokenId < 0)
+                {
+                    authToken.Valid = false;
+                }
                 return authToken;
             }
 
@@ -55,9 +55,9 @@ namespace MTCG.Auth
 
         public async Task<int> Signup(Credentials creds)
         {
-            var user = this._users.FirstOrDefault(u => u.GetName() == creds.Username);
+            var dbUser = await UserRepository.Instance.GetByUsername(creds.Username);
 
-            if (user != null)
+            if (dbUser != null)
             {
                 return -1;
             }
@@ -66,46 +66,26 @@ namespace MTCG.Auth
             this._users.Add(newUser);
 
             newUser.Stats.Id = await StatsRepository.Instance.Add(newUser.Stats);
+
+            if (newUser.Stats.Id < 0) return -1;
+
             return await UserRepository.Instance.Add(newUser);
         }
 
-        public bool Logout(string authToken)
+        public async Task<bool> Logout(string authToken)
         {
-            var user = this._users.FirstOrDefault(u => u.Token.Value == authToken);
+            var authTokenObj = new AuthToken() { Valid = true, Value = authToken };
+            var result = await UserTokenRepository.Instance.Delete(new UserToken(-1, authTokenObj));
 
-            if (user == null)
-            {
-                return false;
-            }
-
-            user.Token.Reset();
-
-            return user.Token.Valid == false;
+            return result == 1;
         }
 
-        public bool IsAuthorized(string authToken)
+        public async Task<bool> IsAuthorized(string authToken)
         {
-            var user = this._users.FirstOrDefault(u => u.Token.Value == authToken);
+            var result = await UserTokenRepository.Instance.GetByAuthToken(authToken);
 
-            return user != null;
+            return result >= 0;
 
-        }
-
-        public User GetUserByToken(string authToken)
-        {
-            var user = this._users.FirstOrDefault(u => u.Token.Value == authToken);
-
-            return user;
-        }
-
-        public bool UserExists(string username)
-        {
-            return this._users.FirstOrDefault(u => u.GetName() == username) != null;
-        }
-
-        public User GetUserByName(string username)
-        {
-            return this._users.FirstOrDefault(u => u.GetName() == username);
         }
 
     }

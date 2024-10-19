@@ -13,7 +13,7 @@ namespace MTCG.DataAccessLayer
 
         public void Update(T entity);
 
-        public void Delete(T entity);
+        public Task<int> Delete(T entity);
 
         public IEnumerable<T> GetAll();
 

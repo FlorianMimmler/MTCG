@@ -12,7 +12,7 @@ namespace MTCG.DataAccessLayer
     internal class StatsRepository : IRepository<Stats>
     {
 
-        private static StatsRepository _instance;
+        private static StatsRepository? _instance;
 
         public static StatsRepository Instance => _instance ??= new StatsRepository();
 
@@ -24,14 +24,14 @@ namespace MTCG.DataAccessLayer
         {
             await using var conn = ConnectionController.CreateConnection();
             await conn.OpenAsync();
-            using var command = conn.CreateCommand();
+            await using var command = conn.CreateCommand();
 
             command.CommandText = "INSERT INTO \"Stats\" default values RETURNING id";
 
             return (int) (await command.ExecuteScalarAsync() ?? -1);
         }
 
-        public void Delete(Stats entity)
+        public async Task<int> Delete(Stats entity)
         {
             throw new NotImplementedException();
         }
