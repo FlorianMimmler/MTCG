@@ -1,16 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using System.Data;
 using System.Data.Common;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using MTCG.Auth;
 using MTCG.BusinessLayer.Interface;
-using MTCG.BusinessLayer.Model.User;
 using Npgsql;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace MTCG.DataAccessLayer
 {
@@ -100,7 +91,7 @@ namespace MTCG.DataAccessLayer
             throw new NotImplementedException();
         }
 
-        public IEnumerable<ICard> GetAll()
+        public Task<IEnumerable<ICard>?> GetAll()
         {
             throw new NotImplementedException();
         }

@@ -2,9 +2,6 @@
 using MTCG.BusinessLayer.Controller;
 using MTCG.BusinessLayer.Model.Card;
 using MTCG.BusinessLayer.Model.User;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.Json;
 using MTCG.DataAccessLayer;
 
@@ -334,13 +331,19 @@ namespace MTCG.PresentationLayer
                         };
                     }
 
-                    var result = ScoreboardController.Instance.GetScoreboardDTOs();
+                    var result = await ScoreboardController.Instance.GetScoreboardDTOs();
 
-                    return new HttpResponse()
-                    {
-                        StatusCode = HttpStatusCode.OK,
-                        ResponseText = JsonSerializer.Serialize(result)
-                    };
+                    return result != null
+                        ? new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.OK,
+                            ResponseText = JsonSerializer.Serialize(result)
+                        }
+                        : new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.NoContent,
+                            ResponseText = "Empty Scoreboard"
+                        };
                 }
 
             }

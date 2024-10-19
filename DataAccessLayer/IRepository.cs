@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace MTCG.DataAccessLayer
 {
     internal interface IRepository<T>
@@ -15,7 +10,7 @@ namespace MTCG.DataAccessLayer
 
         public Task<int> Delete(T entity);
 
-        public IEnumerable<T> GetAll();
+        public Task<IEnumerable<T>?> GetAll();
 
         public T GetById(int id);
 

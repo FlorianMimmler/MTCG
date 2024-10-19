@@ -1,10 +1,4 @@
-﻿using Npgsql;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data;
 
 namespace MTCG.DataAccessLayer
 {
@@ -46,7 +40,7 @@ namespace MTCG.DataAccessLayer
             return (int)(await command.ExecuteNonQueryAsync());
         }
 
-        public IEnumerable<UserToken> GetAll()
+        public Task<IEnumerable<UserToken>?> GetAll()
         {
             throw new NotImplementedException();
         }

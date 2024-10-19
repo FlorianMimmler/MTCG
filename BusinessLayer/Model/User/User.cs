@@ -3,8 +3,6 @@ using MTCG.BusinessLayer.Controller;
 using MTCG.BusinessLayer.Interface;
 using MTCG.BusinessLayer.Model;
 using MTCG.BusinessLayer.Model.User;
-using System;
-using System.Linq;
 using MTCG.DataAccessLayer;
 
 namespace MTCG
@@ -75,20 +73,6 @@ namespace MTCG
             var result = await StackRepository.Instance.SetDeckByCards(selection);
             return result == 4;
 
-        }
-
-        private bool AddCardToDeckFromStack(string cardID)
-        {
-            var cardToAdd = this.Stack.GetCard(cardID);
-
-            if (cardToAdd == null)
-            {
-                return false;
-            }
-
-            this.Deck.AddCard(cardToAdd);
-
-            return true;
         }
 
         public ICard GetRandomCardFromDeck()

@@ -1,7 +1,4 @@
-﻿using Npgsql;
-using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using System.Data;
 using MTCG.BusinessLayer.Model.User;
 
 namespace MTCG.DataAccessLayer
@@ -39,9 +36,54 @@ namespace MTCG.DataAccessLayer
             throw new NotImplementedException();
         }
 
-        public IEnumerable<User> GetAll()
+        public async Task<IEnumerable<User>?> GetAll()
         {
-            throw new NotImplementedException();
+            await using var conn = ConnectionController.CreateConnection();
+            await conn.OpenAsync();
+            await using var command = conn.CreateCommand();
+
+            command.CommandText = """
+                                  SELECT u.id, username, password, salt, admin, coins, stats.id as statsid, stats.eloscore, stats.wins, stats.losses
+                                  FROM "User" as u
+                                  LEFT JOIN "Stats" as stats on u."statsID" = stats."id"
+                                  """;
+
+            await using var reader = await command.ExecuteReaderAsync();
+
+            if (await reader.ReadAsync())
+            {
+                var allUsers = new List<User>();
+                do
+                {
+                    var user = new User
+                    {
+                        Id = reader.GetInt32(reader.GetOrdinal("id")),
+                        Credentials = new Credentials()
+                        {
+                            Username = reader.GetString("username"),
+                        },
+                        Coins = reader.GetInt32("coins"),
+                        Stats = new Stats()
+                        {
+                            Elo = new Elo() { EloScore = reader.GetInt32("eloscore") },
+                            Wins = reader.GetInt32("wins"),
+                            Losses = reader.GetInt32("losses"),
+                            Id = reader.GetInt32("statsid")
+                        },
+                        Admin = reader.GetBoolean("admin")
+                    };
+
+                    user.Credentials.SetSalt(reader.GetString("salt"));
+                    user.Credentials.SetPassword(reader.GetString("password"));
+
+                    allUsers.Add(user);
+
+                } while (await reader.ReadAsync());
+
+                return allUsers;
+            }
+
+            return null;
         }
 
         public User GetById(int id)

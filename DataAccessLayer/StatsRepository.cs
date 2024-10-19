@@ -1,11 +1,4 @@
 ﻿using MTCG.BusinessLayer.Model.User;
-using Npgsql;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MTCG.DataAccessLayer
 {
@@ -36,7 +29,7 @@ namespace MTCG.DataAccessLayer
             throw new NotImplementedException();
         }
 
-        public IEnumerable<Stats> GetAll()
+        public Task<IEnumerable<Stats>?> GetAll()
         {
             throw new NotImplementedException();
         }
