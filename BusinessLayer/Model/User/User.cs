@@ -67,7 +67,6 @@ namespace MTCG
 
         public async Task<bool> SelectDeck(string[] selection)
         {   
-            Console.WriteLine(selection);
             _ = await StackRepository.Instance.ClearDeckFromUser(Id);
 
             var result = await StackRepository.Instance.SetDeckByCards(selection);

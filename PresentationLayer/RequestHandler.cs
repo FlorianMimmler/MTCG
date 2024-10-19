@@ -4,6 +4,7 @@ using MTCG.BusinessLayer.Model.Card;
 using MTCG.BusinessLayer.Model.User;
 using System.Text.Json;
 using MTCG.DataAccessLayer;
+using MTCG.BusinessLayer.Model.RequestObjects;
 
 namespace MTCG.PresentationLayer
 {
@@ -17,29 +18,19 @@ namespace MTCG.PresentationLayer
             {
                 if (request.StartsWith("/sessions"))
                 {
-                    var requestData = JsonSerializer.Deserialize<Dictionary<string, object>>(body);
+                    var loginRequest = JsonSerializer.Deserialize<LoginRequest>(body);
 
-                    if (requestData == null)
+                    if (loginRequest == null || string.IsNullOrEmpty(loginRequest.Username) || string.IsNullOrEmpty(loginRequest.Password))
                     {
                         return new HttpResponse()
                         {
-                            StatusCode = HttpStatusCode.Unauthorized,
-                            ResponseText = "Invalid username/password provided"
+                            StatusCode = HttpStatusCode.BadRequest,
+                            ResponseText = "Invalid input data"
                         };
                     }
 
-                    if (!requestData.TryGetValue("Username", out var username) ||
-                        !requestData.TryGetValue("Password", out var password))
-                    {
-                        return new HttpResponse()
-                        {
-                            StatusCode = HttpStatusCode.Unauthorized,
-                            ResponseText = "Invalid username/password provided"
-                        };
-                    }
-
-                    var userCreds = new Credentials() { Username = username.ToString() };
-                    userCreds.SetPassword(password.ToString());
+                    var userCreds = new Credentials { Username = loginRequest.Username };
+                    userCreds.SetPassword(loginRequest.Password);
 
                     var authToken = await AuthenticationController.Instance.Login(userCreds);
 
@@ -47,7 +38,7 @@ namespace MTCG.PresentationLayer
                         ? new HttpResponse()
                         {
                             StatusCode = HttpStatusCode.Created,
-                            ResponseText = $"{{ \"Token\": {authToken.Value} }}"
+                            ResponseText = JsonSerializer.Serialize(new { Token = authToken.Value })
                         }
                         : new HttpResponse()
                         {
@@ -58,17 +49,18 @@ namespace MTCG.PresentationLayer
 
                 if (request.StartsWith("/users"))
                 {
-                    var requestData = JsonSerializer.Deserialize<Dictionary<string, object>>(body);
+                    var signupRequest = JsonSerializer.Deserialize<SignupRequest>(body);
 
-                    if (!requestData.TryGetValue("Username", out var username) ||
-                        !requestData.TryGetValue("Password", out var password))
+                    if (signupRequest == null || string.IsNullOrEmpty(signupRequest.Username) || string.IsNullOrEmpty(signupRequest.Password))
+                    {
                         return new HttpResponse()
                         {
                             StatusCode = HttpStatusCode.BadRequest,
-                            ResponseText = "Wrong arguments"
+                            ResponseText = "Invalid input data"
                         };
+                    }
 
-                    var userId = await AuthenticationController.Instance.Signup(new Credentials(username.ToString(), password.ToString()));
+                    var userId = await AuthenticationController.Instance.Signup(new Credentials(signupRequest.Username, signupRequest.Password));
 
                     return userId >= 0 ?
                         new HttpResponse()
@@ -86,15 +78,6 @@ namespace MTCG.PresentationLayer
 
                 if (request.StartsWith("/transactions/packages"))
                 {
-                    if (!await AuthenticationController.Instance.IsAuthorized(requestAuthToken))
-                    {
-                        return
-                            new HttpResponse()
-                            {
-                                StatusCode = HttpStatusCode.Unauthorized,
-                                ResponseText = "Not authorized"
-                            };
-                    }
 
                     var user = await UserRepository.Instance.GetByAuthToken(requestAuthToken);
 
@@ -127,7 +110,8 @@ namespace MTCG.PresentationLayer
 
                 if (request.StartsWith("/users/"))
                 {
-                    if (! await AuthenticationController.Instance.IsAuthorized(requestAuthToken))
+                    var user = await UserRepository.Instance.GetByAuthToken(requestAuthToken);
+                    if (user == null)
                     {
                         return new HttpResponse()
                         {
@@ -136,8 +120,9 @@ namespace MTCG.PresentationLayer
                         };
                     }
 
-                    User? user = null;
-                    if ((user = await UserRepository.Instance.GetByAuthToken(requestAuthToken)) == null)
+                    var username = request[(request.LastIndexOf('/') + 1)..];
+
+                    if (username != user.GetName() && !user.Admin)
                     {
                         return new HttpResponse()
                         {
@@ -145,15 +130,6 @@ namespace MTCG.PresentationLayer
                             ResponseText = "Not authorized"
                         };
                     }
-
-                    var username = request.Substring(request.LastIndexOf("/", StringComparison.Ordinal) + 1);
-
-                    if (username != user.GetName() && !user.Admin) return
-                        new HttpResponse()
-                        {
-                            StatusCode = HttpStatusCode.Unauthorized,
-                            ResponseText = "Not authorized"
-                        };
 
                     var resultUser = username == user.GetName() ? user : await UserRepository.Instance.GetUserDataByUsername(username);
 
@@ -186,15 +162,6 @@ namespace MTCG.PresentationLayer
 
                 if (request == "/stats")
                 {
-                    if (!await AuthenticationController.Instance.IsAuthorized(requestAuthToken))
-                    {
-                        return new HttpResponse()
-                        {
-                            StatusCode = HttpStatusCode.Unauthorized,
-                            ResponseText = "Not authorized"
-                        };
-                    }
-
                     var user = await UserRepository.Instance.GetByAuthToken(requestAuthToken);
 
                     if (user == null)
@@ -225,15 +192,6 @@ namespace MTCG.PresentationLayer
 
                 if (request == "/cards")
                 {
-                    if (!await AuthenticationController.Instance.IsAuthorized(requestAuthToken))
-                    {
-                        return new HttpResponse()
-                        {
-                            StatusCode = HttpStatusCode.Unauthorized,
-                            ResponseText = "Not authorized"
-                        };
-                    }
-
                     var user = await UserRepository.Instance.GetByAuthToken(requestAuthToken);
 
                     if (user == null)
@@ -263,26 +221,15 @@ namespace MTCG.PresentationLayer
                         Damage = card.Damage
                     });
 
-                    var jsonResult = JsonSerializer.Serialize(usersCardDtos);
-
                     return new HttpResponse()
                     {
                         StatusCode = HttpStatusCode.OK,
-                        ResponseText = jsonResult
+                        ResponseText = JsonSerializer.Serialize(usersCardDtos)
                     };
                 }
 
                 if (request == "/deck")
                 {
-                    if (!await AuthenticationController.Instance.IsAuthorized(requestAuthToken))
-                    {
-                        return new HttpResponse()
-                        {
-                            StatusCode = HttpStatusCode.Unauthorized,
-                            ResponseText = "Not authorized"
-                        };
-                    }
-
                     var user = await UserRepository.Instance.GetByAuthToken(requestAuthToken);
                     if (user == null)
                     {
@@ -311,12 +258,10 @@ namespace MTCG.PresentationLayer
                         Damage = card.Damage
                     });
 
-                    var jsonResult = JsonSerializer.Serialize(usersCardDtos);
-
                     return new HttpResponse()
                     {
                         StatusCode = HttpStatusCode.OK,
-                        ResponseText = jsonResult
+                        ResponseText = JsonSerializer.Serialize(usersCardDtos)
                     };
                 }
 
@@ -352,15 +297,6 @@ namespace MTCG.PresentationLayer
             {
                 if (request.StartsWith("/deck"))
                 {
-                    if (!await AuthenticationController.Instance.IsAuthorized(requestAuthToken))
-                    {
-                        return new HttpResponse()
-                        {
-                            StatusCode = HttpStatusCode.Unauthorized,
-                            ResponseText = "Not authorized"
-                        };
-                    }
-
                     var user = await UserRepository.Instance.GetByAuthToken(requestAuthToken);
                     if (user == null)
                     {
@@ -371,9 +307,9 @@ namespace MTCG.PresentationLayer
                         };
                     }
 
-                    var requestData = JsonSerializer.Deserialize<Dictionary<string, object>>(body);
+                    var requestData = JsonSerializer.Deserialize<DeckRequest>(body);
 
-                    if (requestData == null)
+                    if (requestData == null || requestData.cards.Length != 4)
                     {
                         return new HttpResponse()
                         {
@@ -382,27 +318,7 @@ namespace MTCG.PresentationLayer
                         };
                     }
 
-                    if (!requestData.TryGetValue("cards", out var cardsObj))
-                    {
-                        return new HttpResponse()
-                        {
-                            StatusCode = HttpStatusCode.BadRequest,
-                            ResponseText = "Bad Request"
-                        };
-                    }
-
-                    var cards = JsonSerializer.Deserialize<string[]>(cardsObj.ToString());
-
-                    if (cards is not { Length: 4 })
-                    {
-                        return new HttpResponse()
-                        {
-                            StatusCode = HttpStatusCode.BadRequest,
-                            ResponseText = "Not enough cards provided"
-                        };
-                    }
-
-                    if (await user.SelectDeck(cards))
+                    if (await user.SelectDeck(requestData.cards))
                     {
                         return new HttpResponse()
                         {
