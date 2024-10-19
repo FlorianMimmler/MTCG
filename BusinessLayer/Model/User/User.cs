@@ -5,6 +5,7 @@ using MTCG.BusinessLayer.Model;
 using MTCG.BusinessLayer.Model.User;
 using System;
 using System.Linq;
+using MTCG.DataAccessLayer;
 
 namespace MTCG
 {
@@ -35,12 +36,20 @@ namespace MTCG
             Credentials = creds;
         }
 
-        public bool BuyPackage()
+        public async Task<bool> BuyPackage()
         {
 
             if (Coins >= Package.Price)
             {
-                Stack.AddCards(CardController.Instance.GetCards(Package.MaxCards));
+                var newCards = CardController.Instance.GetCards(Package.MaxCards);
+                Stack.AddCards(newCards);
+                Console.WriteLine("save cards");
+                var result = await StackRepository.Instance.AddMultiple(newCards, Id);
+                Console.WriteLine(result);
+                if (!result)
+                {
+                    return false;
+                }
                 Coins -= Package.Price;
                 return true;
             }

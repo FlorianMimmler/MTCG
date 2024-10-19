@@ -6,9 +6,9 @@ namespace MTCG
 {
     internal abstract class Card : ICard
     {
-        protected Card(string name, int damage, ElementType elementType)
+        protected Card(string name, int damage, ElementType elementType, string? id = null)
         {
-            Id = Guid.NewGuid().ToString();
+            Id = id ?? Guid.NewGuid().ToString();
             Name = name;
             Damage = damage;
             ElementType = elementType;

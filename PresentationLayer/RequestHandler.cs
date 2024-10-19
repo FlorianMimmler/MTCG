@@ -98,7 +98,7 @@ namespace MTCG.PresentationLayer
                         };
                     }
 
-                    var success = user.BuyPackage();
+                    var success = await user.BuyPackage();
 
                     return success ? new HttpResponse()
                     {
@@ -236,7 +236,18 @@ namespace MTCG.PresentationLayer
                         };
                     }
 
-                    var usersCardDtos = user.Stack.Cards.Select(card => new CardDTO()
+                    var userCards = await StackRepository.Instance.GetByUser(user.Id);
+
+                    if (userCards == null)
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.NoContent,
+                            ResponseText = "No Cards found"
+                        };
+                    }
+
+                    var usersCardDtos = userCards.Select(card => new CardDTO()
                     {
                         Id = card.Id,
                         Name = card.Name,
