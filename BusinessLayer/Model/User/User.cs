@@ -24,12 +24,7 @@ namespace MTCG
 
         public ICardWrapper Stack { get; set; } = new Stack();
 
-        public User(string username)
-        {
-            Credentials = new Credentials(username, "test");
-        }
-
-        public User() { }
+        public User() {}
 
         public User(Credentials creds)
         {

@@ -16,40 +16,33 @@ namespace MTCG
         {
             Username = username;
             Salt = GenerateSalt();  // Generate a random salt
-            HashPassword(password);  // Hash the password with the salt
+            Password = HashPassword(password);
         }
 
         public Credentials() { }
 
-        private void HashPassword(string password)
+        private string HashPassword(string password)
         {
             // Combine password and salt before hashing
-            string saltedPassword = password + Salt;
+            var saltedPassword = password + Salt;
 
             // Hash the salted password using SHA256
-            using (SHA256 sha256 = SHA256.Create())
-            {
-                byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(saltedPassword));
-                Password = Convert.ToBase64String(hashBytes);  // Convert the hash to Base64 for easier storage
-            }
+            using var sha256 = SHA256.Create();
+            var hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(saltedPassword));
+            return Convert.ToBase64String(hashBytes);
         }
 
         private string GenerateSalt()
         {
-            // Generate a cryptographically secure random salt
-            byte[] saltBytes = new byte[16]; // 128-bit salt
-            using (var rng = new RNGCryptoServiceProvider())
-            {
-                rng.GetBytes(saltBytes);
-            }
-            // Convert salt to a string for storage (e.g., Base64 encoding)
+            var saltBytes = new byte[64];
+            saltBytes = RandomNumberGenerator.GetBytes(saltBytes.Length);
             return Convert.ToBase64String(saltBytes);
         }
 
         public void HashPasswordWithSalt(string salt)
         {
             Salt = salt;
-            HashPassword(Password);
+            Password = HashPassword(Password);
         }
 
         public void SetPassword(string password)

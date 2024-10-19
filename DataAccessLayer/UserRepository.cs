@@ -9,7 +9,7 @@ namespace MTCG.DataAccessLayer
     internal class UserRepository : IRepository<User>
     {
 
-        public static UserRepository _instance;
+        private static UserRepository? _instance;
 
         public static UserRepository Instance => _instance ??= new UserRepository();
 
@@ -34,7 +34,7 @@ namespace MTCG.DataAccessLayer
     
         }
 
-        public async Task<int> Delete(User entity)
+        public Task<int> Delete(User entity)
         {
             throw new NotImplementedException();
         }

@@ -8,7 +8,7 @@ namespace MTCG.Auth
     internal class AuthenticationController
     {
 
-        private static AuthenticationController _instance;
+        private static AuthenticationController? _instance;
         public static AuthenticationController Instance => _instance ??= new AuthenticationController();
 
         private AuthenticationController()

@@ -31,7 +31,7 @@ namespace MTCG.DataAccessLayer
             return (int) (await command.ExecuteScalarAsync() ?? -1);
         }
 
-        public async Task<int> Delete(Stats entity)
+        public Task<int> Delete(Stats entity)
         {
             throw new NotImplementedException();
         }

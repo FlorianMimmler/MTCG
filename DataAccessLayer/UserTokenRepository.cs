@@ -11,7 +11,7 @@ namespace MTCG.DataAccessLayer
     internal class UserTokenRepository : IRepository<UserToken>
     {
 
-        private static UserTokenRepository _instance;
+        private static UserTokenRepository? _instance;
 
         public static UserTokenRepository Instance => _instance ??= new UserTokenRepository();
 

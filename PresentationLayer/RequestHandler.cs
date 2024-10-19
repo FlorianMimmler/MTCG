@@ -22,13 +22,25 @@ namespace MTCG.PresentationLayer
                 {
                     var requestData = JsonSerializer.Deserialize<Dictionary<string, object>>(body);
 
-                    if (!requestData.TryGetValue("Username", out var username) ||
-                        !requestData.TryGetValue("Password", out var password))
+                    if (requestData == null)
+                    {
                         return new HttpResponse()
                         {
                             StatusCode = HttpStatusCode.Unauthorized,
                             ResponseText = "Invalid username/password provided"
                         };
+                    }
+
+                    if (!requestData.TryGetValue("Username", out var username) ||
+                        !requestData.TryGetValue("Password", out var password))
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.Unauthorized,
+                            ResponseText = "Invalid username/password provided"
+                        };
+                    }
+
                     var userCreds = new Credentials() { Username = username.ToString() };
                     userCreds.SetPassword(password.ToString());
 
@@ -59,9 +71,9 @@ namespace MTCG.PresentationLayer
                             ResponseText = "Wrong arguments"
                         };
 
-                    var userID = await AuthenticationController.Instance.Signup(new Credentials(username.ToString(), password.ToString()));
+                    var userId = await AuthenticationController.Instance.Signup(new Credentials(username.ToString(), password.ToString()));
 
-                    return userID >= 0 ?
+                    return userId >= 0 ?
                         new HttpResponse()
                         {
                             StatusCode = HttpStatusCode.OK,
@@ -356,16 +368,27 @@ namespace MTCG.PresentationLayer
 
                     var requestData = JsonSerializer.Deserialize<Dictionary<string, object>>(body);
 
-                    if (!requestData.TryGetValue("cards", out var cardsObj))
+                    if (requestData == null)
+                    {
                         return new HttpResponse()
                         {
                             StatusCode = HttpStatusCode.BadRequest,
                             ResponseText = "Bad Request"
                         };
+                    }
+
+                    if (!requestData.TryGetValue("cards", out var cardsObj))
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.BadRequest,
+                            ResponseText = "Bad Request"
+                        };
+                    }
 
                     var cards = JsonSerializer.Deserialize<string[]>(cardsObj.ToString());
 
-                    if (cards.Length != 4)
+                    if (cards is not { Length: 4 })
                     {
                         return new HttpResponse()
                         {
