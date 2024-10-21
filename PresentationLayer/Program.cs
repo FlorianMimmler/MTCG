@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using MTCG;
 
-namespace MTCG
+namespace MTCG_new.PresentationLayer
 {
     internal class Program
     {

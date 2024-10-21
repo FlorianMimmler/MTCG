@@ -1,6 +1,6 @@
-﻿using System;
+﻿using MTCG.BusinessLayer.Interface;
+using System;
 using System.Collections.Generic;
-using MTCG.BusinessLayer.Interface;
 
 namespace MTCG.BusinessLayer.Controller
 {
@@ -11,7 +11,7 @@ namespace MTCG.BusinessLayer.Controller
 
         public static CardController Instance => _instance ??= new CardController();
 
-        private CardController(){}
+        private CardController() { }
 
         private static Random random;
         private static readonly object syncObj = new object();
@@ -49,9 +49,9 @@ namespace MTCG.BusinessLayer.Controller
             {
                 return new SpellCard(damage, GetRandomElement());
             }
-            
+
             return new MonsterCard(damage, GetRandomElement(), GetRandomMonsterType());
-            
+
         }
 
         private static ElementType GetRandomElement()

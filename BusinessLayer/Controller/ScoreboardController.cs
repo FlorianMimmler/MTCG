@@ -1,26 +1,25 @@
-﻿using MTCG.Auth;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MTCG.BusinessLayer.Model.User;
+﻿using MTCG.BusinessLayer.Model.User;
+using MTCG.DataAccessLayer;
 
 namespace MTCG.BusinessLayer.Controller
 {
     internal class ScoreboardController
     {
 
-        private static ScoreboardController _instance;
+        private static ScoreboardController? _instance;
         public static ScoreboardController Instance => _instance ??= new ScoreboardController();
 
         private ScoreboardController()
         {
         }
 
-        public List<UserStatsDTO> GetScoreboardDTOs()
+        public async Task<List<UserStatsDTO>?> GetScoreboardDTOs()
         {
-            var allUsersDTOs = AuthenticationController.Instance.GetUsers().Select(user => new UserStatsDTO()
+            var allUsers = await UserRepository.Instance.GetAll();
+
+            if (allUsers == null) return null;
+
+            var allUsersDTOs = allUsers.Select(user => new UserStatsDTO()
             {
                 Username = user.GetName(),
                 Wins = user.Stats.Wins,
@@ -30,6 +29,7 @@ namespace MTCG.BusinessLayer.Controller
             }).ToList();
 
             allUsersDTOs.Sort((user1, user2) => user1.EloPoints.CompareTo(user2.EloPoints));
+            allUsersDTOs.Reverse();
 
             return allUsersDTOs;
         }

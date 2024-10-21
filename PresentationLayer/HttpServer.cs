@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace MTCG
 {
-
     public class HttpServer
     {
         private const int ServerPort = 10001;
@@ -38,14 +37,14 @@ namespace MTCG
                     }
 
                 }
-                
+
             }
             catch (ObjectDisposedException)
             {
                 Console.WriteLine("Listener stopped.");
             }
 
-            
+
         }
 
         public void Stop()
@@ -61,7 +60,7 @@ namespace MTCG
             {
                 using var stream = client.GetStream();
 
-                
+
                 var buffer = new byte[client.ReceiveBufferSize];
                 var bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
 
@@ -75,8 +74,8 @@ namespace MTCG
                 var httpMethod = requestLines[0].Split(' ')[0];
                 var requestUrl = requestLines[0].Split(' ')[1];
 
-                
-                var response = _requestHandler.HandleRequest(requestUrl, httpMethod, body, authorizationToken);
+
+                var response = await _requestHandler.HandleRequest(requestUrl, httpMethod, body, authorizationToken);
 
                 var responseBuffer = Encoding.UTF8.GetBytes(response.ToString());
                 await stream.WriteAsync(responseBuffer, 0, responseBuffer.Length);

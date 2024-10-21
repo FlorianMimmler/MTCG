@@ -1,7 +1,7 @@
 ﻿
 namespace MTCG.BusinessLayer.Model.User
 {
-    enum EloName
+    internal enum EloName
     {
         Bronce,
         Silber,
@@ -53,7 +53,7 @@ namespace MTCG.BusinessLayer.Model.User
                 return "Master";
             }
             return "Grandmaster";
-            
+
         }
 
     }

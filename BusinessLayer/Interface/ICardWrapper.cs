@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using MTCG.BusinessLayer.Interface;
+﻿using MTCG.BusinessLayer.Interface;
+using System.Collections.Generic;
 
 
 namespace MTCG
@@ -14,7 +14,7 @@ namespace MTCG
 
         bool RemoveCard(ICard oldCard);
 
-        ICard GetCard(string index);
+        ICard? GetCard(string index);
         ICard GetRandomCard();
 
         void PrintCards();

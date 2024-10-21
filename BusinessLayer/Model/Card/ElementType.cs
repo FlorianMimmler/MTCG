@@ -9,7 +9,7 @@ public static class ElementTypeMethods
 {
     public static string GetString(this ElementType type)
     {
-        switch(type)
+        switch (type)
         {
             case ElementType.FIRE:
                 return "Fire ";
@@ -32,20 +32,20 @@ public static class ElementEffectiveness
         {
             { ElementType.FIRE, new Dictionary<ElementType, double>()
                 {
-                    { ElementType.NORMAL, 2.0 },  
-                    { ElementType.WATER, 0.5 }    
+                    { ElementType.NORMAL, 2.0 },
+                    { ElementType.WATER, 0.5 }
                 }
             },
             { ElementType.WATER, new Dictionary<ElementType, double>()
                 {
-                    { ElementType.FIRE, 2.0 },   
+                    { ElementType.FIRE, 2.0 },
                     { ElementType.NORMAL, 0.5 }
                 }
             },
             { ElementType.NORMAL, new Dictionary<ElementType, double>()
                 {
-                    { ElementType.WATER, 2.0 },  
-                    { ElementType.FIRE, 0.5 }    
+                    { ElementType.WATER, 2.0 },
+                    { ElementType.FIRE, 0.5 }
                 }
             }
         };
