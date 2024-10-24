@@ -39,7 +39,7 @@ namespace MTCG.DataAccessLayer
             throw new NotImplementedException();
         }
 
-        public void Update(Stats entity)
+        public Task<bool> Update(Stats entity)
         {
             throw new NotImplementedException();
         }

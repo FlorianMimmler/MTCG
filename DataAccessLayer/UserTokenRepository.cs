@@ -71,7 +71,7 @@ namespace MTCG.DataAccessLayer
             return userID;
         }
 
-        public void Update(UserToken entity)
+        public Task<bool> Update(UserToken entity)
         {
             throw new NotImplementedException();
         }

@@ -81,7 +81,7 @@ namespace MTCG.DataAccessLayer
 
         }
 
-        public void Update(ICard entity)
+        public Task<bool> Update(ICard entity)
         {
             throw new NotImplementedException();
         }

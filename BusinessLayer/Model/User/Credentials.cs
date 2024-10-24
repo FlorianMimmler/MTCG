@@ -50,6 +50,11 @@ namespace MTCG
             Password = password;
         }
 
+        public void SetPasswordAndHash(string password)
+        {
+            Password = HashPassword(password);
+        }
+
         public void SetSalt(string salt)
         {
             Salt = salt;
