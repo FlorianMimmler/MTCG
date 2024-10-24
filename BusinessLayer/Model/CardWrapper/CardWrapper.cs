@@ -40,6 +40,12 @@ namespace MTCG
             return newCards.All(card => this.Cards.Contains(card));
         }
 
+        public bool SetCards(List<ICard> newCards)
+        {
+            Cards.Clear();
+            return AddCards(newCards);
+        }
+
         public bool RemoveCard(ICard oldCard)
         {
             return this.Cards.Remove(oldCard);

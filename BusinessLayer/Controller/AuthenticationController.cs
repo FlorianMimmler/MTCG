@@ -1,6 +1,7 @@
-﻿using MTCG.DataAccessLayer;
+﻿using MTCG.Auth;
+using MTCG.DataAccessLayer;
 
-namespace MTCG.Auth
+namespace MTCG
 {
     internal class AuthenticationController
     {

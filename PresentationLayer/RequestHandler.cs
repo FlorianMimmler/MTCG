@@ -103,6 +103,27 @@ namespace MTCG.PresentationLayer
                     };
 
                 }
+
+                if (request.StartsWith("/battles"))
+                {
+                    var user = await UserRepository.Instance.GetByAuthToken(requestAuthToken);
+                    if (user == null)
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.Unauthorized,
+                            ResponseText = "Not authorized"
+                        };
+                    }
+
+                    var result = await BattleLobbyController.Instance.EnterLobby(user);
+
+                    return new HttpResponse()
+                    {
+                        StatusCode = HttpStatusCode.OK,
+                        ResponseText = result
+                    };
+                }
             }
 
             if (httpMethod == "GET")

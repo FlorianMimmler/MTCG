@@ -12,6 +12,8 @@ namespace MTCG
 
         bool AddCards(List<ICard> newCards);
 
+        bool SetCards(List<ICard> newCards);
+
         bool RemoveCard(ICard oldCard);
 
         ICard? GetCard(string index);
