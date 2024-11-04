@@ -163,11 +163,14 @@ namespace MTCG.PresentationLayer
                         };
                     }
 
+                    var userStack = await CardRepository.Instance.GetByUser(resultUser.Id);
+
+
                     var result = new UserDTO()
                     {
                         Username = resultUser.GetName(),
                         Coins = resultUser.Coins,
-                        CardCount = resultUser.Stack.Cards.Count,
+                        CardCount = userStack?.Count ?? 0,
                         EloPoints = resultUser.Stats.Elo.EloScore,
                         EloName = resultUser.Stats.Elo.GetEloName()
                     };
@@ -224,7 +227,7 @@ namespace MTCG.PresentationLayer
                         };
                     }
 
-                    var userCards = await StackRepository.Instance.GetByUser(user.Id);
+                    var userCards = await CardRepository.Instance.GetByUser(user.Id);
 
                     if (userCards == null)
                     {
@@ -261,7 +264,7 @@ namespace MTCG.PresentationLayer
                         };
                     }
 
-                    var deck = await StackRepository.Instance.GetDeckByUser(user.Id);
+                    var deck = await CardRepository.Instance.GetDeckByUser(user.Id);
 
                     if (deck is not { Count: > 0 })
                     {

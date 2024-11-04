@@ -37,7 +37,7 @@ namespace MTCG
                 var newCards = CardController.Instance.GetCards(Package.MaxCards);
                 Stack.AddCards(newCards);
                 Console.WriteLine("save cards");
-                var result = await StackRepository.Instance.AddMultiple(newCards, Id);
+                var result = await CardRepository.Instance.AddMultiple(newCards, Id);
                 Console.WriteLine(result);
                 if (!result)
                 {
@@ -65,11 +65,11 @@ namespace MTCG
             this.Deck.PrintCards();
         }
 
-        public async Task<bool> SelectDeck(string[] selection)
+        public async Task<bool> SelectDeck(int[] selection)
         {   
-            _ = await StackRepository.Instance.ClearDeckFromUser(Id);
+            _ = await CardRepository.Instance.ClearDeckFromUser(Id);
 
-            var result = await StackRepository.Instance.SetDeckByCards(selection);
+            var result = await CardRepository.Instance.SetDeckByCards(selection);
             return result == 4;
 
         }

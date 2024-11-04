@@ -37,8 +37,8 @@ namespace MTCG
             var opponent = _waitingPlayers[0];
             _waitingPlayers.RemoveAt(0);
 
-            player.Deck.SetCards(await StackRepository.Instance.GetDeckByUser(player.Id) ?? []);
-            opponent.Deck.SetCards(await StackRepository.Instance.GetDeckByUser(opponent.Id) ?? []);
+            player.Deck.SetCards(await CardRepository.Instance.GetDeckByUser(player.Id) ?? []);
+            opponent.Deck.SetCards(await CardRepository.Instance.GetDeckByUser(opponent.Id) ?? []);
 
             // Remove waiting opponent from pending results
             var opponentTcs = _pendingResults[opponent.GetName()];

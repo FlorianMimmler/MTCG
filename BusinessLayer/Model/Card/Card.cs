@@ -6,15 +6,15 @@ namespace MTCG
 {
     internal abstract class Card : ICard
     {
-        protected Card(string name, int damage, ElementType elementType, string? id = null)
+        protected Card(string name, int damage, ElementType elementType, int? id = null)
         {
-            Id = id ?? Guid.NewGuid().ToString();
+            Id = id ?? -1;
             Name = name;
             Damage = damage;
             ElementType = elementType;
         }
 
-        public string Id { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
         public int Damage { get; set; }
         public ElementType ElementType { get; set; }

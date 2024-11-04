@@ -8,7 +8,7 @@ namespace MTCG.BusinessLayer.Model.RequestObjects
 {
     internal class DeckRequest
     {
-        public string[] cards { get; set; }
+        public int[] cards { get; set; }
 
     }
 }
