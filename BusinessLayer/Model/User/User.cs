@@ -74,6 +74,27 @@ namespace MTCG
 
         }
 
+        public async Task<bool> Edit(string? username, string? password)
+        {
+            if (username != null)
+            {
+                var dbUser = await UserRepository.Instance.GetByUsername(username);
+                if (dbUser != null)
+                {
+                    return false;
+                }
+
+                this.Credentials.Username = username;
+            }
+
+            if (password != null)
+            {
+                this.Credentials.SetPasswordAndHash(password);
+            }
+
+            return await UserRepository.Instance.Update(this);
+        }
+
         public ICard GetRandomCardFromDeck()
         {
             return this.Deck.GetRandomCard();

@@ -1,6 +1,7 @@
-﻿using MTCG.DataAccessLayer;
+﻿using MTCG.Auth;
+using MTCG.DataAccessLayer;
 
-namespace MTCG.Auth
+namespace MTCG
 {
     internal class AuthenticationController
     {
@@ -10,19 +11,8 @@ namespace MTCG.Auth
 
         private AuthenticationController()
         {
-            this._users = [];
         }
 
-        /* ONLY FOR USAGE WITHOUT DB */
-
-        private List<User> _users;
-
-        public List<User> GetUsers()
-        {
-            return _users;
-        }
-
-        /* _____ */
 
 
         public async Task<AuthToken> Login(Credentials creds)
@@ -60,7 +50,6 @@ namespace MTCG.Auth
             }
 
             var newUser = new User(creds);
-            this._users.Add(newUser);
 
             newUser.Stats.Id = await StatsRepository.Instance.Add(newUser.Stats);
 

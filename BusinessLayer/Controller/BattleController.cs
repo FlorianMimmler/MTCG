@@ -2,6 +2,8 @@
 using MTCG.BusinessLayer.Interface;
 using MTCG.BusinessLayer.Model.BattleStrategy;
 using System;
+using System.Text.Json;
+using System.Xml;
 
 namespace MTCG
 {
@@ -20,14 +22,26 @@ namespace MTCG
 
         private const int MaxBattleRounds = 100;
 
+        public List<BattleRoundLog> BattleLog { get; set; } = [];
+        public BattleLogHeader BattleLogHeader { get; set; }
+
         public void StartBattle()
         {
             Console.WriteLine($"--------| Start Battle |--------");
             Console.WriteLine($"{Player1.GetName()} Vs {Player2.GetName()}");
-            for (var battleRoundIndex = 0; battleRoundIndex < MaxBattleRounds; battleRoundIndex++)
+
+            BattleLogHeader = new BattleLogHeader
+            {
+                Player1 = Player1.GetName(),
+                Player2 = Player2.GetName()
+            };
+
+            for (var battleRoundIndex = 1; battleRoundIndex <= MaxBattleRounds; battleRoundIndex++)
             {
                 Console.WriteLine($">> Round {battleRoundIndex} <<");
-                ProcessBattleRound();
+                var roundLog = ProcessBattleRound(battleRoundIndex);
+
+                BattleLog.Add(roundLog);
 
                 //Check Decks for winner
                 if (IsBattleOver())
@@ -39,7 +53,7 @@ namespace MTCG
             ProcessBattleResult();
         }
 
-        private void ProcessBattleRound()
+        private BattleRoundLog ProcessBattleRound(int roundNumber)
         {
             //pick two random Cards
             var card1 = Player1.GetRandomCardFromDeck();
@@ -54,7 +68,15 @@ namespace MTCG
             var result = this.BattleStrategy.Execute(card1, card2);
 
             //Process Winner
-            ProcessBattleRoundResult(result, card1, card2);
+            var winnerCard = ProcessBattleRoundResult(result, card1, card2);
+
+            return new BattleRoundLog
+            {
+                RoundNumber = roundNumber,
+                CardPlayer1 = card1.Name,
+                CardPlayer2 = card2.Name,
+                WinnerCard = winnerCard
+            };
         }
 
         private void SetBattleRoundStrategy(ICard card1, ICard card2)
@@ -73,7 +95,7 @@ namespace MTCG
             }
         }
 
-        private void ProcessBattleRoundResult(BattleResult result, ICard card1, ICard card2)
+        private string ProcessBattleRoundResult(BattleResult result, ICard card1, ICard card2)
         {
             switch (result)
             {
@@ -81,15 +103,15 @@ namespace MTCG
                     Player1.GetDeck().AddCard(card2);
                     Player2.GetDeck().RemoveCard(card2);
                     Console.WriteLine($"{card1.Name} wins");
-                    break;
+                    return card1.Name;
                 case BattleResult.Player2Wins:
                     Player2.GetDeck().AddCard(card1);
                     Player1.GetDeck().RemoveCard(card1);
                     Console.WriteLine($"{card2.Name} wins");
-                    break;
+                    return card2.Name;
                 case BattleResult.Tie:
                     Console.WriteLine($"Tie");
-                    break;
+                    return "Tie";
                 default:
                     throw new ArgumentOutOfRangeException(nameof(result), result, null);
             }
@@ -125,17 +147,50 @@ namespace MTCG
                     Player1.Stats.AddWin();
                     Player2.Stats.AddLoss();
                     Console.WriteLine("Player 1 wins");
+                    BattleLogHeader.Winner = Player1.GetName();
                     break;
                 case BattleResult.Player2Wins:
                     Player2.Stats.AddWin();
                     Player1.Stats.AddLoss();
                     Console.WriteLine("Player 2 wins");
+                    BattleLogHeader.Winner = Player2.GetName();
                     break;
                 case BattleResult.Tie:
+                    Console.WriteLine("Tie");
+                    BattleLogHeader.Winner = "Tie";
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(result), result, null);
             }
         }
+
+        public string GetSerializedBattleLog()
+        {
+            var battleLogObject = new
+            {
+                player1 = BattleLogHeader.Player1,
+                player2 = BattleLogHeader.Player2,
+                winner = BattleLogHeader.Winner,
+                rounds = BattleLog
+            };
+
+            var battleLogString = JsonSerializer.Serialize(battleLogObject);
+            return battleLogString;
+        }
+    }
+
+    internal class BattleLogHeader
+    {
+        public string Player1 { get; set; }
+        public string Player2 { get; set; }
+        public string Winner { get; set; }
+    }
+
+    internal class BattleRoundLog
+    {
+        public int RoundNumber { get; set; }
+        public string CardPlayer1 { get; set; }
+        public string CardPlayer2 { get; set; }
+        public string WinnerCard { get; set; }
     }
 }

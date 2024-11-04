@@ -6,7 +6,7 @@ namespace MTCG.DataAccessLayer
 
         public Task<int> Add(T entity);
 
-        public void Update(T entity);
+        public Task<bool> Update(T entity);
 
         public Task<int> Delete(T entity);
 

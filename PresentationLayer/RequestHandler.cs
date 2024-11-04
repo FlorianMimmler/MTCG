@@ -103,6 +103,27 @@ namespace MTCG.PresentationLayer
                     };
 
                 }
+
+                if (request.StartsWith("/battles"))
+                {
+                    var user = await UserRepository.Instance.GetByAuthToken(requestAuthToken);
+                    if (user == null)
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.Unauthorized,
+                            ResponseText = "Not authorized"
+                        };
+                    }
+
+                    var result = await BattleLobbyController.Instance.EnterLobby(user);
+
+                    return new HttpResponse()
+                    {
+                        StatusCode = HttpStatusCode.OK,
+                        ResponseText = result
+                    };
+                }
             }
 
             if (httpMethod == "GET")
@@ -293,6 +314,7 @@ namespace MTCG.PresentationLayer
 
             }
 
+
             if (httpMethod == "PUT")
             {
                 if (request.StartsWith("/deck"))
@@ -332,6 +354,59 @@ namespace MTCG.PresentationLayer
                         StatusCode = HttpStatusCode.Forbidden,
                         ResponseText = "Card not found"
                     };
+
+                }
+
+                if(request.StartsWith("/users/"))
+                {
+
+                    var callingUser = await UserRepository.Instance.GetByAuthToken(requestAuthToken);
+                    if (callingUser == null)
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.Unauthorized,
+                            ResponseText = "Not authorized"
+                        };
+                    }
+
+                    var username = request[(request.LastIndexOf('/') + 1)..];
+
+                    if (username != callingUser.GetName() && !callingUser.Admin)
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.Unauthorized,
+                            ResponseText = "Not authorized"
+                        };
+                    }
+
+                    var editUserRequest = JsonSerializer.Deserialize<EditUsersRequest>(body);
+
+                    if (editUserRequest == null || (string.IsNullOrEmpty(editUserRequest.Username) && string.IsNullOrEmpty(editUserRequest.Password)))
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.BadRequest,
+                            ResponseText = "Invalid input data"
+                        };
+                    }
+
+                    var user = await UserRepository.Instance.GetUserDataByUsername(username);
+
+                    var result = user != null && await user.Edit(editUserRequest.Username, editUserRequest.Password);
+
+                    return result
+                        ? new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.OK,
+                            ResponseText = "User changed"
+                        }
+                        : new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.InternalServerError,
+                            ResponseText = "Error"
+                        };
 
                 }
             }

@@ -1,5 +1,7 @@
 ﻿using System.Data;
+using System.Data.Common;
 using MTCG.BusinessLayer.Model.User;
+using Npgsql;
 
 namespace MTCG.DataAccessLayer
 {
@@ -214,9 +216,39 @@ namespace MTCG.DataAccessLayer
             return null;
         }
 
-        public void Update(User entity)
+        public async Task<bool> Update(User entity)
         {
-            throw new NotImplementedException();
+            await using var conn = ConnectionController.CreateConnection();
+            await conn.OpenAsync();
+            await using var command = conn.CreateCommand();
+
+            command.CommandText =
+                "UPDATE \"User\" SET username = @username, password = @password WHERE \"id\" = @id";
+            ConnectionController.AddParameterWithValue(command, "username", DbType.String, entity.Credentials.Username);
+            ConnectionController.AddParameterWithValue(command, "password", DbType.String, entity.Credentials.Password);
+            ConnectionController.AddParameterWithValue(command, "id", DbType.Int32, entity.Id);
+
+            try
+            {
+                return await command.ExecuteNonQueryAsync() == 1;
+            }
+            catch (NpgsqlException ex)
+            {
+                // Specific Npgsql exception handling
+                Console.WriteLine($"PostgreSQL error: {ex.Message}");
+            }
+            catch (DbException ex)
+            {
+                // General database exception
+                Console.WriteLine($"Database error: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                // Any other exceptions
+                Console.WriteLine($"Unexpected error: {ex.Message}");
+            }
+
+            return false;
         }
 
         public static void AddParameterWithValue(IDbCommand command, string parameterName, DbType type, object value)
