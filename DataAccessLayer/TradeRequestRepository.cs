@@ -14,27 +14,27 @@ using NpgsqlTypes;
 
 namespace MTCG.DataAccessLayer
 {
-    internal class TradeRepository : IRepository<TradingDeal>
+    internal class TradeRequestRepository : IRepository<TradingDealRequest>
     {
 
-        private static TradeRepository? _instance;
+        private static TradeRequestRepository? _instance;
 
-        public static TradeRepository Instance => _instance ??= new TradeRepository();
+        public static TradeRequestRepository Instance => _instance ??= new TradeRequestRepository();
 
-        private TradeRepository()
+        private TradeRequestRepository()
         {
         }
-        public async Task<int> Add(TradingDeal entity)
+        public async Task<int> Add(TradingDealRequest entity)
         {
             await using var conn = ConnectionController.CreateConnection();
             await conn.OpenAsync();
             await using var command = conn.CreateCommand();
 
-            command.CommandText = "INSERT INTO \"Trade\" (\"offeredCard\", requirements, \"userID\") VALUES (@offeredCard, @requirements, @userID) RETURNING id";
-
+            command.CommandText = "INSERT INTO \"TradeRequest\" (\"offeredCard\", \"tradeID\", \"requestUserID\") VALUES (@offeredCard, @tradeID, @requestUserID) RETURNING id";
+ 
             ConnectionController.AddParameterWithValue(command, "offeredCard", DbType.Int32, entity.OfferedCard.Id);
-            ConnectionController.AddParameterWithValue(command, "requirements", DbType.String, JsonSerializer.Serialize(entity.Requirements));
-            ConnectionController.AddParameterWithValue(command, "userID", DbType.Int32, entity.OfferingUserId);
+            ConnectionController.AddParameterWithValue(command, "tradeID", DbType.Int32, entity.TradeId);
+            ConnectionController.AddParameterWithValue(command, "requestUserID", DbType.Int32, entity.RequestUserId);
 
             Console.WriteLine("Save to DB");
             try
@@ -60,18 +60,18 @@ namespace MTCG.DataAccessLayer
             return -1;
         }
 
-        public Task<int> Delete(TradingDeal entity)
+        public Task<int> Delete(TradingDealRequest entity)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<IEnumerable<TradingDeal>?> GetAll()
+        public async Task<IEnumerable<TradingDealRequest>?> GetAll()
         {
             await using var conn = ConnectionController.CreateConnection();
             await conn.OpenAsync();
             await using var command = conn.CreateCommand();
 
-            command.CommandText = "SELECT *, \"Trade\".id as tradeid, c.id as cardid FROM \"Trade\" left join \"Card\" as c on \"Trade\".\"offeredCard\" = c.id";
+            command.CommandText = "SELECT *, c.id as cardid FROM \"TradeRequest\" left join \"Card\" as c on \"TradeRequest\".\"offeredCard\" = c.id";
 
             try
             {
@@ -79,17 +79,17 @@ namespace MTCG.DataAccessLayer
 
                 if (!await reader.ReadAsync()) return null;
 
-                var tradingDeals = new List<TradingDeal>();
+                var tradingDeals = new List<TradingDealRequest>();
                 do
                 {
-
+/*
                     ICard offeredCard = reader.GetInt32("cardType") == 1 ?
                         new MonsterCard(reader.GetInt32("damage"), (ElementType)reader.GetInt32("elementType"), (MonsterType)reader.GetInt32("monsterType"), reader.GetInt32("cardid"), reader.GetString("name"))
                         : new SpellCard(reader.GetInt32("damage"), (ElementType)reader.GetInt32("elementType"), reader.GetInt32("cardid"), reader.GetString("name"));
 
-                    tradingDeals.Add(new TradingDeal(offeredCard, JsonSerializer.Deserialize<TradingDealRequirements>(reader.GetString("requirements")),
-                        reader.GetInt32("userID"), reader.GetInt32("tradeid")));
-
+                    tradingDeals.Add(new TradingDealRequest(offeredCard, JsonSerializer.Deserialize<TradingDealRequirements>(reader.GetString("requirements")),
+                        reader.GetInt32("userID")));
+*/
 
                 } while (await reader.ReadAsync());
 
@@ -114,18 +114,19 @@ namespace MTCG.DataAccessLayer
                 return null;
             }
 
-            
+
 
         }
 
-        public async Task<IEnumerable<TradingDeal>?> GetByUserId(int userId)
+        public async Task<IEnumerable<TradingDealRequest>?> GetByTradeId(int id)
         {
             await using var conn = ConnectionController.CreateConnection();
             await conn.OpenAsync();
             await using var command = conn.CreateCommand();
 
-            command.CommandText = "SELECT *, \"Trade\".id as tradeid, c.id as cardid FROM \"Trade\" left join \"Card\" as c on \"Trade\".\"offeredCard\" = c.id WHERE \"Trade\".\"userID\" = @userID";
-            ConnectionController.AddParameterWithValue(command, "userID", DbType.Int32, userId);
+            command.CommandText = "SELECT *, \"TradeRequest\".id as traderequestid, c.id as cardid FROM \"TradeRequest\" left join \"Card\" as c on \"TradeRequest\".\"offeredCard\" = c.id WHERE \"TradeRequest\".\"tradeID\" = @tradeID";
+            ConnectionController.AddParameterWithValue(command, "tradeID", DbType.Int32, id);
+
 
             try
             {
@@ -133,21 +134,20 @@ namespace MTCG.DataAccessLayer
 
                 if (!await reader.ReadAsync()) return null;
 
-                var tradingDeals = new List<TradingDeal>();
+                var tradingDealRequests = new List<TradingDealRequest>();
                 do
                 {
-
+                    
                     ICard offeredCard = reader.GetInt32("cardType") == 1 ?
                         new MonsterCard(reader.GetInt32("damage"), (ElementType)reader.GetInt32("elementType"), (MonsterType)reader.GetInt32("monsterType"), reader.GetInt32("cardid"), reader.GetString("name"))
                         : new SpellCard(reader.GetInt32("damage"), (ElementType)reader.GetInt32("elementType"), reader.GetInt32("cardid"), reader.GetString("name"));
 
-                    tradingDeals.Add(new TradingDeal(offeredCard, JsonSerializer.Deserialize<TradingDealRequirements>(reader.GetString("requirements")),
-                        reader.GetInt32("userID"), reader.GetInt32("tradeid")));
-
+                    tradingDealRequests.Add(new TradingDealRequest(id,reader.GetInt32("userID"), offeredCard, reader.GetInt32("traderequestid")));
+                    
 
                 } while (await reader.ReadAsync());
 
-                return tradingDeals;
+                return tradingDealRequests;
             }
             catch (NpgsqlException ex)
             {
@@ -169,13 +169,13 @@ namespace MTCG.DataAccessLayer
             }
         }
 
-        public async Task<TradingDeal?> GetById(int id)
+        public async Task<TradingDealRequest?> GetById(int id)
         {
             await using var conn = ConnectionController.CreateConnection();
             await conn.OpenAsync();
             await using var command = conn.CreateCommand();
 
-            command.CommandText = "SELECT *, \"Trade\".id as tradeid, c.id as cardid FROM \"Trade\" left join \"Card\" as c on \"Trade\".\"offeredCard\" = c.id WHERE \"Trade\".\"id\" = @id";
+            command.CommandText = "SELECT *, \"TradeRequest\".id as traderequestid, c.id as cardid FROM \"TradeRequest\" left join \"Card\" as c on \"TradeRequest\".\"offeredCard\" = c.id WHERE \"TradeRequest\".\"id\" = @id";
             ConnectionController.AddParameterWithValue(command, "id", DbType.Int32, id);
 
             try
@@ -184,12 +184,12 @@ namespace MTCG.DataAccessLayer
 
                 if (!await reader.ReadAsync()) return null;
 
+
                 ICard offeredCard = reader.GetInt32("cardType") == 1 ?
                     new MonsterCard(reader.GetInt32("damage"), (ElementType)reader.GetInt32("elementType"), (MonsterType)reader.GetInt32("monsterType"), reader.GetInt32("cardid"), reader.GetString("name"))
                     : new SpellCard(reader.GetInt32("damage"), (ElementType)reader.GetInt32("elementType"), reader.GetInt32("cardid"), reader.GetString("name"));
 
-                return new TradingDeal(offeredCard, JsonSerializer.Deserialize<TradingDealRequirements>(reader.GetString("requirements")),
-                    reader.GetInt32("userID"), reader.GetInt32("tradeid"));
+                return new TradingDealRequest(reader.GetInt32("tradeID"), reader.GetInt32("userID"), offeredCard, reader.GetInt32("traderequestid"));
 
             }
             catch (NpgsqlException ex)
@@ -212,7 +212,7 @@ namespace MTCG.DataAccessLayer
             }
         }
 
-        public Task<bool> Update(TradingDeal entity)
+        public Task<bool> Update(TradingDealRequest entity)
         {
             throw new NotImplementedException();
         }

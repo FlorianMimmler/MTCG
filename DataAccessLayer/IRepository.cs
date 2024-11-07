@@ -12,7 +12,7 @@ namespace MTCG.DataAccessLayer
 
         public Task<IEnumerable<T>?> GetAll();
 
-        public T GetById(int id);
+        public Task<T?> GetById(int id);
 
     }
 }

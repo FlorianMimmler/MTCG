@@ -85,6 +85,40 @@ namespace MTCG.DataAccessLayer
             throw new NotImplementedException();
         }
 
+        public async Task<bool> UpdateUserId(ICard entity, int newUserId)
+        {
+            await using var conn = ConnectionController.CreateConnection();
+            await conn.OpenAsync();
+            await using var command = conn.CreateCommand();
+
+            command.CommandText = "UPDATE \"Card\" SET \"userID\" = @userID WHERE id = @id";
+
+            ConnectionController.AddParameterWithValue(command, "userID", DbType.Int32, newUserId);
+            ConnectionController.AddParameterWithValue(command, "id", DbType.Int32, entity.Id);
+
+            try
+            {
+                return await command.ExecuteNonQueryAsync() == 1;
+            }
+            catch (NpgsqlException ex)
+            {
+                // Specific Npgsql exception handling
+                Console.WriteLine($"PostgreSQL error: {ex.Message}");
+            }
+            catch (DbException ex)
+            {
+                // General database exception
+                Console.WriteLine($"Database error: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                // Any other exceptions
+                Console.WriteLine($"Unexpected error: {ex.Message}");
+            }
+
+            return false;
+        }
+
         public Task<int> Delete(ICard entity)
         {
             throw new NotImplementedException();
@@ -157,9 +191,29 @@ namespace MTCG.DataAccessLayer
             return null;
         }
 
-        public ICard GetById(int id)
+        public async Task<ICard?> GetById(int id)
         {
-            throw new NotImplementedException();
+            await using var conn = ConnectionController.CreateConnection();
+            await conn.OpenAsync();
+            await using var command = conn.CreateCommand();
+
+            command.CommandText = "SELECT * FROM \"Card\" WHERE \"id\" = @cardID";
+
+            ConnectionController.AddParameterWithValue(command, "cardID", DbType.Int32, id);
+
+            await using var reader = await command.ExecuteReaderAsync();
+
+            if (await reader.ReadAsync())
+            {
+                return reader.GetInt32("cardType") == 1
+                    ? new MonsterCard(reader.GetInt32("damage"), (ElementType)reader.GetInt32("elementType"),
+                        (MonsterType)reader.GetInt32("monsterType"), reader.GetInt32("id"), reader.GetString("name"))
+                    : new SpellCard(reader.GetInt32("damage"), (ElementType)reader.GetInt32("elementType"),
+                        reader.GetInt32("id"), reader.GetString("name"));
+            }
+
+            return null;
+
         }
 
         public async Task<int> ClearDeckFromUser(int userId)
