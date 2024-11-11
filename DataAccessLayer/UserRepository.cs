@@ -88,7 +88,7 @@ namespace MTCG.DataAccessLayer
             return null;
         }
 
-        public User GetById(int id)
+        public Task<User?> GetById(int id)
         {
             throw new NotImplementedException();
         }

@@ -5,15 +5,15 @@ using Npgsql;
 
 namespace MTCG.DataAccessLayer
 {
-    internal class StackRepository : IRepository<ICard>
+    internal class CardRepository : IRepository<ICard>
 
     {
 
-    private static StackRepository? _instance;
+    private static CardRepository? _instance;
 
-    public static StackRepository Instance => _instance ??= new StackRepository();
+    public static CardRepository Instance => _instance ??= new CardRepository();
 
-    private StackRepository()
+    private CardRepository()
     {
     }
 
@@ -29,7 +29,7 @@ namespace MTCG.DataAccessLayer
             await conn.OpenAsync();
             await using var command = conn.CreateCommand();
 
-            command.CommandText = "INSERT INTO \"Card\" (\"userID\", \"cardID\", \"cardType\", \"name\", \"damage\", \"elementType\", \"monsterType\") VALUES ";
+            command.CommandText = "INSERT INTO \"Card\" (\"userID\", \"cardType\", \"name\", \"damage\", \"elementType\", \"monsterType\") VALUES ";
             var index = 0;
 
             foreach (var card in entities)
@@ -41,11 +41,10 @@ namespace MTCG.DataAccessLayer
                 }
 
                 // Create unique parameter names for each card
-                command.CommandText += $"(@userID{index}, @cardID{index}, @cardType{index}, @name{index}, @damage{index}, @elementType{index}, @monsterType{index})";
+                command.CommandText += $"(@userID{index}, @cardType{index}, @name{index}, @damage{index}, @elementType{index}, @monsterType{index})";
 
                 // Add the parameters with unique names for each card
                 ConnectionController.AddParameterWithValue(command, $"userID{index}", DbType.Int32, userID);
-                ConnectionController.AddParameterWithValue(command, $"cardID{index}", DbType.String, card.Id);
                 ConnectionController.AddParameterWithValue(command, $"cardType{index}", DbType.Int32, card is MonsterCard ? 1 : 2); // Assuming card type is 1 for Monster, 2 for Spell
                 ConnectionController.AddParameterWithValue(command, $"name{index}", DbType.String, card.Name);
                 ConnectionController.AddParameterWithValue(command, $"damage{index}", DbType.Int32, card.Damage);
@@ -86,6 +85,40 @@ namespace MTCG.DataAccessLayer
             throw new NotImplementedException();
         }
 
+        public async Task<bool> UpdateUserId(ICard entity, int newUserId)
+        {
+            await using var conn = ConnectionController.CreateConnection();
+            await conn.OpenAsync();
+            await using var command = conn.CreateCommand();
+
+            command.CommandText = "UPDATE \"Card\" SET \"userID\" = @userID WHERE id = @id";
+
+            ConnectionController.AddParameterWithValue(command, "userID", DbType.Int32, newUserId);
+            ConnectionController.AddParameterWithValue(command, "id", DbType.Int32, entity.Id);
+
+            try
+            {
+                return await command.ExecuteNonQueryAsync() == 1;
+            }
+            catch (NpgsqlException ex)
+            {
+                // Specific Npgsql exception handling
+                Console.WriteLine($"PostgreSQL error: {ex.Message}");
+            }
+            catch (DbException ex)
+            {
+                // General database exception
+                Console.WriteLine($"Database error: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                // Any other exceptions
+                Console.WriteLine($"Unexpected error: {ex.Message}");
+            }
+
+            return false;
+        }
+
         public Task<int> Delete(ICard entity)
         {
             throw new NotImplementedException();
@@ -115,8 +148,8 @@ namespace MTCG.DataAccessLayer
                 {
                     
                     cards.Add(reader.GetInt32("cardType") == 1 ? 
-                        new MonsterCard(reader.GetInt32("damage"), (ElementType)reader.GetInt32("elementType"), (MonsterType)reader.GetInt32("monsterType"), reader.GetString("cardID"), reader.GetString("name"))
-                        : new SpellCard(reader.GetInt32("damage"), (ElementType)reader.GetInt32("elementType"), reader.GetString("cardID"), reader.GetString("name"))
+                        new MonsterCard(reader.GetInt32("damage"), (ElementType)reader.GetInt32("elementType"), (MonsterType)reader.GetInt32("monsterType"), reader.GetInt32("id"), reader.GetString("name"))
+                        : new SpellCard(reader.GetInt32("damage"), (ElementType)reader.GetInt32("elementType"), reader.GetInt32("id"), reader.GetString("name"))
                     );
 
                 } while (await reader.ReadAsync());
@@ -146,8 +179,8 @@ namespace MTCG.DataAccessLayer
                 {
 
                     cards.Add(reader.GetInt32("cardType") == 1 ?
-                        new MonsterCard(reader.GetInt32("damage"), (ElementType)reader.GetInt32("elementType"), (MonsterType)reader.GetInt32("monsterType"), reader.GetString("cardID"), reader.GetString("name"))
-                        : new SpellCard(reader.GetInt32("damage"), (ElementType)reader.GetInt32("elementType"), reader.GetString("cardID"), reader.GetString("name"))
+                        new MonsterCard(reader.GetInt32("damage"), (ElementType)reader.GetInt32("elementType"), (MonsterType)reader.GetInt32("monsterType"), reader.GetInt32("id"), reader.GetString("name"))
+                        : new SpellCard(reader.GetInt32("damage"), (ElementType)reader.GetInt32("elementType"), reader.GetInt32("id"), reader.GetString("name"))
                     );
 
                 } while (await reader.ReadAsync());
@@ -158,9 +191,29 @@ namespace MTCG.DataAccessLayer
             return null;
         }
 
-        public ICard GetById(int id)
+        public async Task<ICard?> GetById(int id)
         {
-            throw new NotImplementedException();
+            await using var conn = ConnectionController.CreateConnection();
+            await conn.OpenAsync();
+            await using var command = conn.CreateCommand();
+
+            command.CommandText = "SELECT * FROM \"Card\" WHERE \"id\" = @cardID";
+
+            ConnectionController.AddParameterWithValue(command, "cardID", DbType.Int32, id);
+
+            await using var reader = await command.ExecuteReaderAsync();
+
+            if (await reader.ReadAsync())
+            {
+                return reader.GetInt32("cardType") == 1
+                    ? new MonsterCard(reader.GetInt32("damage"), (ElementType)reader.GetInt32("elementType"),
+                        (MonsterType)reader.GetInt32("monsterType"), reader.GetInt32("id"), reader.GetString("name"))
+                    : new SpellCard(reader.GetInt32("damage"), (ElementType)reader.GetInt32("elementType"),
+                        reader.GetInt32("id"), reader.GetString("name"));
+            }
+
+            return null;
+
         }
 
         public async Task<int> ClearDeckFromUser(int userId)
@@ -175,17 +228,17 @@ namespace MTCG.DataAccessLayer
             return (int)(await command.ExecuteNonQueryAsync());
         }
 
-        public async Task<int> SetDeckByCards(string[] cards)
+        public async Task<int> SetDeckByCards(int[] cards)
         {
             await using var conn = ConnectionController.CreateConnection();
             await conn.OpenAsync();
             await using var command = conn.CreateCommand();
 
-            command.CommandText = "UPDATE \"Card\" SET \"isDeck\" = true WHERE \"cardID\" IN (@card1, @card2, @card3, @card4)";
-            ConnectionController.AddParameterWithValue(command, "card1", DbType.String, cards[0]);
-            ConnectionController.AddParameterWithValue(command, "card2", DbType.String, cards[1]);
-            ConnectionController.AddParameterWithValue(command, "card3", DbType.String, cards[2]);
-            ConnectionController.AddParameterWithValue(command, "card4", DbType.String, cards[3]);
+            command.CommandText = "UPDATE \"Card\" SET \"isDeck\" = true WHERE \"id\" IN (@card1, @card2, @card3, @card4)";
+            ConnectionController.AddParameterWithValue(command, "card1", DbType.Int32, cards[0]);
+            ConnectionController.AddParameterWithValue(command, "card2", DbType.Int32, cards[1]);
+            ConnectionController.AddParameterWithValue(command, "card3", DbType.Int32, cards[2]);
+            ConnectionController.AddParameterWithValue(command, "card4", DbType.Int32, cards[3]);
 
             return (int)(await command.ExecuteNonQueryAsync());
         }

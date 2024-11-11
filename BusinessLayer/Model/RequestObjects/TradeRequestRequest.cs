@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace MTCG.BusinessLayer.Model.RequestObjects
 {
-    internal class DeckRequest
+    internal class TradeRequestRequest
     {
-        public int[] cards { get; set; }
+        public int TradeId { get; set; }
+        public int OfferedCardId { get; set; }
 
     }
 }

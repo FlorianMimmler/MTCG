@@ -5,6 +5,7 @@ using MTCG.BusinessLayer.Model.User;
 using System.Text.Json;
 using MTCG.DataAccessLayer;
 using MTCG.BusinessLayer.Model.RequestObjects;
+using MTCG.BusinessLayer.Model.Trading;
 
 namespace MTCG.PresentationLayer
 {
@@ -124,6 +125,108 @@ namespace MTCG.PresentationLayer
                         ResponseText = result
                     };
                 }
+
+                if (request == "/trade")
+                {
+                    var user = await UserRepository.Instance.GetByAuthToken(requestAuthToken);
+                    if (user == null)
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.Unauthorized,
+                            ResponseText = "Not authorized"
+                        };
+                    }
+
+                    var tradeRequest = JsonSerializer.Deserialize<TradeRequest>(body);
+
+                    Console.WriteLine(tradeRequest.Requirements.MinDamage);
+
+                    if (tradeRequest == null || tradeRequest.OfferedCardId < 0)
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.BadRequest,
+                            ResponseText = "Invalid input data"
+                        };
+                    }
+
+                    var offeredCard = await CardRepository.Instance.GetById(tradeRequest.OfferedCardId);
+                    if (offeredCard == null)
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.BadRequest,
+                            ResponseText = "Invalid input data"
+                        };
+                    }
+
+                    Console.WriteLine(offeredCard.Damage);
+
+                    var newTradingDeal = new TradingDeal(offeredCard, tradeRequest.Requirements, user.Id);
+
+                    Console.WriteLine(newTradingDeal.OfferingUserId);
+
+                    var result = await TradeRepository.Instance.Add(newTradingDeal);
+
+                    if (result >= 0)
+                    {
+                        return new HttpResponse() { StatusCode = HttpStatusCode.OK, ResponseText = "Trade Created" };
+                    }   
+
+                    return new HttpResponse()
+                        { StatusCode = HttpStatusCode.InternalServerError, ResponseText = "Internal Server Error" };
+                    
+
+                }
+
+                if (request == "/tradeRequest")
+                {
+                    var user = await UserRepository.Instance.GetByAuthToken(requestAuthToken);
+                    if (user == null)
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.Unauthorized,
+                            ResponseText = "Not authorized"
+                        };
+                    }
+
+                    var tradeRequest = JsonSerializer.Deserialize<TradeRequestRequest>(body);
+
+                    if (tradeRequest == null || tradeRequest.OfferedCardId < 0 || tradeRequest.TradeId < 0)
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.BadRequest,
+                            ResponseText = "Invalid input data"
+                        };
+                    }
+
+                    var offeredCard = await CardRepository.Instance.GetById(tradeRequest.OfferedCardId);
+                    if (offeredCard == null)
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.BadRequest,
+                            ResponseText = "Invalid input data"
+                        };
+                    }
+
+                    var newTradingRequest = new TradingDealRequest(tradeRequest.TradeId, user.Id, offeredCard);
+
+                    var result = await TradeRequestRepository.Instance.Add(newTradingRequest);
+
+                    if (result >= 0)
+                    {
+                        return new HttpResponse() { StatusCode = HttpStatusCode.OK, ResponseText = "TradeRequest Created" };
+                    }
+
+                    return new HttpResponse()
+                        { StatusCode = HttpStatusCode.InternalServerError, ResponseText = "Internal Server Error" };
+
+
+                }
             }
 
             if (httpMethod == "GET")
@@ -163,11 +266,14 @@ namespace MTCG.PresentationLayer
                         };
                     }
 
+                    var userStack = await CardRepository.Instance.GetByUser(resultUser.Id);
+
+
                     var result = new UserDTO()
                     {
                         Username = resultUser.GetName(),
                         Coins = resultUser.Coins,
-                        CardCount = resultUser.Stack.Cards.Count,
+                        CardCount = userStack?.Count ?? 0,
                         EloPoints = resultUser.Stats.Elo.EloScore,
                         EloName = resultUser.Stats.Elo.GetEloName()
                     };
@@ -224,7 +330,7 @@ namespace MTCG.PresentationLayer
                         };
                     }
 
-                    var userCards = await StackRepository.Instance.GetByUser(user.Id);
+                    var userCards = await CardRepository.Instance.GetByUser(user.Id);
 
                     if (userCards == null)
                     {
@@ -261,7 +367,7 @@ namespace MTCG.PresentationLayer
                         };
                     }
 
-                    var deck = await StackRepository.Instance.GetDeckByUser(user.Id);
+                    var deck = await CardRepository.Instance.GetDeckByUser(user.Id);
 
                     if (deck is not { Count: > 0 })
                     {
@@ -310,6 +416,132 @@ namespace MTCG.PresentationLayer
                             StatusCode = HttpStatusCode.NoContent,
                             ResponseText = "Empty Scoreboard"
                         };
+                }
+
+                if (request == "/trade")
+                {
+                    if (!await AuthenticationController.Instance.IsAuthorized(requestAuthToken))
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.Unauthorized,
+                            ResponseText = "Not authorized"
+                        };
+                    }
+
+                    var result = await TradeRepository.Instance.GetAll();
+
+                    return result != null
+                        ? new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.OK,
+                            ResponseText = JsonSerializer.Serialize(result)
+                        }
+                        : new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.NoContent,
+                            ResponseText = "No Trades Available"
+                        };
+                }
+
+                if (request.StartsWith("/trade/") && !request.Contains("tradeRequest"))
+                {
+                    var user = await UserRepository.Instance.GetByAuthToken(requestAuthToken);
+                    if (user == null)
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.Unauthorized,
+                            ResponseText = "Not authorized"
+                        };
+                    }
+
+                    var username = request[(request.LastIndexOf('/') + 1)..];
+
+                    if (username != user.GetName() && !user.Admin)
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.Unauthorized,
+                            ResponseText = "Not authorized"
+                        };
+                    }
+
+                    var requestedUser = user.GetName() == username ? user : await UserRepository.Instance.GetByUsername(username);
+                    
+                    if (requestedUser == null)
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.BadRequest,
+                            ResponseText = "Invalid input data"
+                        };
+                    }
+
+                    var result = await TradeRepository.Instance.GetByUserId(requestedUser.Id);
+
+                    return result != null
+                        ? new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.OK,
+                            ResponseText = JsonSerializer.Serialize(result)
+                        }
+                        : new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.NoContent,
+                            ResponseText = "No Trades Available"
+                        };
+
+                }
+
+                if (request.StartsWith("/trade/") && request.Contains("tradeRequest"))
+                {
+                    var user = await UserRepository.Instance.GetByAuthToken(requestAuthToken);
+                    if (user == null)
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.Unauthorized,
+                            ResponseText = "Not authorized"
+                        };
+                    }
+
+                    if (!int.TryParse(request[(request.IndexOf('/', 2) + 1)..(request.LastIndexOf('/'))],
+                            out var tradeId))
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.BadRequest,
+                            ResponseText = "Invalid input data"
+                        };
+
+                    var trade = await TradeRepository.Instance.GetById(tradeId);
+
+                    if (trade == null || (trade.OfferingUserId != user.Id && !user.Admin))
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.Unauthorized,
+                            ResponseText = "Not authorized"
+                        };
+                    }
+
+                    var result = await TradeRequestRepository.Instance.GetByTradeId(tradeId);
+
+                    return result != null
+                        ? new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.OK,
+                            ResponseText = JsonSerializer.Serialize(result)
+                        }
+                        : new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.NoContent,
+                            ResponseText = "No TradeRequests Available"
+                        };
+
+
+
+
                 }
 
             }
@@ -407,6 +639,84 @@ namespace MTCG.PresentationLayer
                             StatusCode = HttpStatusCode.InternalServerError,
                             ResponseText = "Error"
                         };
+
+                }
+
+                if (request.StartsWith("/tradeRequest/"))
+                {
+                    var callingUser = await UserRepository.Instance.GetByAuthToken(requestAuthToken);
+                    if (callingUser == null)
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.Unauthorized,
+                            ResponseText = "Not authorized"
+                        };
+                    }
+
+                    if (int.TryParse(request[(request.LastIndexOf('/') + 1)..], out var tradeRequestId))
+                    {
+
+                        Console.WriteLine(tradeRequestId);
+
+                        var tradeRequest = await TradeRequestRepository.Instance.GetById(tradeRequestId);
+                        if (tradeRequest == null)
+                        {
+                            return new HttpResponse()
+                            {
+                                StatusCode = HttpStatusCode.BadRequest,
+                                ResponseText = "Bad Request"
+                            };
+                        }
+
+                        Console.WriteLine(tradeRequest.Id);
+
+                        var tradeOffer = await TradeRepository.Instance.GetById(tradeRequest.TradeId);
+                        if (tradeOffer == null)
+                        {
+                            return new HttpResponse()
+                            {
+                                StatusCode = HttpStatusCode.InternalServerError,
+                                ResponseText = "Internal Server Error"
+                            };
+                        }
+                        Console.WriteLine(tradeOffer.Id);
+
+                        if (tradeOffer.OfferingUserId != callingUser.Id && !callingUser.Admin)
+                        {
+                            return new HttpResponse()
+                            {
+                                StatusCode = HttpStatusCode.Unauthorized,
+                                ResponseText = "Not authorized"
+                            };
+                        }
+
+                        Console.WriteLine($"Trade Request offered cardid {tradeRequest.OfferedCard.Id} and should become new UserID {tradeOffer.OfferingUserId}");
+                        Console.WriteLine($"Trade Offer offered cardid {tradeOffer.OfferedCard.Id} and should become new UserID {tradeRequest.RequestUserId}");
+
+                        Console.WriteLine("execute trade");
+
+                        if (await CardRepository.Instance.UpdateUserId(tradeRequest.OfferedCard,
+                                tradeOffer.OfferingUserId))
+                        {
+                            if (await CardRepository.Instance.UpdateUserId(tradeOffer.OfferedCard,
+                                    tradeRequest.RequestUserId))
+                            {
+                                return new HttpResponse()
+                                {
+                                    StatusCode = HttpStatusCode.OK,
+                                    ResponseText = "Trade executed"
+                                };
+                            }
+                        }
+
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.InternalServerError,
+                            ResponseText = "Internal Server Error"
+                        };
+
+                    }
 
                 }
             }

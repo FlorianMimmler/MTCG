@@ -34,7 +34,7 @@ namespace MTCG.DataAccessLayer
             throw new NotImplementedException();
         }
 
-        public Stats GetById(int id)
+        public Task<Stats?> GetById(int id)
         {
             throw new NotImplementedException();
         }

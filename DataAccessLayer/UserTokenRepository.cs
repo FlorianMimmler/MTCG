@@ -45,7 +45,7 @@ namespace MTCG.DataAccessLayer
             throw new NotImplementedException();
         }
 
-        public UserToken GetById(int id)
+        public Task<UserToken?> GetById(int id)
         {
             throw new NotImplementedException();
         }
