@@ -624,6 +624,15 @@ namespace MTCG.PresentationLayer
                         };
                     }
 
+                    if (editUserRequest.Username == callingUser.GetName())
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.Conflict,
+                            ResponseText = "New username must be different"
+                        };
+                    }
+
                     var user = await UserRepository.Instance.GetUserDataByUsername(username);
 
                     var result = user != null && await user.Edit(editUserRequest.Username, editUserRequest.Password);
