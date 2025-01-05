@@ -213,6 +213,17 @@ namespace MTCG.PresentationLayer
                         };
                     }
 
+                    var tradeOffer = await TradeRepository.Instance.GetById(tradeRequest.TradeId);
+
+                    if (tradeOffer != null && tradeOffer.OfferingUserId == user.Id)
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.Conflict,
+                            ResponseText = "You can't trade with yourself"
+                        };
+                    }
+
                     var newTradingRequest = new TradingDealRequest(tradeRequest.TradeId, user.Id, offeredCard);
 
                     var result = await TradeRequestRepository.Instance.Add(newTradingRequest);
