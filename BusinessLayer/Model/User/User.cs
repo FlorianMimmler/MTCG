@@ -66,11 +66,23 @@ namespace MTCG
         }
 
         public async Task<bool> SelectDeck(int[] selection)
-        {   
+        {
+            var oldDeck = await CardRepository.Instance.GetDeckByUser(this.Id);
+
+            var oldDeckSelection = oldDeck?.Select(card => card.Id).ToArray();
+
             _ = await CardRepository.Instance.ClearDeckFromUser(Id);
 
-            var result = await CardRepository.Instance.SetDeckByCards(selection);
-            return result == 4;
+            var result = await CardRepository.Instance.SetDeckByCards(selection, this.Id);
+
+            if (result != 4)
+            {
+                _ = await CardRepository.Instance.ClearDeckFromUser(Id);
+                _ = oldDeckSelection != null ? await CardRepository.Instance.SetDeckByCards(oldDeckSelection, this.Id) : 1;
+                return false;
+            }
+
+            return true;
 
         }
 

@@ -228,17 +228,18 @@ namespace MTCG.DataAccessLayer
             return (int)(await command.ExecuteNonQueryAsync());
         }
 
-        public async Task<int> SetDeckByCards(int[] cards)
+        public async Task<int> SetDeckByCards(int[] cards, int userID)
         {
             await using var conn = ConnectionController.CreateConnection();
             await conn.OpenAsync();
             await using var command = conn.CreateCommand();
 
-            command.CommandText = "UPDATE \"Card\" SET \"isDeck\" = true WHERE \"id\" IN (@card1, @card2, @card3, @card4)";
+            command.CommandText = "UPDATE \"Card\" SET \"isDeck\" = true WHERE \"userID\" = @userID and \"id\" IN (@card1, @card2, @card3, @card4)";
             ConnectionController.AddParameterWithValue(command, "card1", DbType.Int32, cards[0]);
             ConnectionController.AddParameterWithValue(command, "card2", DbType.Int32, cards[1]);
             ConnectionController.AddParameterWithValue(command, "card3", DbType.Int32, cards[2]);
             ConnectionController.AddParameterWithValue(command, "card4", DbType.Int32, cards[3]);
+            ConnectionController.AddParameterWithValue(command, "userID", DbType.Int32, userID);
 
             return (int)(await command.ExecuteNonQueryAsync());
         }
