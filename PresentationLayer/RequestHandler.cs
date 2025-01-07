@@ -135,7 +135,7 @@ namespace MTCG.PresentationLayer
 
                     return new HttpResponse()
                     {
-                        StatusCode = HttpStatusCode.OK,
+                        StatusCode = result.Contains("Error") ? HttpStatusCode.InternalServerError : HttpStatusCode.OK,
                         ResponseText = result
                     };
                 }
