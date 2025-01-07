@@ -261,8 +261,19 @@ namespace MTCG.DataAccessLayer
                 "UPDATE \"User\" SET coins = @coinsCount WHERE \"id\" = @id";
             ConnectionController.AddParameterWithValue(command, "coinsCount", DbType.Int32, newCoinsCount);
             ConnectionController.AddParameterWithValue(command, "id", DbType.Int32, userId);
-
-            return await command.ExecuteNonQueryAsync() == 1;
+            Console.WriteLine("here");
+            int result;
+            try
+            {
+                 result = await command.ExecuteNonQueryAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
+            
+            return result == 1;
         }
 
         public static void AddParameterWithValue(IDbCommand command, string parameterName, DbType type, object value)
