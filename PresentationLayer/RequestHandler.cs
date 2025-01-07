@@ -165,13 +165,23 @@ namespace MTCG.PresentationLayer
                     user.Deck.SetCards(userDeck);
 
                     var battle = new BattleController(user);
-                    battle.StartBattle();
-                    var result = battle.GetSerializedBattleLogForPlayer(1);
+                    var result = battle.StartBattle();
+
+                    if (!result)
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.InternalServerError,
+                            ResponseText = "An Unexpected Error occured"
+                        };
+                    }
+
+                    var log = battle.GetSerializedBattleLogForPlayer(1);
 
                     return new HttpResponse()
                     {
                         StatusCode = HttpStatusCode.OK,
-                        ResponseText = result
+                        ResponseText = log
                     };
                 }
 

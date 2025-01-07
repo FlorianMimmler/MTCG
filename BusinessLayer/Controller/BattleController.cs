@@ -47,32 +47,42 @@ namespace MTCG
         public List<BattleRoundLog> BattleLog { get; set; } = [];
         public BattleLogHeader BattleLogHeader { get; set; }
 
-        public void StartBattle()
+        public bool StartBattle()
         {
-            Console.WriteLine($"--------| Start Battle |--------");
-            Console.WriteLine($"{Player1.GetName()} Vs {Player2.GetName()}");
-
-            BattleLogHeader = new BattleLogHeader
+            try
             {
-                Player1 = Player1.GetName(),
-                Player2 = Player2.GetName()
-            };
+                Console.WriteLine($"--------| Start Battle |--------");
+                Console.WriteLine($"{Player1.GetName()} Vs {Player2.GetName()}");
 
-            for (; RoundsPlayed <= MaxBattleRounds; RoundsPlayed++)
-            {
-                Console.WriteLine($">> Round {RoundsPlayed} <<");
-                var roundLog = ProcessBattleRound(RoundsPlayed);
-
-                BattleLog.Add(roundLog);
-
-                //Check Decks for winner
-                if (IsBattleOver())
+                BattleLogHeader = new BattleLogHeader
                 {
-                    break;
+                    Player1 = Player1.GetName(),
+                    Player2 = Player2.GetName()
+                };
+
+                for (; RoundsPlayed <= MaxBattleRounds; RoundsPlayed++)
+                {
+                    Console.WriteLine($">> Round {RoundsPlayed} <<");
+                    var roundLog = ProcessBattleRound(RoundsPlayed);
+
+                    BattleLog.Add(roundLog);
+
+                    //Check Decks for winner
+                    if (IsBattleOver())
+                    {
+                        break;
+                    }
                 }
+
+                ProcessBattleResult();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
             }
 
-            ProcessBattleResult();
+            return true;
         }
 
         private BattleRoundLog ProcessBattleRound(int roundNumber)
