@@ -18,13 +18,11 @@ namespace MTCG.BusinessLayer.Model.User
         public void AddWin()
         {
             Wins++;
-            Elo.Increase();
         }
 
         public void AddLoss()
         {
             Losses++;
-            Elo.Decrease();
         }
     }
 }

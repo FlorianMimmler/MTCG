@@ -48,11 +48,10 @@ namespace MTCG
             // Start battle
             var battleController = new BattleController(player, opponent);
             battleController.StartBattle();
-            var result = battleController.GetSerializedBattleLog();
 
             // Complete both tasks (for both players)
-            opponentTcs.SetResult(result);
-            return result; // Immediate result for player B
+            opponentTcs.SetResult(battleController.GetSerializedBattleLogForPlayer(2));
+            return battleController.GetSerializedBattleLogForPlayer(1); ; // Immediate result for player B
             
         }
 

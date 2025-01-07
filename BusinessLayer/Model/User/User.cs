@@ -29,27 +29,24 @@ namespace MTCG
             Credentials = creds;
         }
 
-        public async Task<bool> BuyPackage()
+        public async Task<int> BuyPackage()
         {
 
             if (Coins >= Package.Price)
             {
+                if (!(await UserRepository.Instance.UpdateCoins(this.Coins - Package.Price, this.Id)))
+                {
+                    return 0;
+                }
                 var newCards = CardController.Instance.GetCards(Package.MaxCards);
                 Stack.AddCards(newCards);
-                Console.WriteLine("save cards");
                 var result = await CardRepository.Instance.AddMultiple(newCards, Id);
-                Console.WriteLine(result);
-                if (!result)
-                {
-                    return false;
-                }
-                Coins -= Package.Price;
-                return true;
+
+                return result ? 1 : 0;
             }
             else
             {
-                Console.WriteLine("Not enough coins available");
-                return false;
+                return 2;
             }
         }
 
@@ -66,11 +63,23 @@ namespace MTCG
         }
 
         public async Task<bool> SelectDeck(int[] selection)
-        {   
+        {
+            var oldDeck = await CardRepository.Instance.GetDeckByUser(this.Id);
+
+            var oldDeckSelection = oldDeck?.Select(card => card.Id).ToArray();
+
             _ = await CardRepository.Instance.ClearDeckFromUser(Id);
 
-            var result = await CardRepository.Instance.SetDeckByCards(selection);
-            return result == 4;
+            var result = await CardRepository.Instance.SetDeckByCards(selection, this.Id);
+
+            if (result != 4)
+            {
+                _ = await CardRepository.Instance.ClearDeckFromUser(Id);
+                _ = oldDeckSelection != null ? await CardRepository.Instance.SetDeckByCards(oldDeckSelection, this.Id) : 1;
+                return false;
+            }
+
+            return true;
 
         }
 
@@ -93,6 +102,11 @@ namespace MTCG
             }
 
             return await UserRepository.Instance.Update(this);
+        }
+
+        public async Task<bool> SaveStats()
+        {
+            return await StatsRepository.Instance.Update(this.Stats);
         }
 
         public ICard GetRandomCardFromDeck()

@@ -93,14 +93,18 @@ namespace MTCG.PresentationLayer
 
                     var success = await user.BuyPackage();
 
-                    return success ? new HttpResponse()
+                    return success == 1 ? new HttpResponse()
                     {
                         StatusCode = HttpStatusCode.OK,
                         ResponseText = "A package has been successfully bought"
-                    } : new HttpResponse()
+                    } : success == 2 ? new HttpResponse()
                     {
                         StatusCode = HttpStatusCode.Forbidden,
                         ResponseText = "Not enough money"
+                    } : new HttpResponse()
+                    {
+                        StatusCode = HttpStatusCode.InternalServerError,
+                        ResponseText = "An Unexpected Error Occured"
                     };
 
                 }
@@ -114,6 +118,16 @@ namespace MTCG.PresentationLayer
                         {
                             StatusCode = HttpStatusCode.Unauthorized,
                             ResponseText = "Not authorized"
+                        };
+                    }
+
+                    var userDeck = await CardRepository.Instance.GetDeckByUser(user.Id);
+                    if (userDeck?.Count != 4)
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.InternalServerError,
+                            ResponseText = "No Deck selected"
                         };
                     }
 
@@ -210,6 +224,17 @@ namespace MTCG.PresentationLayer
                         {
                             StatusCode = HttpStatusCode.BadRequest,
                             ResponseText = "Invalid input data"
+                        };
+                    }
+
+                    var tradeOffer = await TradeRepository.Instance.GetById(tradeRequest.TradeId);
+
+                    if (tradeOffer != null && tradeOffer.OfferingUserId == user.Id)
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.Conflict,
+                            ResponseText = "You can't trade with yourself"
                         };
                     }
 
@@ -621,6 +646,15 @@ namespace MTCG.PresentationLayer
                         {
                             StatusCode = HttpStatusCode.BadRequest,
                             ResponseText = "Invalid input data"
+                        };
+                    }
+
+                    if (editUserRequest.Username == callingUser.GetName())
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.Conflict,
+                            ResponseText = "New username must be different"
                         };
                     }
 

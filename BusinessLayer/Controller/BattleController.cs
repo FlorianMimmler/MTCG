@@ -3,7 +3,6 @@ using MTCG.BusinessLayer.Interface;
 using MTCG.BusinessLayer.Model.BattleStrategy;
 using System;
 using System.Text.Json;
-using System.Xml;
 
 namespace MTCG
 {
@@ -21,6 +20,7 @@ namespace MTCG
         public User Player2 { get; set; }
 
         private const int MaxBattleRounds = 100;
+        private int RoundsPlayed = 1;
 
         public List<BattleRoundLog> BattleLog { get; set; } = [];
         public BattleLogHeader BattleLogHeader { get; set; }
@@ -36,10 +36,10 @@ namespace MTCG
                 Player2 = Player2.GetName()
             };
 
-            for (var battleRoundIndex = 1; battleRoundIndex <= MaxBattleRounds; battleRoundIndex++)
+            for (; RoundsPlayed <= MaxBattleRounds; RoundsPlayed++)
             {
-                Console.WriteLine($">> Round {battleRoundIndex} <<");
-                var roundLog = ProcessBattleRound(battleRoundIndex);
+                Console.WriteLine($">> Round {RoundsPlayed} <<");
+                var roundLog = ProcessBattleRound(RoundsPlayed);
 
                 BattleLog.Add(roundLog);
 
@@ -68,14 +68,15 @@ namespace MTCG
             var result = this.BattleStrategy.Execute(card1, card2);
 
             //Process Winner
-            var winnerCard = ProcessBattleRoundResult(result, card1, card2);
+            var resultData = ProcessBattleRoundResult(result, card1, card2);
 
             return new BattleRoundLog
             {
                 RoundNumber = roundNumber,
                 CardPlayer1 = card1.Name,
                 CardPlayer2 = card2.Name,
-                WinnerCard = winnerCard
+                WinnerCard = resultData.Item2,
+                Winner = resultData.Item1
             };
         }
 
@@ -95,7 +96,7 @@ namespace MTCG
             }
         }
 
-        private string ProcessBattleRoundResult(BattleResult result, ICard card1, ICard card2)
+        private Tuple<string, string> ProcessBattleRoundResult(BattleResult result, ICard card1, ICard card2)
         {
             switch (result)
             {
@@ -103,15 +104,15 @@ namespace MTCG
                     Player1.GetDeck().AddCard(card2);
                     Player2.GetDeck().RemoveCard(card2);
                     Console.WriteLine($"{card1.Name} wins");
-                    return card1.Name;
+                    return new Tuple<string, string>(Player1.GetName(), card1.Name);
                 case BattleResult.Player2Wins:
                     Player2.GetDeck().AddCard(card1);
                     Player1.GetDeck().RemoveCard(card1);
                     Console.WriteLine($"{card2.Name} wins");
-                    return card2.Name;
+                    return new Tuple<string, string>(Player2.GetName(), card2.Name);
                 case BattleResult.Tie:
                     Console.WriteLine($"Tie");
-                    return "Tie";
+                    return new Tuple<string, string>("", "");
                 default:
                     throw new ArgumentOutOfRangeException(nameof(result), result, null);
             }
@@ -128,17 +129,17 @@ namespace MTCG
             {
                 return BattleResult.Player2Wins;
             }
-            else if (Player2.GetDeck().IsEmpty())
+
+            if (Player2.GetDeck().IsEmpty())
             {
                 return BattleResult.Player1Wins;
             }
-            else
-            {
-                return BattleResult.Tie;
-            }
+            
+            return BattleResult.Tie;
+            
         }
 
-        private void ProcessBattleResult()
+        private async void ProcessBattleResult()
         {
             var result = GetBattleResult();
             switch (result)
@@ -146,12 +147,16 @@ namespace MTCG
                 case BattleResult.Player1Wins:
                     Player1.Stats.AddWin();
                     Player2.Stats.AddLoss();
+                    Player1.Stats.Elo.Increase(GetEloPoints(1));
+                    Player2.Stats.Elo.Decrease(GetEloPoints(2));
                     Console.WriteLine("Player 1 wins");
                     BattleLogHeader.Winner = Player1.GetName();
                     break;
                 case BattleResult.Player2Wins:
                     Player2.Stats.AddWin();
                     Player1.Stats.AddLoss();
+                    Player1.Stats.Elo.Decrease(GetEloPoints(1));
+                    Player2.Stats.Elo.Increase(GetEloPoints(2));
                     Console.WriteLine("Player 2 wins");
                     BattleLogHeader.Winner = Player2.GetName();
                     break;
@@ -162,20 +167,37 @@ namespace MTCG
                 default:
                     throw new ArgumentOutOfRangeException(nameof(result), result, null);
             }
+            
+            _ = await Player1.SaveStats();
+            _ = await Player2.SaveStats();
         }
 
-        public string GetSerializedBattleLog()
+        public string GetSerializedBattleLogForPlayer(int player)
         {
             var battleLogObject = new
             {
                 player1 = BattleLogHeader.Player1,
                 player2 = BattleLogHeader.Player2,
                 winner = BattleLogHeader.Winner,
+                elo = GetEloPoints(player),
+                roundsCount = RoundsPlayed,
                 rounds = BattleLog
             };
 
             var battleLogString = JsonSerializer.Serialize(battleLogObject);
             return battleLogString;
+        }
+
+        private int GetEloPoints(int player)
+        {
+            var battleResult = GetBattleResult();
+            var baseElo = (player == 1 && battleResult == BattleResult.Player1Wins) ||
+                          (player == 2 && battleResult == BattleResult.Player2Wins) ? 20 :
+                (player == 1 && battleResult == BattleResult.Player2Wins) ||
+                (player == 2 && battleResult == BattleResult.Player1Wins) ? 12 :
+                0;
+
+            return baseElo / ((RoundsPlayed < 10 ? 10 : RoundsPlayed) / 10);
         }
     }
 
@@ -192,5 +214,6 @@ namespace MTCG
         public string CardPlayer1 { get; set; }
         public string CardPlayer2 { get; set; }
         public string WinnerCard { get; set; }
+        public string Winner { get; set; }
     }
 }
