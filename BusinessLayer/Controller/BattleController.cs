@@ -3,6 +3,7 @@ using MTCG.BusinessLayer.Interface;
 using MTCG.BusinessLayer.Model.BattleStrategy;
 using System;
 using System.Text.Json;
+using MTCG.BusinessLayer.Controller;
 
 namespace MTCG
 {
@@ -16,6 +17,27 @@ namespace MTCG
             this.Player2 = player2;
         }
 
+        public BattleController(User player)
+        {
+            this.Player1 = player;
+            CreateAiPlayer();
+        }
+
+        private void CreateAiPlayer()
+        {
+            var aiPlayer = new User(new Credentials("Ai-Player", "ai"))
+            {
+                Deck =
+                {
+                    Cards = CardController.Instance.GetCards(4)
+                }
+            };
+            this.Player2 = aiPlayer;
+            Ai = true;
+        }
+
+        private bool Ai = false;
+
         public User Player1 { get; set; }
         public User Player2 { get; set; }
 
@@ -25,32 +47,42 @@ namespace MTCG
         public List<BattleRoundLog> BattleLog { get; set; } = [];
         public BattleLogHeader BattleLogHeader { get; set; }
 
-        public void StartBattle()
+        public bool StartBattle()
         {
-            Console.WriteLine($"--------| Start Battle |--------");
-            Console.WriteLine($"{Player1.GetName()} Vs {Player2.GetName()}");
-
-            BattleLogHeader = new BattleLogHeader
+            try
             {
-                Player1 = Player1.GetName(),
-                Player2 = Player2.GetName()
-            };
+                Console.WriteLine($"--------| Start Battle |--------");
+                Console.WriteLine($"{Player1.GetName()} Vs {Player2.GetName()}");
 
-            for (; RoundsPlayed <= MaxBattleRounds; RoundsPlayed++)
-            {
-                Console.WriteLine($">> Round {RoundsPlayed} <<");
-                var roundLog = ProcessBattleRound(RoundsPlayed);
-
-                BattleLog.Add(roundLog);
-
-                //Check Decks for winner
-                if (IsBattleOver())
+                BattleLogHeader = new BattleLogHeader
                 {
-                    break;
+                    Player1 = Player1.GetName(),
+                    Player2 = Player2.GetName()
+                };
+
+                for (; RoundsPlayed <= MaxBattleRounds; RoundsPlayed++)
+                {
+                    Console.WriteLine($">> Round {RoundsPlayed} <<");
+                    var roundLog = ProcessBattleRound(RoundsPlayed);
+
+                    BattleLog.Add(roundLog);
+
+                    //Check Decks for winner
+                    if (IsBattleOver())
+                    {
+                        break;
+                    }
                 }
+
+                ProcessBattleResult();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
             }
 
-            ProcessBattleResult();
+            return true;
         }
 
         private BattleRoundLog ProcessBattleRound(int roundNumber)
@@ -73,8 +105,8 @@ namespace MTCG
             return new BattleRoundLog
             {
                 RoundNumber = roundNumber,
-                CardPlayer1 = card1.Name,
-                CardPlayer2 = card2.Name,
+                CardPlayer1 = card1,
+                CardPlayer2 = card2,
                 WinnerCard = resultData.Item2,
                 Winner = resultData.Item1
             };
@@ -169,7 +201,10 @@ namespace MTCG
             }
             
             _ = await Player1.SaveStats();
-            _ = await Player2.SaveStats();
+            if (!Ai)
+            {
+                _ = await Player2.SaveStats();
+            }
         }
 
         public string GetSerializedBattleLogForPlayer(int player)
@@ -196,7 +231,10 @@ namespace MTCG
                 (player == 1 && battleResult == BattleResult.Player2Wins) ||
                 (player == 2 && battleResult == BattleResult.Player1Wins) ? 12 :
                 0;
-
+            if (Ai)
+            {
+                baseElo /= 5;
+            }
             return baseElo / ((RoundsPlayed < 10 ? 10 : RoundsPlayed) / 10);
         }
     }
@@ -211,8 +249,8 @@ namespace MTCG
     internal class BattleRoundLog
     {
         public int RoundNumber { get; set; }
-        public string CardPlayer1 { get; set; }
-        public string CardPlayer2 { get; set; }
+        public ICard CardPlayer1 { get; set; }
+        public ICard CardPlayer2 { get; set; }
         public string WinnerCard { get; set; }
         public string Winner { get; set; }
     }

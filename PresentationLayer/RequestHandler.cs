@@ -135,8 +135,53 @@ namespace MTCG.PresentationLayer
 
                     return new HttpResponse()
                     {
-                        StatusCode = HttpStatusCode.OK,
+                        StatusCode = result.Contains("Error") ? HttpStatusCode.InternalServerError : HttpStatusCode.OK,
                         ResponseText = result
+                    };
+                }
+
+                if (request.StartsWith("/ai-battle"))
+                {
+                    var user = await UserRepository.Instance.GetByAuthToken(requestAuthToken);
+                    if (user == null)
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.Unauthorized,
+                            ResponseText = "Not authorized"
+                        };
+                    }
+
+                    var userDeck = await CardRepository.Instance.GetDeckByUser(user.Id);
+                    if (userDeck?.Count != 4)
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.InternalServerError,
+                            ResponseText = "No Deck selected"
+                        };
+                    }
+
+                    user.Deck.SetCards(userDeck);
+
+                    var battle = new BattleController(user);
+                    var result = battle.StartBattle();
+
+                    if (!result)
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.InternalServerError,
+                            ResponseText = "An Unexpected Error occured"
+                        };
+                    }
+
+                    var log = battle.GetSerializedBattleLogForPlayer(1);
+
+                    return new HttpResponse()
+                    {
+                        StatusCode = HttpStatusCode.OK,
+                        ResponseText = log
                     };
                 }
 

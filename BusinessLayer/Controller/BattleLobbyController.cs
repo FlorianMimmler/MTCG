@@ -47,7 +47,13 @@ namespace MTCG
 
             // Start battle
             var battleController = new BattleController(player, opponent);
-            battleController.StartBattle();
+            var result = battleController.StartBattle();
+
+            if (!result)
+            {
+                opponentTcs.SetResult("An Unexcpected Error Occured");
+                return "An Unexcpected Error Occured";
+            }
 
             // Complete both tasks (for both players)
             opponentTcs.SetResult(battleController.GetSerializedBattleLogForPlayer(2));
