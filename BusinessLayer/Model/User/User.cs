@@ -29,27 +29,27 @@ namespace MTCG
             Credentials = creds;
         }
 
-        public async Task<bool> BuyPackage()
+        public async Task<int> BuyPackage()
         {
 
             if (Coins >= Package.Price)
             {
+                if (!await UserRepository.Instance.UpdateCoins(this.Coins - Package.Price, this.Id))
+                {
+                    return 0;
+                }
                 var newCards = CardController.Instance.GetCards(Package.MaxCards);
                 Stack.AddCards(newCards);
                 Console.WriteLine("save cards");
                 var result = await CardRepository.Instance.AddMultiple(newCards, Id);
                 Console.WriteLine(result);
-                if (!result)
-                {
-                    return false;
-                }
-                Coins -= Package.Price;
-                return true;
+
+                return result ? 1 : 0;
             }
             else
             {
                 Console.WriteLine("Not enough coins available");
-                return false;
+                return 2;
             }
         }
 

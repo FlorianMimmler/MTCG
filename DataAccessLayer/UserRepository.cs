@@ -251,6 +251,20 @@ namespace MTCG.DataAccessLayer
             return false;
         }
 
+        public async Task<bool> UpdateCoins(int newCoinsCount, int userId)
+        {
+            await using var conn = ConnectionController.CreateConnection();
+            await conn.OpenAsync();
+            await using var command = conn.CreateCommand();
+
+            command.CommandText =
+                "UPDATE \"User\" SET coins = @coinsCount WHERE \"id\" = @id";
+            ConnectionController.AddParameterWithValue(command, "coinsCount", DbType.Int32, newCoinsCount);
+            ConnectionController.AddParameterWithValue(command, "id", DbType.Int32, userId);
+
+            return await command.ExecuteNonQueryAsync() == 1;
+        }
+
         public static void AddParameterWithValue(IDbCommand command, string parameterName, DbType type, object value)
         {
             var parameter = command.CreateParameter();

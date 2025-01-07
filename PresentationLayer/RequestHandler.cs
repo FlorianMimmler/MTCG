@@ -93,14 +93,18 @@ namespace MTCG.PresentationLayer
 
                     var success = await user.BuyPackage();
 
-                    return success ? new HttpResponse()
+                    return success == 1 ? new HttpResponse()
                     {
                         StatusCode = HttpStatusCode.OK,
                         ResponseText = "A package has been successfully bought"
-                    } : new HttpResponse()
+                    } : success == 2 ? new HttpResponse()
                     {
                         StatusCode = HttpStatusCode.Forbidden,
                         ResponseText = "Not enough money"
+                    } : new HttpResponse()
+                    {
+                        StatusCode = HttpStatusCode.InternalServerError,
+                        ResponseText = "An Unexpected Error Occured"
                     };
 
                 }
