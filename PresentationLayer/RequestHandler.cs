@@ -140,6 +140,41 @@ namespace MTCG.PresentationLayer
                     };
                 }
 
+                if (request.StartsWith("/ai-battle"))
+                {
+                    var user = await UserRepository.Instance.GetByAuthToken(requestAuthToken);
+                    if (user == null)
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.Unauthorized,
+                            ResponseText = "Not authorized"
+                        };
+                    }
+
+                    var userDeck = await CardRepository.Instance.GetDeckByUser(user.Id);
+                    if (userDeck?.Count != 4)
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.InternalServerError,
+                            ResponseText = "No Deck selected"
+                        };
+                    }
+
+                    user.Deck.SetCards(userDeck);
+
+                    var battle = new BattleController(user);
+                    battle.StartBattle();
+                    var result = battle.GetSerializedBattleLogForPlayer(1);
+
+                    return new HttpResponse()
+                    {
+                        StatusCode = HttpStatusCode.OK,
+                        ResponseText = result
+                    };
+                }
+
                 if (request == "/trade")
                 {
                     var user = await UserRepository.Instance.GetByAuthToken(requestAuthToken);
