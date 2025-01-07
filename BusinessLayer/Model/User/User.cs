@@ -107,6 +107,11 @@ namespace MTCG
             return await UserRepository.Instance.Update(this);
         }
 
+        public async Task<bool> SaveStats()
+        {
+            return await StatsRepository.Instance.Update(this.Stats);
+        }
+
         public ICard GetRandomCardFromDeck()
         {
             return this.Deck.GetRandomCard();

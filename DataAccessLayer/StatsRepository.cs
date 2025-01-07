@@ -1,4 +1,5 @@
 ﻿using MTCG.BusinessLayer.Model.User;
+using System.Data;
 
 namespace MTCG.DataAccessLayer
 {
@@ -39,9 +40,20 @@ namespace MTCG.DataAccessLayer
             throw new NotImplementedException();
         }
 
-        public Task<bool> Update(Stats entity)
+        public async Task<bool> Update(Stats entity)
         {
-            throw new NotImplementedException();
+            await using var conn = ConnectionController.CreateConnection();
+            await conn.OpenAsync();
+            await using var command = conn.CreateCommand();
+
+            command.CommandText = "UPDATE \"Stats\" SET wins = @wins, losses = @losses, eloscore = @eloscore WHERE id = @id";
+
+            ConnectionController.AddParameterWithValue(command, "wins", DbType.Int32, entity.Wins);
+            ConnectionController.AddParameterWithValue(command, "losses", DbType.Int32, entity.Losses);
+            ConnectionController.AddParameterWithValue(command, "eloscore", DbType.Int32, entity.Elo.EloScore);
+            ConnectionController.AddParameterWithValue(command, "id", DbType.Int32, entity.Id);
+
+            return await command.ExecuteNonQueryAsync() == 1;
         }
     }
 }

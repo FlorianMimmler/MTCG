@@ -117,6 +117,16 @@ namespace MTCG.PresentationLayer
                         };
                     }
 
+                    var userDeck = await CardRepository.Instance.GetDeckByUser(user.Id);
+                    if (userDeck?.Count != 4)
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.InternalServerError,
+                            ResponseText = "No Deck selected"
+                        };
+                    }
+
                     var result = await BattleLobbyController.Instance.EnterLobby(user);
 
                     return new HttpResponse()
