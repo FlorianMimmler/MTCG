@@ -3,12 +3,15 @@ using System.Data;
 
 namespace MTCG.DataAccessLayer
 {
-    internal class StatsRepository : IRepository<Stats>
+    public class StatsRepository : IStatsRepository
     {
 
-        private static StatsRepository? _instance;
+        private static IStatsRepository? _instance;
 
-        public static StatsRepository Instance => _instance ??= new StatsRepository();
+        public static IStatsRepository Instance {
+            get => _instance ??= new StatsRepository();
+            set => _instance = value;
+        }
 
         private StatsRepository()
         {

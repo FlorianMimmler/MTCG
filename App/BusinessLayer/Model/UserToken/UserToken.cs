@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MTCG
 {
-    internal class UserToken(int userID, AuthToken token)
+    public class UserToken(int userID, AuthToken token)
     {
 
         public int UserID = userID;

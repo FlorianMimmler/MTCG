@@ -1,13 +1,16 @@
-﻿using MTCG.Auth;
-using MTCG.DataAccessLayer;
+﻿using MTCG.DataAccessLayer;
 
-namespace MTCG
+namespace MTCG.Auth
 {
-    internal class AuthenticationController
+    public class AuthenticationController
     {
 
         private static AuthenticationController? _instance;
-        public static AuthenticationController Instance => _instance ??= new AuthenticationController();
+        public static AuthenticationController Instance
+        {
+            get => _instance ??= new AuthenticationController();
+            set => _instance = value;
+        } 
 
         private AuthenticationController()
         {

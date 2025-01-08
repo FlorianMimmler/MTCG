@@ -1,10 +1,8 @@
 ﻿
-using System;
 using System.Security.Cryptography;
-using System.Security.Policy;
 using System.Text;
 
-namespace MTCG
+namespace MTCG.Auth
 {
     public class Credentials
     {

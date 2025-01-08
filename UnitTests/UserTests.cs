@@ -1,4 +1,5 @@
 using MTCG;
+using MTCG.Auth;
 
 namespace MTCG_uTests
 {

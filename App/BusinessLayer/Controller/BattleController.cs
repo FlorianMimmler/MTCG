@@ -5,6 +5,7 @@ using System;
 using System.Text.Json;
 using MTCG.BusinessLayer.Controller;
 using MTCG.BusinessLayer.Model.Card;
+using MTCG.Auth;
 
 namespace MTCG
 {

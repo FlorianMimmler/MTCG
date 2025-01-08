@@ -1,16 +1,21 @@
 ﻿using System.Data;
 using System.Data.Common;
+using MTCG.Auth;
 using MTCG.BusinessLayer.Model.User;
 using Npgsql;
 
 namespace MTCG.DataAccessLayer
 {
-    internal class UserRepository : IRepository<User>
+    public class UserRepository : IUserRepository
     {
 
-        private static UserRepository? _instance;
+        private static IUserRepository? _instance;
 
-        public static UserRepository Instance => _instance ??= new UserRepository();
+        public static IUserRepository Instance
+        {
+            get => _instance ??= new UserRepository();
+            set => _instance = value; // Allow override for testing
+        }
 
 
         private UserRepository()
@@ -25,10 +30,10 @@ namespace MTCG.DataAccessLayer
 
             command.CommandText = "INSERT INTO \"User\" (username, password, salt, \"statsID\") " +
                                   "VALUES (@username, @password, @salt, @statsID) RETURNING id";
-            AddParameterWithValue(command, "username", DbType.String, entity.GetName());
-            AddParameterWithValue(command, "password", DbType.String, entity.Credentials.Password);
-            AddParameterWithValue(command, "salt", DbType.String, entity.Credentials.Salt);
-            AddParameterWithValue(command, "statsID", DbType.Int32, entity.Stats.Id);
+            ConnectionController.AddParameterWithValue(command, "username", DbType.String, entity.GetName());
+            ConnectionController.AddParameterWithValue(command, "password", DbType.String, entity.Credentials.Password);
+            ConnectionController.AddParameterWithValue(command, "salt", DbType.String, entity.Credentials.Salt);
+            ConnectionController.AddParameterWithValue(command, "statsID", DbType.Int32, entity.Stats.Id);
             return (int)(await command.ExecuteScalarAsync() ?? 0);
     
         }
@@ -100,7 +105,7 @@ namespace MTCG.DataAccessLayer
             await using var command = conn.CreateCommand();
 
             command.CommandText = "SELECT id, username, password, salt FROM \"User\" WHERE username = @username";
-            AddParameterWithValue(command, "username", DbType.String, username);
+            ConnectionController.AddParameterWithValue(command, "username", DbType.String, username);
 
             await using var reader = await command.ExecuteReaderAsync();
 
@@ -136,7 +141,7 @@ namespace MTCG.DataAccessLayer
                                   LEFT JOIN "Stats" as stats on u."statsID" = stats."id"
                                   WHERE u."username" = @username
                                   """;
-            AddParameterWithValue(command, "username", DbType.String, username);
+            ConnectionController.AddParameterWithValue(command, "username", DbType.String, username);
 
             await using var reader = await command.ExecuteReaderAsync();
 
@@ -183,7 +188,7 @@ namespace MTCG.DataAccessLayer
                                    LEFT JOIN "Stats" as stats on u."statsID" = stats."id"
                                    WHERE uT."authToken" = @authToken
                                    """;
-            AddParameterWithValue(command, "authToken", DbType.String, authToken);
+            ConnectionController.AddParameterWithValue(command, "authToken", DbType.String, authToken);
 
             await using var reader = await command.ExecuteReaderAsync();
 
@@ -274,15 +279,6 @@ namespace MTCG.DataAccessLayer
             }
             
             return result == 1;
-        }
-
-        public static void AddParameterWithValue(IDbCommand command, string parameterName, DbType type, object value)
-        {
-            var parameter = command.CreateParameter();
-            parameter.DbType = type;
-            parameter.ParameterName = parameterName;
-            parameter.Value = value ?? DBNull.Value;
-            command.Parameters.Add(parameter);
         }
 
     }

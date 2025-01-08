@@ -2,12 +2,16 @@
 
 namespace MTCG.DataAccessLayer
 {
-    internal class UserTokenRepository : IRepository<UserToken>
+    public class UserTokenRepository : IUserTokenRepository
     {
 
-        private static UserTokenRepository? _instance;
+        private static IUserTokenRepository? _instance;
 
-        public static UserTokenRepository Instance => _instance ??= new UserTokenRepository();
+        public static IUserTokenRepository Instance
+        {
+            get => _instance ??= new UserTokenRepository();
+            set => _instance = value;
+        } 
 
         private UserTokenRepository()
         {
@@ -21,8 +25,8 @@ namespace MTCG.DataAccessLayer
 
             command.CommandText = "INSERT INTO \"UserToken\" (\"userID\", \"authToken\") " +
                                   "VALUES (@userID, @authToken) RETURNING id";
-            AddParameterWithValue(command, "userID", DbType.Int32, entity.UserID);
-            AddParameterWithValue(command, "authToken", DbType.String, entity.Token.Value);
+            ConnectionController.AddParameterWithValue(command, "userID", DbType.Int32, entity.UserID);
+            ConnectionController.AddParameterWithValue(command, "authToken", DbType.String, entity.Token.Value);
             
             return (int)(await command.ExecuteScalarAsync() ?? -1);
 
@@ -35,7 +39,7 @@ namespace MTCG.DataAccessLayer
             await using var command = conn.CreateCommand();
 
             command.CommandText = "DELETE FROM \"UserToken\" WHERE \"authToken\" = @authToken";
-            AddParameterWithValue(command, "authToken", DbType.String, entity.Token.Value);
+            ConnectionController.AddParameterWithValue(command, "authToken", DbType.String, entity.Token.Value);
 
             return (int)(await command.ExecuteNonQueryAsync());
         }
@@ -57,7 +61,7 @@ namespace MTCG.DataAccessLayer
             await using var command = conn.CreateCommand();
 
             command.CommandText = "SELECT \"userID\" FROM \"UserToken\" WHERE \"authToken\" = @authToken";
-            AddParameterWithValue(command, "authToken", DbType.String, authToken);
+            ConnectionController.AddParameterWithValue(command, "authToken", DbType.String, authToken);
 
             await using var reader = await command.ExecuteReaderAsync();
 
@@ -74,15 +78,6 @@ namespace MTCG.DataAccessLayer
         public Task<bool> Update(UserToken entity)
         {
             throw new NotImplementedException();
-        }
-
-        public static void AddParameterWithValue(IDbCommand command, string parameterName, DbType type, object value)
-        {
-            var parameter = command.CreateParameter();
-            parameter.DbType = type;
-            parameter.ParameterName = parameterName;
-            parameter.Value = value ?? DBNull.Value;
-            command.Parameters.Add(parameter);
         }
 
     }
