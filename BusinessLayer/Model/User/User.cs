@@ -2,6 +2,7 @@
 using MTCG.BusinessLayer.Controller;
 using MTCG.BusinessLayer.Interface;
 using MTCG.BusinessLayer.Model;
+using MTCG.BusinessLayer.Model.Achievements;
 using MTCG.BusinessLayer.Model.User;
 using MTCG.DataAccessLayer;
 
@@ -22,11 +23,33 @@ namespace MTCG
 
         public ICardWrapper Stack { get; set; } = new Stack();
 
+        public List<int>? AchievementIds { get; set; }
+        public List<Achievement> NewAchievements { get; set; } = [];
+
         public User() {}
 
         public User(Credentials creds)
         {
             Credentials = creds;
+            _ = LoadAchievements();
+
+        }
+
+        private async Task<int> LoadAchievements()
+        {
+            AchievementIds = (await AchievementRepository.Instance.GetAchievementsByUser(this.Id)).Select(achievement => achievement.Id)
+                .ToList();
+            return AchievementIds.Count;
+        }
+
+        public async Task<List<Achievement>> GetAchievements()
+        {
+            AchievementIds ??= (await AchievementRepository.Instance.GetAchievementsByUser(this.Id))
+                    .Select(achievement => achievement.Id)
+                    .ToList();
+
+            return AchievementController.Instance.GetAchievements()
+                .Where(achievement => AchievementIds.Contains(achievement.Id)).ToList();
         }
 
         public async Task<int> BuyPackage()
@@ -107,6 +130,55 @@ namespace MTCG
         public async Task<bool> SaveStats()
         {
             return await StatsRepository.Instance.Update(this.Stats);
+        }
+
+        public async Task<bool> CheckAndUnlockAchievements()
+        {
+            if (AchievementIds == null)
+            {
+                var count = await LoadAchievements();
+                Console.WriteLine("unlocked achievments player " + this.Id + ": " + count);
+            }
+            var achievementList = AchievementController.Instance.GetAchievements() ?? [];
+            var success = true;
+            foreach (var achievement in achievementList.Where(achievement => !AchievementIds.Contains(achievement.Id)))
+            {
+                Console.WriteLine(achievement.Id + " is open");
+                if (AchievementTypes.Wins == achievement.Type && this.Stats.Wins >= achievement.Value ||
+                    AchievementTypes.Elo == achievement.Type && this.Stats.Elo.EloScore >= achievement.Value)
+                {
+                    Console.WriteLine(achievement.Id + " gets added");
+                    success = await AddAchievement(achievement);
+                }
+            }
+            return success;
+        }
+
+        private async Task<bool> AddAchievement(Achievement achievement)
+        {
+            NewAchievements.Add(achievement);
+            Console.WriteLine("New Achievements: " + NewAchievements.Count);
+            if (await UserAchievementRepository.Instance.Add(new UserAchievement(this.Id, achievement)) >= 0)
+            {
+                return await ApplyAchievementRewards(achievement);
+            }
+
+            return false;
+        }
+
+        private async Task<bool> ApplyAchievementRewards(Achievement achievement)
+        {
+            switch (achievement.RewardType)
+            {
+                case AchievementTypes.Coins:
+                    this.Coins += achievement.RewardValue;
+                    return await UserRepository.Instance.UpdateCoins(this.Coins, this.Id);
+                case AchievementTypes.Elo:
+                    this.Stats.Elo.EloScore += achievement.RewardValue;
+                    return await StatsRepository.Instance.Update(this.Stats);
+                default:
+                    return true;
+            }
         }
 
         public ICard GetRandomCardFromDeck()

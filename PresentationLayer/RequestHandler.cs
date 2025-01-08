@@ -165,7 +165,7 @@ namespace MTCG.PresentationLayer
                     user.Deck.SetCards(userDeck);
 
                     var battle = new BattleController(user);
-                    var result = battle.StartBattle();
+                    var result = await battle.StartBattle();
 
                     if (!result)
                     {
@@ -459,6 +459,27 @@ namespace MTCG.PresentationLayer
                     {
                         StatusCode = HttpStatusCode.OK,
                         ResponseText = JsonSerializer.Serialize(usersCardDtos)
+                    };
+                }
+
+                if (request == "/achievements")
+                {
+                    var user = await UserRepository.Instance.GetByAuthToken(requestAuthToken);
+                    if (user == null)
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.Unauthorized,
+                            ResponseText = "Not authorized"
+                        };
+                    }
+
+                    var result = await user.GetAchievements();
+
+                    return new HttpResponse()
+                    {
+                        StatusCode = HttpStatusCode.OK,
+                        ResponseText = JsonSerializer.Serialize(result)
                     };
                 }
 

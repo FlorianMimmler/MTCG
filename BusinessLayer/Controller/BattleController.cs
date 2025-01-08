@@ -47,7 +47,7 @@ namespace MTCG
         public List<BattleRoundLog> BattleLog { get; set; } = [];
         public BattleLogHeader BattleLogHeader { get; set; }
 
-        public bool StartBattle()
+        public async Task<bool> StartBattle()
         {
             try
             {
@@ -74,7 +74,7 @@ namespace MTCG
                     }
                 }
 
-                ProcessBattleResult();
+                _ = await ProcessBattleResult();
             }
             catch (Exception e)
             {
@@ -171,7 +171,7 @@ namespace MTCG
             
         }
 
-        private async void ProcessBattleResult()
+        private async Task<int> ProcessBattleResult()
         {
             var result = GetBattleResult();
             switch (result)
@@ -201,20 +201,27 @@ namespace MTCG
             }
             
             _ = await Player1.SaveStats();
-            if (!Ai)
-            {
-                _ = await Player2.SaveStats();
-            }
+            if (Ai) return 1;
+
+            _ = await Player2.SaveStats();
+            _ = await Player2.CheckAndUnlockAchievements();
+            _ = await Player1.CheckAndUnlockAchievements();
+
+            return 1;
         }
 
         public string GetSerializedBattleLogForPlayer(int player)
         {
+            Console.WriteLine("Log Achievements: " + Player1.NewAchievements.Count);
+            Console.WriteLine("Log Achievements: " + Player2.NewAchievements.Count);
+
             var battleLogObject = new
             {
                 player1 = BattleLogHeader.Player1,
                 player2 = BattleLogHeader.Player2,
                 winner = BattleLogHeader.Winner,
                 elo = GetEloPoints(player),
+                newAchievements = player == 1 ? Player1.NewAchievements : Player2.NewAchievements,
                 roundsCount = RoundsPlayed,
                 rounds = BattleLog
             };

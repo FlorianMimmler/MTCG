@@ -47,7 +47,7 @@ namespace MTCG
 
             // Start battle
             var battleController = new BattleController(player, opponent);
-            var result = battleController.StartBattle();
+            var result = await battleController.StartBattle();
 
             if (!result)
             {
