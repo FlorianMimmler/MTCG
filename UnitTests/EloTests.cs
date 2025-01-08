@@ -77,10 +77,10 @@ namespace MTCG_uTests
             // Given
             _elo.EloScore = score;
 
-            // When
+            // Act
             var result = _elo.GetEloName();
 
-            // Then
+            // Assert
             Assert.That(result, Is.EqualTo(expectedName));
         }
 

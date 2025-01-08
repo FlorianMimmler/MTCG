@@ -18,13 +18,13 @@ namespace MTCG_uTests
         [Test]
         public void AddWin_AddsOneWin_ShouldUpdateStats()
         {
-            //Given
+            //Arrange
             var stats = new Stats();
 
-            //When
+            //Act
             stats.AddWin();
 
-            //Then
+            //Assert
             Assert.That(stats.Wins, Is.EqualTo(1));
 
         }
@@ -32,13 +32,13 @@ namespace MTCG_uTests
         [Test]
         public void AddLoss_AddsOneLoss_ShouldUpdateStats()
         {
-            //Given
+            //Arrange
             var stats = new Stats();
 
-            //When
+            //Act
             stats.AddLoss();
 
-            //Then
+            //Assert
             Assert.That(stats.Losses, Is.EqualTo(1));
 
         }

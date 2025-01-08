@@ -1,10 +1,11 @@
 ﻿using MTCG.BusinessLayer.Interface;
+using MTCG.BusinessLayer.Model.Card;
 
 namespace MTCG.BusinessLayer.Model.BattleStrategy
 {
     internal class MonsterBattleStrategy : BattleStrategy
     {
-        private readonly SpecialCaseResolver _specialCaseResolver = new SpecialCaseResolver();
+        private readonly SpecialCaseResolver _specialCaseResolver = new();
 
         public override BattleResult Execute(ICard card1, ICard card2)
         {

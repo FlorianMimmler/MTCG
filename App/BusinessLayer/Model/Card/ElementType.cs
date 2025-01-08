@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿namespace MTCG.BusinessLayer.Model.Card;
 
 public enum ElementType
 {

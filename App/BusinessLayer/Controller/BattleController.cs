@@ -4,6 +4,7 @@ using MTCG.BusinessLayer.Model.BattleStrategy;
 using System;
 using System.Text.Json;
 using MTCG.BusinessLayer.Controller;
+using MTCG.BusinessLayer.Model.Card;
 
 namespace MTCG
 {

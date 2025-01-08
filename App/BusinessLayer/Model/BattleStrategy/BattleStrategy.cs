@@ -2,7 +2,7 @@
 
 namespace MTCG.BusinessLayer.Model.BattleStrategy
 {
-    internal abstract class BattleStrategy : IBattleStrategy
+    public abstract class BattleStrategy : IBattleStrategy
     {
         public abstract BattleResult Execute(ICard card1, ICard card2);
 

@@ -1,4 +1,5 @@
 ﻿using MTCG.BusinessLayer.Interface;
+using MTCG.BusinessLayer.Model.Card;
 using System;
 using System.Collections.Generic;
 

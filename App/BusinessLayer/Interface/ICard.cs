@@ -1,4 +1,6 @@
 ﻿
+using MTCG.BusinessLayer.Model.Card;
+
 namespace MTCG.BusinessLayer.Interface
 {
     public interface ICard

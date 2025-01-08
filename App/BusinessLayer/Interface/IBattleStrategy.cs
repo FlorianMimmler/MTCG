@@ -1,6 +1,6 @@
 ﻿using MTCG.BusinessLayer.Interface;
 
-namespace MTCG.BusinessLayer
+namespace MTCG.BusinessLayer.Model.BattleStrategy
 {
     internal interface IBattleStrategy
     {

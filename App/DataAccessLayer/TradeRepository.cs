@@ -8,6 +8,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using MTCG.BusinessLayer.Interface;
+using MTCG.BusinessLayer.Model.Card;
 using MTCG.BusinessLayer.Model.Trading;
 using Npgsql;
 using NpgsqlTypes;

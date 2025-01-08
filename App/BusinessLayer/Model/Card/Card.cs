@@ -2,9 +2,9 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace MTCG
+namespace MTCG.BusinessLayer.Model.Card
 {
-    internal abstract class Card : ICard
+    public abstract class Card : ICard
     {
         protected Card(string name, int damage, ElementType elementType, int? id = null)
         {

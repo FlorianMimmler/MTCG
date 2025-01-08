@@ -9,24 +9,27 @@ namespace MTCG
     public class Credentials
     {
         public string Username { get; set; }
-        public string Password { get; private set; }  // Password should be set only internally.
+        public string Password { get; private set; }
         public string Salt { get; private set; }
 
         public Credentials(string username, string password)
         {
             Username = username;
-            Salt = GenerateSalt();  // Generate a random salt
+            Salt = GenerateSalt();
             Password = HashPassword(password);
         }
 
-        public Credentials() { }
+        public Credentials() 
+        {
+            Username = "";
+            Password = "";
+            Salt = "";
+        }
 
         private string HashPassword(string password)
         {
-            // Combine password and salt before hashing
             var saltedPassword = password + Salt;
 
-            // Hash the salted password using SHA256
             using var sha256 = SHA256.Create();
             var hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(saltedPassword));
             return Convert.ToBase64String(hashBytes);

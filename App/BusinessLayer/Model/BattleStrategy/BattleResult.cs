@@ -1,4 +1,4 @@
-﻿namespace MTCG.BusinessLayer
+﻿namespace MTCG.BusinessLayer.Model.BattleStrategy
 {
     public enum BattleResult
     {

@@ -1,4 +1,5 @@
 ﻿using MTCG.BusinessLayer.Interface;
+using MTCG.BusinessLayer.Model.Card;
 
 namespace MTCG.BusinessLayer.Model.BattleStrategy
 {

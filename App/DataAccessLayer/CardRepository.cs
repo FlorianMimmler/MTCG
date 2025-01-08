@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using System.Data.Common;
 using MTCG.BusinessLayer.Interface;
+using MTCG.BusinessLayer.Model.Card;
 using Npgsql;
 
 namespace MTCG.DataAccessLayer

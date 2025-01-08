@@ -1,7 +1,7 @@
 ﻿
-namespace MTCG
+namespace MTCG.BusinessLayer.Model.Card
 {
-    internal class MonsterCard : Card
+    public class MonsterCard : Card
     {
         public MonsterCard(int damage, ElementType elementType, MonsterType monsterType, int? id = null, string? name = null) : base(name ?? elementType.GetString() + monsterType, damage, elementType, id)
         {
