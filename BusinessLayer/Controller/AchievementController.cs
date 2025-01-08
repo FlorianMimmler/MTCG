@@ -32,9 +32,9 @@ namespace MTCG.BusinessLayer.Controller
             return _achievementList?.First(achievement => achievement.Id == id);
         }
 
-        public List<Achievement>? GetAchievements()
+        public List<Achievement> GetAchievements()
         {
-            return _achievementList?.ToList();
+            return _achievementList?.ToList() ?? [];
         }
 
     }

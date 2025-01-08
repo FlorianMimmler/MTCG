@@ -42,6 +42,16 @@ namespace MTCG
             return AchievementIds.Count;
         }
 
+        public async Task<List<Achievement>> GetAchievements()
+        {
+            AchievementIds ??= (await AchievementRepository.Instance.GetAchievementsByUser(this.Id))
+                    .Select(achievement => achievement.Id)
+                    .ToList();
+
+            return AchievementController.Instance.GetAchievements()
+                .Where(achievement => AchievementIds.Contains(achievement.Id)).ToList();
+        }
+
         public async Task<int> BuyPackage()
         {
 

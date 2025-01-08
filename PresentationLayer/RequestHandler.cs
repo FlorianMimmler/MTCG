@@ -462,6 +462,27 @@ namespace MTCG.PresentationLayer
                     };
                 }
 
+                if (request == "/achievements")
+                {
+                    var user = await UserRepository.Instance.GetByAuthToken(requestAuthToken);
+                    if (user == null)
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.Unauthorized,
+                            ResponseText = "Not authorized"
+                        };
+                    }
+
+                    var result = await user.GetAchievements();
+
+                    return new HttpResponse()
+                    {
+                        StatusCode = HttpStatusCode.OK,
+                        ResponseText = JsonSerializer.Serialize(result)
+                    };
+                }
+
                 if (request == "/scoreboard")
                 {
                     if (!await AuthenticationController.Instance.IsAuthorized(requestAuthToken))
