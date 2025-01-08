@@ -165,7 +165,7 @@ namespace MTCG.PresentationLayer
                     user.Deck.SetCards(userDeck);
 
                     var battle = new BattleController(user);
-                    var result = battle.StartBattle();
+                    var result = await battle.StartBattle();
 
                     if (!result)
                     {
