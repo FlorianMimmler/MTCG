@@ -33,7 +33,7 @@ namespace MTCG.DataAccessLayer
             await using var command = conn.CreateCommand();
 
             command.CommandText = """
-                                  SELECT a.id, a.type, a.value, a.rewardtype, a.rewardvalue
+                                  SELECT a.id, a.name, a.type, a.value, a.rewardtype, a.rewardvalue
                                   FROM "Achievement" a
                                   """;
 
@@ -45,6 +45,7 @@ namespace MTCG.DataAccessLayer
                 achievements.Add(new Achievement
                 {
                     Id = reader.GetInt32("id"),
+                    Name = reader.GetString("name"),
                     Type = Achievement.StringAchievementToEnum(reader.GetString("type")),
                     Value = reader.GetInt32("value"),
                     RewardType = Achievement.StringAchievementToEnum(reader.GetString("rewardtype")),
@@ -67,7 +68,7 @@ namespace MTCG.DataAccessLayer
             await using var command = conn.CreateCommand();
 
             command.CommandText = """
-                                  SELECT a.id, a.type, a.value, a.rewardtype, a.rewardvalue
+                                  SELECT a.id, a.name, a.type, a.value, a.rewardtype, a.rewardvalue
                                   FROM "Achievement" a
                                   INNER JOIN "UserAchievement" ua ON a.id = ua.achievement
                                   WHERE ua."user" = @userId
@@ -83,6 +84,7 @@ namespace MTCG.DataAccessLayer
                 achievements.Add(new Achievement
                 {
                     Id = reader.GetInt32("id"),
+                    Name = reader.GetString("name"),
                     Type = Achievement.StringAchievementToEnum(reader.GetString("type")),
                     Value = reader.GetInt32("value"),
                     RewardType = Achievement.StringAchievementToEnum(reader.GetString("rewardtype")),

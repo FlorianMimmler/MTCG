@@ -9,6 +9,8 @@ namespace MTCG.BusinessLayer.Model.Achievements
     internal class Achievement
     {
         public int Id { get; set; }
+
+        public string Name { get; set; }
         public AchievementTypes Type { get; set; }
         public int Value { get; set; }
         public AchievementTypes RewardType { get; set; }
