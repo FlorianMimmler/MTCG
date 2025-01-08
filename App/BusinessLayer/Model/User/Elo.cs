@@ -1,17 +1,7 @@
 ﻿
 namespace MTCG.BusinessLayer.Model.User
 {
-    internal enum EloName
-    {
-        Bronce,
-        Silber,
-        Gold,
-        Platin,
-        Diamond,
-        Master,
-        GrandMaster
-    }
-    internal class Elo
+    public class Elo
     {
 
         public int EloScore { get; set; } = 90;
@@ -32,7 +22,7 @@ namespace MTCG.BusinessLayer.Model.User
 
         public string GetEloName()
         {
-            if (EloScore < 80)
+            if (EloScore < 70)
             {
                 return "Bronce";
             }

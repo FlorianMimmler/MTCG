@@ -2,7 +2,7 @@
 
 namespace MTCG.Auth
 {
-    internal class AuthToken
+    public class AuthToken
     {
         public string Value { get; set; } = "";
         public bool Valid { get; set; } = false;

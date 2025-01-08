@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MTCG.BusinessLayer.Model.User
 {
-    internal class Stats
+    public class Stats
     {
         public int Id { get; set; }
         public int Wins { get; set; } = 0;

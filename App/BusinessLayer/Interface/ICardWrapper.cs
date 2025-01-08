@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace MTCG
 {
-    internal interface ICardWrapper
+    public interface ICardWrapper
     {
         List<ICard> Cards { get; set; }
 

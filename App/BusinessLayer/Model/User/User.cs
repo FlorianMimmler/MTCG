@@ -8,7 +8,7 @@ using MTCG.DataAccessLayer;
 
 namespace MTCG
 {
-    internal class User
+    public class User
     {
         public int Id { get; set; }
         public Credentials Credentials { get; set; }
@@ -54,23 +54,18 @@ namespace MTCG
 
         public async Task<int> BuyPackage()
         {
+            if (Coins < Package.Price) return 2;
 
-            if (Coins >= Package.Price)
+            if (!(await UserRepository.Instance.UpdateCoins(this.Coins - Package.Price, this.Id)))
             {
-                if (!(await UserRepository.Instance.UpdateCoins(this.Coins - Package.Price, this.Id)))
-                {
-                    return 0;
-                }
-                var newCards = CardController.Instance.GetCards(Package.MaxCards);
-                Stack.AddCards(newCards);
-                var result = await CardRepository.Instance.AddMultiple(newCards, Id);
+                return 0;
+            }
+            var newCards = CardController.Instance.GetCards(Package.MaxCards);
+            Stack.AddCards(newCards);
+            var result = await CardRepository.Instance.AddMultiple(newCards, Id);
 
-                return result ? 1 : 0;
-            }
-            else
-            {
-                return 2;
-            }
+            return result ? 1 : 0;
+
         }
 
         public void PrintStack()

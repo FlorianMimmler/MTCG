@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MTCG.BusinessLayer.Model.Achievements
 {
-    internal class Achievement
+    public class Achievement
     {
         public int Id { get; set; }
 

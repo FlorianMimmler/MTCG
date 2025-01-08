@@ -6,7 +6,7 @@ using System.Text;
 
 namespace MTCG
 {
-    internal class Credentials
+    public class Credentials
     {
         public string Username { get; set; }
         public string Password { get; private set; }  // Password should be set only internally.

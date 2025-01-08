@@ -1,7 +1,7 @@
 ﻿
 namespace MTCG.BusinessLayer.Interface
 {
-    internal interface ICard
+    public interface ICard
     {
         int Id { get; set; }
         string Name { get; set; }
