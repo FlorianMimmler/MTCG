@@ -27,9 +27,12 @@ namespace MTCG.DataAccessLayer
         }
         public async Task<int> Add(TradingDeal entity)
         {
-            await using var conn = ConnectionController.CreateConnection();
-            await conn.OpenAsync();
-            await using var command = conn.CreateCommand();
+            await using var command = await ConnectionController.GetCommandConnection();
+
+            if (command == null)
+            {
+                return -1;
+            }
 
             command.CommandText = "INSERT INTO \"Trade\" (\"offeredCard\", requirements, \"userID\") VALUES (@offeredCard, @requirements, @userID) RETURNING id";
 
@@ -68,9 +71,12 @@ namespace MTCG.DataAccessLayer
 
         public async Task<IEnumerable<TradingDeal>?> GetAll()
         {
-            await using var conn = ConnectionController.CreateConnection();
-            await conn.OpenAsync();
-            await using var command = conn.CreateCommand();
+            await using var command = await ConnectionController.GetCommandConnection();
+
+            if (command == null)
+            {
+                return null;
+            }
 
             command.CommandText = "SELECT *, \"Trade\".id as tradeid, c.id as cardid FROM \"Trade\" left join \"Card\" as c on \"Trade\".\"offeredCard\" = c.id";
 
@@ -121,9 +127,12 @@ namespace MTCG.DataAccessLayer
 
         public async Task<IEnumerable<TradingDeal>?> GetByUserId(int userId)
         {
-            await using var conn = ConnectionController.CreateConnection();
-            await conn.OpenAsync();
-            await using var command = conn.CreateCommand();
+            await using var command = await ConnectionController.GetCommandConnection();
+
+            if (command == null)
+            {
+                return null;
+            }
 
             command.CommandText = "SELECT *, \"Trade\".id as tradeid, c.id as cardid FROM \"Trade\" left join \"Card\" as c on \"Trade\".\"offeredCard\" = c.id WHERE \"Trade\".\"userID\" = @userID";
             ConnectionController.AddParameterWithValue(command, "userID", DbType.Int32, userId);
@@ -172,9 +181,12 @@ namespace MTCG.DataAccessLayer
 
         public async Task<TradingDeal?> GetById(int id)
         {
-            await using var conn = ConnectionController.CreateConnection();
-            await conn.OpenAsync();
-            await using var command = conn.CreateCommand();
+            await using var command = await ConnectionController.GetCommandConnection();
+
+            if (command == null)
+            {
+                return null;
+            }
 
             command.CommandText = "SELECT *, \"Trade\".id as tradeid, c.id as cardid FROM \"Trade\" left join \"Card\" as c on \"Trade\".\"offeredCard\" = c.id WHERE \"Trade\".\"id\" = @id";
             ConnectionController.AddParameterWithValue(command, "id", DbType.Int32, id);

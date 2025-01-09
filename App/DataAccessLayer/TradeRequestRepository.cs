@@ -27,9 +27,12 @@ namespace MTCG.DataAccessLayer
         }
         public async Task<int> Add(TradingDealRequest entity)
         {
-            await using var conn = ConnectionController.CreateConnection();
-            await conn.OpenAsync();
-            await using var command = conn.CreateCommand();
+            await using var command = await ConnectionController.GetCommandConnection();
+
+            if (command == null)
+            {
+                return -1;
+            }
 
             command.CommandText = "INSERT INTO \"TradeRequest\" (\"offeredCard\", \"tradeID\", \"requestUserID\") VALUES (@offeredCard, @tradeID, @requestUserID) RETURNING id";
  
@@ -68,9 +71,12 @@ namespace MTCG.DataAccessLayer
 
         public async Task<IEnumerable<TradingDealRequest>?> GetAll()
         {
-            await using var conn = ConnectionController.CreateConnection();
-            await conn.OpenAsync();
-            await using var command = conn.CreateCommand();
+            await using var command = await ConnectionController.GetCommandConnection();
+
+            if (command == null)
+            {
+                return null;
+            }
 
             command.CommandText = "SELECT *, c.id as cardid FROM \"TradeRequest\" left join \"Card\" as c on \"TradeRequest\".\"offeredCard\" = c.id";
 
@@ -121,9 +127,12 @@ namespace MTCG.DataAccessLayer
 
         public async Task<IEnumerable<TradingDealRequest>?> GetByTradeId(int id)
         {
-            await using var conn = ConnectionController.CreateConnection();
-            await conn.OpenAsync();
-            await using var command = conn.CreateCommand();
+            await using var command = await ConnectionController.GetCommandConnection();
+
+            if (command == null)
+            {
+                return null;
+            }
 
             command.CommandText = "SELECT *, \"TradeRequest\".id as traderequestid, c.id as cardid FROM \"TradeRequest\" left join \"Card\" as c on \"TradeRequest\".\"offeredCard\" = c.id WHERE \"TradeRequest\".\"tradeID\" = @tradeID";
             ConnectionController.AddParameterWithValue(command, "tradeID", DbType.Int32, id);

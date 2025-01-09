@@ -19,9 +19,12 @@ namespace MTCG.DataAccessLayer
 
         public async Task<int> Add(Stats entity)
         {
-            await using var conn = ConnectionController.CreateConnection();
-            await conn.OpenAsync();
-            await using var command = conn.CreateCommand();
+            await using var command = await ConnectionController.GetCommandConnection();
+
+            if (command == null)
+            {
+                return -1;
+            }
 
             command.CommandText = "INSERT INTO \"Stats\" default values RETURNING id";
 
@@ -45,9 +48,12 @@ namespace MTCG.DataAccessLayer
 
         public async Task<bool> Update(Stats entity)
         {
-            await using var conn = ConnectionController.CreateConnection();
-            await conn.OpenAsync();
-            await using var command = conn.CreateCommand();
+            await using var command = await ConnectionController.GetCommandConnection();
+
+            if (command == null)
+            {
+                return false;
+            }
 
             command.CommandText = "UPDATE \"Stats\" SET wins = @wins, losses = @losses, eloscore = @eloscore WHERE id = @id";
 

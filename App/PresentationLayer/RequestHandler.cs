@@ -6,6 +6,7 @@ using System.Text.Json;
 using MTCG.DataAccessLayer;
 using MTCG.BusinessLayer.Model.RequestObjects;
 using MTCG.BusinessLayer.Model.Trading;
+using MTCG.BusinessLayer.Interface;
 
 namespace MTCG.PresentationLayer
 {
@@ -72,6 +73,15 @@ namespace MTCG.PresentationLayer
 
                     var userId = await AuthenticationController.Instance.Signup(new Credentials(signupRequest.Username, signupRequest.Password));
 
+                    if (userId == -2)
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.InternalServerError,
+                            ResponseText = "An Error occured"
+                        };
+                    }
+
                     return userId >= 0 ?
                         new HttpResponse()
                         {
@@ -97,6 +107,15 @@ namespace MTCG.PresentationLayer
                         {
                             StatusCode = HttpStatusCode.Unauthorized,
                             ResponseText = "Not authorized"
+                        };
+                    }
+
+                    if (user.GetName() == "__connection__error__")
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.InternalServerError,
+                            ResponseText = "An error occured"
                         };
                     }
 
@@ -130,6 +149,15 @@ namespace MTCG.PresentationLayer
                         };
                     }
 
+                    if (user.GetName() == "__connection__error__")
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.InternalServerError,
+                            ResponseText = "An error occured"
+                        };
+                    }
+
                     var userDeck = await CardRepository.Instance.GetDeckByUser(user.Id);
                     if (userDeck?.Count != 4)
                     {
@@ -158,6 +186,15 @@ namespace MTCG.PresentationLayer
                         {
                             StatusCode = HttpStatusCode.Unauthorized,
                             ResponseText = "Not authorized"
+                        };
+                    }
+
+                    if (user.GetName() == "__connection__error__")
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.InternalServerError,
+                            ResponseText = "An error occured"
                         };
                     }
 
@@ -203,6 +240,15 @@ namespace MTCG.PresentationLayer
                         {
                             StatusCode = HttpStatusCode.Unauthorized,
                             ResponseText = "Not authorized"
+                        };
+                    }
+
+                    if (user.GetName() == "__connection__error__")
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.InternalServerError,
+                            ResponseText = "An error occured"
                         };
                     }
 
@@ -260,6 +306,15 @@ namespace MTCG.PresentationLayer
                         };
                     }
 
+                    if (user.GetName() == "__connection__error__")
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.InternalServerError,
+                            ResponseText = "An error occured"
+                        };
+                    }
+
                     var tradeRequest = JsonSerializer.Deserialize<TradeRequestRequest>(body);
 
                     if (tradeRequest == null || tradeRequest.OfferedCardId < 0 || tradeRequest.TradeId < 0)
@@ -314,12 +369,22 @@ namespace MTCG.PresentationLayer
                 if (request.StartsWith("/users/"))
                 {
                     var user = await UserRepository.Instance.GetByAuthToken(requestAuthToken);
+                    Console.WriteLine("Here");
                     if (user == null)
                     {
                         return new HttpResponse()
                         {
                             StatusCode = HttpStatusCode.Unauthorized,
                             ResponseText = "Not authorized"
+                        };
+                    }
+
+                    if (user.GetName() == "__connection__error__")
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.InternalServerError,
+                            ResponseText = "An error occured"
                         };
                     }
 
@@ -333,7 +398,7 @@ namespace MTCG.PresentationLayer
                             ResponseText = "Not authorized"
                         };
                     }
-
+                    Console.WriteLine("Here");
                     var resultUser = username == user.GetName() ? user : await UserRepository.Instance.GetUserDataByUsername(username);
 
                     if (resultUser == null)
@@ -344,10 +409,10 @@ namespace MTCG.PresentationLayer
                             ResponseText = "Not authorized"
                         };
                     }
-
+                    Console.WriteLine("Here");
                     var userStack = await CardRepository.Instance.GetByUser(resultUser.Id);
 
-
+                    Console.WriteLine("Here");
                     var result = new UserDTO()
                     {
                         Username = resultUser.GetName(),
@@ -379,6 +444,15 @@ namespace MTCG.PresentationLayer
                         };
                     }
 
+                    if(user.GetName() == "__connection__error__")
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.InternalServerError,
+                            ResponseText = "An error occured"
+                        };
+                    }
+
                     var userStats = new UserStatsDTO()
                     {
                         Username = user.GetName(),
@@ -406,6 +480,15 @@ namespace MTCG.PresentationLayer
                         {
                             StatusCode = HttpStatusCode.Unauthorized,
                             ResponseText = "Not authorized"
+                        };
+                    }
+
+                    if (user.GetName() == "__connection__error__")
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.InternalServerError,
+                            ResponseText = "An error occured"
                         };
                     }
 
@@ -446,6 +529,15 @@ namespace MTCG.PresentationLayer
                         };
                     }
 
+                    if (user.GetName() == "__connection__error__")
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.InternalServerError,
+                            ResponseText = "An error occured"
+                        };
+                    }
+
                     var deck = await CardRepository.Instance.GetDeckByUser(user.Id);
 
                     if (deck is not { Count: > 0 })
@@ -480,6 +572,15 @@ namespace MTCG.PresentationLayer
                         {
                             StatusCode = HttpStatusCode.Unauthorized,
                             ResponseText = "Not authorized"
+                        };
+                    }
+
+                    if (user.GetName() == "__connection__error__")
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.InternalServerError,
+                            ResponseText = "An error occured"
                         };
                     }
 
@@ -556,6 +657,15 @@ namespace MTCG.PresentationLayer
                         };
                     }
 
+                    if (user.GetName() == "__connection__error__")
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.InternalServerError,
+                            ResponseText = "An error occured"
+                        };
+                    }
+
                     var username = request[(request.LastIndexOf('/') + 1)..];
 
                     if (username != user.GetName() && !user.Admin)
@@ -603,6 +713,15 @@ namespace MTCG.PresentationLayer
                         {
                             StatusCode = HttpStatusCode.Unauthorized,
                             ResponseText = "Not authorized"
+                        };
+                    }
+
+                    if (user.GetName() == "__connection__error__")
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.InternalServerError,
+                            ResponseText = "An error occured"
                         };
                     }
 
@@ -661,6 +780,15 @@ namespace MTCG.PresentationLayer
                         };
                     }
 
+                    if (user.GetName() == "__connection__error__")
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.InternalServerError,
+                            ResponseText = "An error occured"
+                        };
+                    }
+
                     var requestData = JsonSerializer.Deserialize<DeckRequest>(body);
 
                     if (requestData == null || requestData.cards.Length != 4)
@@ -699,6 +827,15 @@ namespace MTCG.PresentationLayer
                         {
                             StatusCode = HttpStatusCode.Unauthorized,
                             ResponseText = "Not authorized"
+                        };
+                    }
+
+                    if (callingUser.GetName() == "__connection__error__")
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.InternalServerError,
+                            ResponseText = "An error occured"
                         };
                     }
 
@@ -760,6 +897,15 @@ namespace MTCG.PresentationLayer
                         {
                             StatusCode = HttpStatusCode.Unauthorized,
                             ResponseText = "Not authorized"
+                        };
+                    }
+
+                    if (callingUser.GetName() == "__connection__error__")
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.InternalServerError,
+                            ResponseText = "An error occured"
                         };
                     }
 

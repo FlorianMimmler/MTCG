@@ -39,10 +39,9 @@ namespace MTCG.DataAccessLayer
         {
             try
             {
-                await using var conn = ConnectionController.CreateConnection();
+                var conn = CreateConnection();
                 await conn.OpenAsync();
-                await using var command = conn.CreateCommand();
-                return command;
+                return conn.CreateCommand(); // Return the command without disposing of the connection here
             }
             catch (Exception)
             {

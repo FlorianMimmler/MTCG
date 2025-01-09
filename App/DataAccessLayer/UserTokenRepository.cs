@@ -1,4 +1,5 @@
-﻿using MTCG.BusinessLayer.Model.User;
+﻿using MTCG.Auth;
+using MTCG.BusinessLayer.Model.User;
 using System.Data;
 
 namespace MTCG.DataAccessLayer
@@ -20,9 +21,12 @@ namespace MTCG.DataAccessLayer
 
         public async Task<int> Add(UserToken entity)
         {
-            await using var conn = ConnectionController.CreateConnection();
-            await conn.OpenAsync();
-            await using var command = conn.CreateCommand();
+            await using var command = await ConnectionController.GetCommandConnection();
+
+            if (command == null)
+            {
+                return -1;
+            }
 
             command.CommandText = "INSERT INTO \"UserToken\" (\"userID\", \"authToken\") " +
                                   "VALUES (@userID, @authToken) RETURNING id";
@@ -35,9 +39,12 @@ namespace MTCG.DataAccessLayer
 
         public async Task<int> Delete(UserToken entity)
         {
-            await using var conn = ConnectionController.CreateConnection();
-            await conn.OpenAsync();
-            await using var command = conn.CreateCommand();
+            await using var command = await ConnectionController.GetCommandConnection();
+
+            if (command == null)
+            {
+                return -1;
+            }
 
             command.CommandText = "DELETE FROM \"UserToken\" WHERE \"authToken\" = @authToken";
             ConnectionController.AddParameterWithValue(command, "authToken", DbType.String, entity.Token.Value);
@@ -57,9 +64,12 @@ namespace MTCG.DataAccessLayer
 
         public async Task<int> GetByAuthToken(string authToken)
         {
-            await using var conn = ConnectionController.CreateConnection();
-            await conn.OpenAsync();
-            await using var command = conn.CreateCommand();
+            await using var command = await ConnectionController.GetCommandConnection();
+
+            if (command == null)
+            {
+                return -2;
+            }
 
             command.CommandText = "SELECT \"userID\" FROM \"UserToken\" WHERE \"authToken\" = @authToken";
             ConnectionController.AddParameterWithValue(command, "authToken", DbType.String, authToken);
