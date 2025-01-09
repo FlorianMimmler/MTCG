@@ -1,9 +1,9 @@
 ﻿
 using MTCG.BusinessLayer.Controller;
 
-namespace MTCG.BusinessLayer.Model
+namespace MTCG.BusinessLayer.Model.CardWrapper
 {
-    internal class Package : CardWrapper
+    public class Package : CardWrapper
     {
         public static int Price { get; set; } = 5;
         public new static int MaxCards { get; set; } = 5;

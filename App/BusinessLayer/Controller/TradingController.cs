@@ -15,12 +15,5 @@ namespace MTCG.BusinessLayer.Controller
         private TradingController()
         {
         }
-
-        /*public async Task<bool> CreateTradeDeal(TradingDeal newTradingDeal)
-        {
-
-
-
-        }*/
     }
 }

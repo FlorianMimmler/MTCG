@@ -3,11 +3,15 @@ using MTCG.DataAccessLayer;
 
 namespace MTCG.BusinessLayer.Controller
 {
-    internal class ScoreboardController
+    public class ScoreboardController
     {
 
         private static ScoreboardController? _instance;
-        public static ScoreboardController Instance => _instance ??= new ScoreboardController();
+        public static ScoreboardController Instance
+        {
+            get => _instance ??= new ScoreboardController();
+            set => _instance = value;
+        } 
 
         private ScoreboardController()
         {

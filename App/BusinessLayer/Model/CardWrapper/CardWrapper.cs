@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace MTCG
+namespace MTCG.BusinessLayer.Model.CardWrapper
 {
-    internal abstract class CardWrapper : ICardWrapper
+    public abstract class CardWrapper : ICardWrapper
     {
         public List<ICard> Cards { get; set; }
         public virtual int MaxCards { get; set; }

@@ -1,4 +1,5 @@
-﻿using MTCG.DataAccessLayer;
+﻿using MTCG.BusinessLayer.Model.User;
+using MTCG.DataAccessLayer;
 
 namespace MTCG.Auth
 {

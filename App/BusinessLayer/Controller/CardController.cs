@@ -5,12 +5,16 @@ using System.Collections.Generic;
 
 namespace MTCG.BusinessLayer.Controller
 {
-    internal class CardController
+    public class CardController : ICardController
     {
 
-        private static CardController _instance;
+        private static ICardController _instance;
 
-        public static CardController Instance => _instance ??= new CardController();
+        public static ICardController Instance
+        {
+            get => _instance ??= new CardController();
+            set => _instance = value;
+        } 
 
         private CardController() { }
 

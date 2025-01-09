@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MTCG
+namespace MTCG.BusinessLayer.Model.User
 {
     public class UserToken(int userID, AuthToken token)
     {

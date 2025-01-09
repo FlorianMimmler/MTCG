@@ -1,9 +1,10 @@
-﻿using MTCG.BusinessLayer.Model.Card;
+﻿using MTCG.BusinessLayer.Interface;
+using MTCG.BusinessLayer.Model.Card;
 using System.Collections.Generic;
 
 namespace MTCG.BusinessLayer.Model.BattleStrategy
 {
-    public class SpecialCaseResolver
+    public class SpecialCaseResolver : ISpecialCaseResolver
     {
         private readonly Dictionary<((MonsterType, ElementType?), MonsterType), BattleResult> _specialCases =
             new Dictionary<((MonsterType, ElementType?), MonsterType), BattleResult>

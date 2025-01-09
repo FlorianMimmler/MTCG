@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using MTCG.BusinessLayer.Model.User;
+using System.Data;
 
 namespace MTCG.DataAccessLayer
 {

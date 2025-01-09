@@ -8,28 +8,27 @@ using MTCG.DataAccessLayer;
 
 namespace MTCG.BusinessLayer.Controller
 {
-    internal class AchievementController
+    public class AchievementController
     {
 
         private static AchievementController _instance;
 
-        public static AchievementController Instance => _instance ??= new AchievementController();
+        public static AchievementController Instance
+        {
+            get => _instance ??= new AchievementController();
+            set => _instance = value;
+        }
 
         private AchievementController()
         {
             LoadAchievements();
         }
 
+        private IEnumerable<Achievement>? _achievementList;
+
         private async void LoadAchievements()
         {
             _achievementList = await AchievementRepository.Instance.GetAll();
-        }
-
-        private IEnumerable<Achievement>? _achievementList;
-
-        public Achievement? GetAchievementById(int id)
-        {
-            return _achievementList?.First(achievement => achievement.Id == id);
         }
 
         public List<Achievement> GetAchievements()

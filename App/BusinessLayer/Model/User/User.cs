@@ -1,14 +1,13 @@
 ﻿using MTCG.Auth;
 using MTCG.BusinessLayer.Controller;
 using MTCG.BusinessLayer.Interface;
-using MTCG.BusinessLayer.Model;
 using MTCG.BusinessLayer.Model.Achievements;
-using MTCG.BusinessLayer.Model.User;
+using MTCG.BusinessLayer.Model.CardWrapper;
 using MTCG.DataAccessLayer;
 
-namespace MTCG
+namespace MTCG.BusinessLayer.Model.User
 {
-    public class User
+    public class User : IUser
     {
         public int Id { get; set; }
         public Credentials Credentials { get; set; }
@@ -17,7 +16,7 @@ namespace MTCG
 
         public int Coins { get; set; } = 20;
 
-        public Stats Stats = new Stats();
+        public Stats Stats { get; set; } = new();
 
         public ICardWrapper Deck { get; set; } = new Deck();
 
@@ -66,18 +65,6 @@ namespace MTCG
 
             return result ? 1 : 0;
 
-        }
-
-        public void PrintStack()
-        {
-            Console.WriteLine("User's stack:");
-            this.Stack.PrintCards();
-        }
-
-        public void PrintDeck()
-        {
-            Console.WriteLine("User's deck:");
-            this.Deck.PrintCards();
         }
 
         public async Task<bool> SelectDeck(int[] selection)

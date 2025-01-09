@@ -1,7 +1,7 @@
 ﻿
-namespace MTCG
+namespace MTCG.BusinessLayer.Model.CardWrapper
 {
-    internal class Deck : CardWrapper
+    public class Deck : CardWrapper
     {
         public Deck() : base(8) { }
 

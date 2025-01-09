@@ -1,4 +1,7 @@
-﻿public enum HttpStatusCode
+﻿
+namespace MTCG.PresentationLayer;
+
+public enum HttpStatusCode
 {
     OK = 200,
     Created = 201,

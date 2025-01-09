@@ -1,5 +1,6 @@
 using MTCG;
 using MTCG.Auth;
+using MTCG.BusinessLayer.Model.User;
 
 namespace MTCG_uTests
 {

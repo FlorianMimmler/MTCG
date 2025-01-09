@@ -9,12 +9,16 @@ using MTCG.BusinessLayer.Model.Achievements;
 
 namespace MTCG.DataAccessLayer
 {
-    internal class AchievementRepository : IRepository<Achievement>
+    public class AchievementRepository : IAchievementRepository
     {
 
-        private static AchievementRepository? _instance;
+        private static IAchievementRepository? _instance;
 
-        public static AchievementRepository Instance => _instance ??= new AchievementRepository();
+        public static IAchievementRepository Instance
+        {
+            get => _instance ??= new AchievementRepository();
+            set => _instance = value;
+        } 
 
         public Task<int> Add(Achievement entity)
         {

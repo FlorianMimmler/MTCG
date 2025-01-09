@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MTCG.BusinessLayer.Model.User
 {
-    internal class UserDTO
+    public class UserDTO
     {
 
         public string Username { get; set; }
@@ -17,7 +17,7 @@ namespace MTCG.BusinessLayer.Model.User
 
     }
 
-    internal class UserStatsDTO
+    public class UserStatsDTO
     {
         public string Username { get; set; }
         public int Wins { get; set; }

@@ -1,10 +1,7 @@
-﻿using NUnit.Framework;
-using NSubstitute;
-using System.Threading.Tasks;
+﻿using NSubstitute;
 using MTCG.BusinessLayer.Model.User;
 using MTCG.DataAccessLayer;
 using MTCG.Auth;
-using MTCG;
 
 namespace MTCG_uTests
 {

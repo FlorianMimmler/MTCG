@@ -6,9 +6,10 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using MTCG.BusinessLayer.Interface;
+using MTCG.BusinessLayer.Model.User;
 using MTCG.DataAccessLayer;
 
-namespace MTCG
+namespace MTCG.BusinessLayer.Controller
 {
     internal class BattleLobbyController
     {

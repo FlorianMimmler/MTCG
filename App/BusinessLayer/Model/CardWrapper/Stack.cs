@@ -1,7 +1,7 @@
 ﻿
-namespace MTCG
+namespace MTCG.BusinessLayer.Model.CardWrapper
 {
-    internal class Stack : CardWrapper
+    public class Stack : CardWrapper
     {
         public Stack() : base()
         {

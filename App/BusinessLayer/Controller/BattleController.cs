@@ -1,25 +1,23 @@
-﻿using MTCG.BusinessLayer;
-using MTCG.BusinessLayer.Interface;
+﻿using MTCG.BusinessLayer.Interface;
 using MTCG.BusinessLayer.Model.BattleStrategy;
-using System;
 using System.Text.Json;
-using MTCG.BusinessLayer.Controller;
 using MTCG.BusinessLayer.Model.Card;
 using MTCG.Auth;
+using MTCG.BusinessLayer.Model.User;
 
-namespace MTCG
+namespace MTCG.BusinessLayer.Controller
 {
-    internal class BattleController
+    public class BattleController
     {
         private IBattleStrategy BattleStrategy { get; set; }
 
-        public BattleController(User player1, User player2)
+        public BattleController(IUser player1, IUser player2)
         {
             this.Player1 = player1;
             this.Player2 = player2;
         }
 
-        public BattleController(User player)
+        public BattleController(IUser player)
         {
             this.Player1 = player;
             CreateAiPlayer();
@@ -40,8 +38,8 @@ namespace MTCG
 
         private bool Ai = false;
 
-        public User Player1 { get; set; }
-        public User Player2 { get; set; }
+        public IUser Player1 { get; set; }
+        public IUser Player2 { get; set; }
 
         private const int MaxBattleRounds = 100;
         private int RoundsPlayed = 1;
@@ -214,8 +212,6 @@ namespace MTCG
 
         public string GetSerializedBattleLogForPlayer(int player)
         {
-            Console.WriteLine("Log Achievements: " + Player1.NewAchievements.Count);
-            Console.WriteLine("Log Achievements: " + Player2.NewAchievements.Count);
 
             var battleLogObject = new
             {
@@ -248,14 +244,14 @@ namespace MTCG
         }
     }
 
-    internal class BattleLogHeader
+    public class BattleLogHeader
     {
         public string Player1 { get; set; }
         public string Player2 { get; set; }
         public string Winner { get; set; }
     }
 
-    internal class BattleRoundLog
+    public class BattleRoundLog
     {
         public int RoundNumber { get; set; }
         public ICard CardPlayer1 { get; set; }
