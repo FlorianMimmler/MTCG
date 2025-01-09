@@ -19,7 +19,7 @@ namespace MTCG.Auth
 
 
 
-        public async Task<AuthToken> Login(Credentials creds)
+        public async Task<AuthToken?> Login(Credentials creds)
         {
 
             var dbUser = await UserRepository.Instance.GetByUsername(creds.Username);
@@ -27,6 +27,11 @@ namespace MTCG.Auth
             if (dbUser == null)
             {
                 return new AuthToken();
+            }
+
+            if (dbUser.GetName() == "__connection__error__")
+            {
+                return null;
             }
 
             creds.HashPasswordWithSalt(dbUser.Credentials.Salt);

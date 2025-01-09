@@ -34,6 +34,7 @@ namespace MTCG.DataAccessLayer
             ConnectionController.AddParameterWithValue(command, "password", DbType.String, entity.Credentials.Password);
             ConnectionController.AddParameterWithValue(command, "salt", DbType.String, entity.Credentials.Salt);
             ConnectionController.AddParameterWithValue(command, "statsID", DbType.Int32, entity.Stats.Id);
+
             return (int)(await command.ExecuteScalarAsync() ?? 0);
     
         }
@@ -100,9 +101,13 @@ namespace MTCG.DataAccessLayer
 
         public async Task<User?> GetByUsername(string username)
         {
-            await using var conn = ConnectionController.CreateConnection();
-            await conn.OpenAsync();
-            await using var command = conn.CreateCommand();
+            
+            await using var command = await ConnectionController.GetCommandConnection();
+
+            if(command == null)
+            {
+                return new User(new Credentials("__connection__error__", ""));
+            }
 
             command.CommandText = "SELECT id, username, password, salt FROM \"User\" WHERE username = @username";
             ConnectionController.AddParameterWithValue(command, "username", DbType.String, username);
@@ -114,7 +119,8 @@ namespace MTCG.DataAccessLayer
                 var user = new User
                 {
                     Id = reader.GetInt32(reader.GetOrdinal("id")),
-                    Credentials = new Credentials() {
+                    Credentials = new Credentials()
+                    {
                         Username = reader.GetString("username"),
                     }
                 };
@@ -126,6 +132,7 @@ namespace MTCG.DataAccessLayer
             }
 
             return null;
+
 
         }
 

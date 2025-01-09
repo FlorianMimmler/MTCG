@@ -35,6 +35,15 @@ namespace MTCG.PresentationLayer
 
                     var authToken = await AuthenticationController.Instance.Login(userCreds);
 
+                    if (authToken == null)
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.InternalServerError,
+                            ResponseText = "An error occured"
+                        };
+                    }
+
                     return authToken.Valid
                         ? new HttpResponse()
                         {
