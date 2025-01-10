@@ -40,28 +40,15 @@ namespace MTCG.DataAccessLayer
             ConnectionController.AddParameterWithValue(command, "tradeID", DbType.Int32, entity.TradeId);
             ConnectionController.AddParameterWithValue(command, "requestUserID", DbType.Int32, entity.RequestUserId);
 
-            Console.WriteLine("Save to DB");
             try
             {
                 return (int)(await command.ExecuteScalarAsync() ?? -1);
             }
-            catch (NpgsqlException ex)
-            {
-                // Specific Npgsql exception handling
-                Console.WriteLine($"PostgreSQL error: {ex.Message}");
-            }
-            catch (DbException ex)
-            {
-                // General database exception
-                Console.WriteLine($"Database error: {ex.Message}");
-            }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Any other exceptions
-                Console.WriteLine($"Unexpected error: {ex.Message}");
+                return -1;
             }
-
-            return -1;
         }
 
         public Task<int> Delete(TradingDealRequest entity)
@@ -102,27 +89,11 @@ namespace MTCG.DataAccessLayer
 
                 return tradingDeals;
             }
-            catch (NpgsqlException ex)
-            {
-                // Specific Npgsql exception handling
-                Console.WriteLine($"PostgreSQL error: {ex.Message}");
-                return null;
-            }
-            catch (DbException ex)
-            {
-                // General database exception
-                Console.WriteLine($"Database error: {ex.Message}");
-                return null;
-            }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Any other exceptions
-                Console.WriteLine($"Unexpected error: {ex.Message}");
                 return null;
             }
-
-
-
         }
 
         public async Task<IEnumerable<TradingDealRequest>?> GetByTradeId(int id)
@@ -159,22 +130,9 @@ namespace MTCG.DataAccessLayer
 
                 return tradingDealRequests;
             }
-            catch (NpgsqlException ex)
-            {
-                // Specific Npgsql exception handling
-                Console.WriteLine($"PostgreSQL error: {ex.Message}");
-                return null;
-            }
-            catch (DbException ex)
-            {
-                // General database exception
-                Console.WriteLine($"Database error: {ex.Message}");
-                return null;
-            }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Any other exceptions
-                Console.WriteLine($"Unexpected error: {ex.Message}");
                 return null;
             }
         }
@@ -202,22 +160,9 @@ namespace MTCG.DataAccessLayer
                 return new TradingDealRequest(reader.GetInt32("tradeID"), reader.GetInt32("userID"), offeredCard, reader.GetInt32("traderequestid"));
 
             }
-            catch (NpgsqlException ex)
-            {
-                // Specific Npgsql exception handling
-                Console.WriteLine($"PostgreSQL error: {ex.Message}");
-                return null;
-            }
-            catch (DbException ex)
-            {
-                // General database exception
-                Console.WriteLine($"Database error: {ex.Message}");
-                return null;
-            }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Any other exceptions
-                Console.WriteLine($"Unexpected error: {ex.Message}");
                 return null;
             }
         }

@@ -298,31 +298,7 @@ namespace MTCG.PresentationLayer
                         };
                     }
 
-                    var result = await TradingController.Instance.CreateTradeRquest(tradeRequest, user);
-
-                    if (result == -3)
-                    {
-                        return new HttpResponse()
-                        {
-                            StatusCode = HttpStatusCode.BadRequest,
-                            ResponseText = "Invalid input data"
-                        };
-                    }
-                    else if (result == -4)
-                    {
-                        return new HttpResponse()
-                        {
-                            StatusCode = HttpStatusCode.Conflict,
-                            ResponseText = "You can't trade with yourself"
-                        };
-                    } 
-                    else if (result >= 0)
-                    {
-                        return new HttpResponse() { StatusCode = HttpStatusCode.OK, ResponseText = "TradeRequest Created" };
-                    }
-
-                    return new HttpResponse()
-                        { StatusCode = HttpStatusCode.InternalServerError, ResponseText = "Internal Server Error" };
+                    return await TradingController.Instance.CreateTradeRquest(tradeRequest, user);
                 }
             }
 
@@ -332,7 +308,6 @@ namespace MTCG.PresentationLayer
                 if (request.StartsWith("/users/"))
                 {
                     var user = await UserRepository.Instance.GetByAuthToken(requestAuthToken);
-                    Console.WriteLine("Here");
                     if (user == null)
                     {
                         return new HttpResponse()
@@ -361,7 +336,6 @@ namespace MTCG.PresentationLayer
                             ResponseText = "Not authorized"
                         };
                     }
-                    Console.WriteLine("Here");
                     var resultUser = username == user.GetName() ? user : await UserRepository.Instance.GetUserDataByUsername(username);
 
                     if (resultUser == null)
@@ -372,10 +346,8 @@ namespace MTCG.PresentationLayer
                             ResponseText = "Not authorized"
                         };
                     }
-                    Console.WriteLine("Here");
                     var userStack = await CardRepository.Instance.GetByUser(resultUser.Id);
 
-                    Console.WriteLine("Here");
                     var result = new UserDTO()
                     {
                         Username = resultUser.GetName(),

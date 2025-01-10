@@ -52,24 +52,40 @@ namespace MTCG.BusinessLayer.Controller
             { StatusCode = HttpStatusCode.InternalServerError, ResponseText = "Internal Server Error" };
         }
 
-        public async Task<int> CreateTradeRquest(TradeRequestRequest tradeRequest, User user)
+        public async Task<HttpResponse> CreateTradeRquest(TradeRequestRequest tradeRequest, User user)
         {
             var offeredCard = await CardRepository.Instance.GetByIdAndUserId(tradeRequest.OfferedCardId, user.Id);
             if (offeredCard == null)
             {
-                return -3;
+                return new HttpResponse()
+                {
+                    StatusCode = HttpStatusCode.BadRequest,
+                    ResponseText = "Invalid input data"
+                };
             }
 
             var tradeOffer = await TradeRepository.Instance.GetById(tradeRequest.TradeId);
 
             if (tradeOffer != null && tradeOffer.OfferingUserId == user.Id)
             {
-                return -4;
+                return new HttpResponse()
+                {
+                    StatusCode = HttpStatusCode.Conflict,
+                    ResponseText = "You can't trade with yourself"
+                };
             }
 
             var newTradingRequest = new TradingDealRequest(tradeRequest.TradeId, user.Id, offeredCard);
 
-            return await TradeRequestRepository.Instance.Add(newTradingRequest);
+            var result = await TradeRequestRepository.Instance.Add(newTradingRequest);
+
+            else if (result >= 0)
+            {
+                return new HttpResponse() { StatusCode = HttpStatusCode.OK, ResponseText = "TradeRequest Created" };
+            }
+
+            return new HttpResponse()
+            { StatusCode = HttpStatusCode.InternalServerError, ResponseText = "Internal Server Error" };
         }
 
         public TradeRequest? ValidateTradeRequest(string rawTradeRequest)

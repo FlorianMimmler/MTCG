@@ -259,23 +259,11 @@ namespace MTCG.DataAccessLayer
             {
                 return await command.ExecuteNonQueryAsync() == 1;
             }
-            catch (NpgsqlException ex)
-            {
-                // Specific Npgsql exception handling
-                Console.WriteLine($"PostgreSQL error: {ex.Message}");
-            }
-            catch (DbException ex)
-            {
-                // General database exception
-                Console.WriteLine($"Database error: {ex.Message}");
-            }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Any other exceptions
-                Console.WriteLine($"Unexpected error: {ex.Message}");
+                return false;
             }
-
-            return false;
         }
 
         public async Task<bool> UpdateCoins(int newCoinsCount, int userId)
@@ -291,7 +279,6 @@ namespace MTCG.DataAccessLayer
                 "UPDATE \"User\" SET coins = @coinsCount WHERE \"id\" = @id";
             ConnectionController.AddParameterWithValue(command, "coinsCount", DbType.Int32, newCoinsCount);
             ConnectionController.AddParameterWithValue(command, "id", DbType.Int32, userId);
-            Console.WriteLine("here");
             int result;
             try
             {
@@ -299,7 +286,6 @@ namespace MTCG.DataAccessLayer
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
                 return false;
             }
             

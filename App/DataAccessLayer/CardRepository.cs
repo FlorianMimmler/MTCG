@@ -63,25 +63,11 @@ namespace MTCG.DataAccessLayer
                 var result = await command.ExecuteNonQueryAsync();
                 return result == index;
             }
-            catch (NpgsqlException ex)
-            {
-                // Specific Npgsql exception handling
-                Console.WriteLine($"PostgreSQL error: {ex.Message}");
-            }
-            catch (DbException ex)
-            {
-                // General database exception
-                Console.WriteLine($"Database error: {ex.Message}");
-            }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Any other exceptions
-                Console.WriteLine($"Unexpected error: {ex.Message}");
+                return false;
             }
-
-            return false;
-
-
         }
 
         public Task<bool> Update(ICard entity)
@@ -107,23 +93,11 @@ namespace MTCG.DataAccessLayer
             {
                 return await command.ExecuteNonQueryAsync() == 1;
             }
-            catch (NpgsqlException ex)
-            {
-                // Specific Npgsql exception handling
-                Console.WriteLine($"PostgreSQL error: {ex.Message}");
-            }
-            catch (DbException ex)
-            {
-                // General database exception
-                Console.WriteLine($"Database error: {ex.Message}");
-            }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Any other exceptions
-                Console.WriteLine($"Unexpected error: {ex.Message}");
+                return false;
             }
-
-            return false;
         }
 
         public Task<int> Delete(ICard entity)

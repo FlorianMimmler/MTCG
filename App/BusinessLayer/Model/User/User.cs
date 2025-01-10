@@ -119,17 +119,14 @@ namespace MTCG.BusinessLayer.Model.User
             if (AchievementIds == null)
             {
                 var count = await LoadAchievements();
-                Console.WriteLine("unlocked achievments player " + this.Id + ": " + count);
             }
             var achievementList = AchievementController.Instance.GetAchievements() ?? [];
             var success = true;
             foreach (var achievement in achievementList.Where(achievement => !AchievementIds.Contains(achievement.Id)))
             {
-                Console.WriteLine(achievement.Id + " is open");
                 if (AchievementTypes.Wins == achievement.Type && this.Stats.Wins >= achievement.Value ||
                     AchievementTypes.Elo == achievement.Type && this.Stats.Elo.EloScore >= achievement.Value)
                 {
-                    Console.WriteLine(achievement.Id + " gets added");
                     success = await AddAchievement(achievement);
                 }
             }
@@ -139,7 +136,6 @@ namespace MTCG.BusinessLayer.Model.User
         private async Task<bool> AddAchievement(Achievement achievement)
         {
             NewAchievements.Add(achievement);
-            Console.WriteLine("New Achievements: " + NewAchievements.Count);
             if (await UserAchievementRepository.Instance.Add(new UserAchievement(this.Id, achievement)) >= 0)
             {
                 return await ApplyAchievementRewards(achievement);
