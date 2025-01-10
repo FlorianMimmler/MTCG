@@ -4,8 +4,10 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MTCG.Auth;
 using MTCG.BusinessLayer.Controller;
 using MTCG.BusinessLayer.Model.Achievements;
+using MTCG.BusinessLayer.Model.User;
 
 namespace MTCG.DataAccessLayer
 {
@@ -32,9 +34,12 @@ namespace MTCG.DataAccessLayer
 
         public async Task<IEnumerable<Achievement>?> GetAll()
         {
-            await using var conn = ConnectionController.CreateConnection();
-            await conn.OpenAsync();
-            await using var command = conn.CreateCommand();
+            await using var command = await ConnectionController.GetCommandConnection();
+
+            if (command == null)
+            {
+                return null;
+            }
 
             command.CommandText = """
                                   SELECT a.id, a.name, a.type, a.value, a.rewardtype, a.rewardvalue
@@ -65,11 +70,14 @@ namespace MTCG.DataAccessLayer
             throw new NotImplementedException();
         }
 
-        public async Task<List<Achievement>> GetAchievementsByUser(int userId)
+        public async Task<List<Achievement>?> GetAchievementsByUser(int userId)
         {
-            await using var conn = ConnectionController.CreateConnection();
-            await conn.OpenAsync();
-            await using var command = conn.CreateCommand();
+            await using var command = await ConnectionController.GetCommandConnection();
+
+            if (command == null)
+            {
+                return null;
+            }
 
             command.CommandText = """
                                   SELECT a.id, a.name, a.type, a.value, a.rewardtype, a.rewardvalue

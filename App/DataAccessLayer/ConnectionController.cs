@@ -34,5 +34,19 @@ namespace MTCG.DataAccessLayer
             parameter.Value = value ?? DBNull.Value;
             command.Parameters.Add(parameter);
         }
+
+        public async static Task<NpgsqlCommand?> GetCommandConnection()
+        {
+            try
+            {
+                var conn = CreateConnection();
+                await conn.OpenAsync();
+                return conn.CreateCommand(); // Return the command without disposing of the connection here
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
     }
 }

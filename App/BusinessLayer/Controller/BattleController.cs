@@ -9,21 +9,21 @@ namespace MTCG.BusinessLayer.Controller
 {
     public class BattleController
     {
-        private IBattleStrategy BattleStrategy { get; set; }
+        private IBattleStrategy BattleStrategy { get; set; } = new MixedBattleStrategy();
 
         public BattleController(IUser player1, IUser player2)
         {
-            this.Player1 = player1;
-            this.Player2 = player2;
+            Player1 = player1;
+            Player2 = player2;
         }
 
         public BattleController(IUser player)
         {
-            this.Player1 = player;
-            CreateAiPlayer();
+            Player1 = player;
+            Player2 = CreateAiPlayer();
         }
 
-        private void CreateAiPlayer()
+        private User CreateAiPlayer()
         {
             var aiPlayer = new User(new Credentials("Ai-Player", "ai"))
             {
@@ -32,8 +32,8 @@ namespace MTCG.BusinessLayer.Controller
                     Cards = CardController.Instance.GetCards(4)
                 }
             };
-            this.Player2 = aiPlayer;
             Ai = true;
+            return aiPlayer;
         }
 
         private bool Ai = false;
@@ -45,7 +45,7 @@ namespace MTCG.BusinessLayer.Controller
         private int RoundsPlayed = 1;
 
         public List<BattleRoundLog> BattleLog { get; set; } = [];
-        public BattleLogHeader BattleLogHeader { get; set; }
+        public BattleLogHeader BattleLogHeader { get; set; } = new();
 
         public async Task<bool> StartBattle()
         {
@@ -76,9 +76,8 @@ namespace MTCG.BusinessLayer.Controller
 
                 _ = await ProcessBattleResult();
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Console.WriteLine(e);
                 return false;
             }
 
@@ -246,17 +245,17 @@ namespace MTCG.BusinessLayer.Controller
 
     public class BattleLogHeader
     {
-        public string Player1 { get; set; }
-        public string Player2 { get; set; }
-        public string Winner { get; set; }
+        public string Player1 { get; set; } = "";
+        public string Player2 { get; set; } = "";
+        public string Winner { get; set; } = "";
     }
 
     public class BattleRoundLog
     {
-        public int RoundNumber { get; set; }
-        public ICard CardPlayer1 { get; set; }
-        public ICard CardPlayer2 { get; set; }
-        public string WinnerCard { get; set; }
-        public string Winner { get; set; }
+        public int RoundNumber { get; set; } = 0;
+        public ICard? CardPlayer1 { get; set; }
+        public ICard? CardPlayer2 { get; set; }
+        public string WinnerCard { get; set; } = "";
+        public string Winner { get; set; } = "";
     }
 }

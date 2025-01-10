@@ -26,9 +26,12 @@ namespace MTCG.DataAccessLayer
         public async Task<bool> AddMultiple(List<ICard> entities, int userID)
         {
 
-            await using var conn = ConnectionController.CreateConnection();
-            await conn.OpenAsync();
-            await using var command = conn.CreateCommand();
+            await using var command = await ConnectionController.GetCommandConnection();
+
+            if (command == null)
+            {
+                return false;
+            }
 
             command.CommandText = "INSERT INTO \"Card\" (\"userID\", \"cardType\", \"name\", \"damage\", \"elementType\", \"monsterType\") VALUES ";
             var index = 0;
@@ -60,25 +63,11 @@ namespace MTCG.DataAccessLayer
                 var result = await command.ExecuteNonQueryAsync();
                 return result == index;
             }
-            catch (NpgsqlException ex)
-            {
-                // Specific Npgsql exception handling
-                Console.WriteLine($"PostgreSQL error: {ex.Message}");
-            }
-            catch (DbException ex)
-            {
-                // General database exception
-                Console.WriteLine($"Database error: {ex.Message}");
-            }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Any other exceptions
-                Console.WriteLine($"Unexpected error: {ex.Message}");
+                return false;
             }
-
-            return false;
-
-
         }
 
         public Task<bool> Update(ICard entity)
@@ -88,9 +77,12 @@ namespace MTCG.DataAccessLayer
 
         public async Task<bool> UpdateUserId(ICard entity, int newUserId)
         {
-            await using var conn = ConnectionController.CreateConnection();
-            await conn.OpenAsync();
-            await using var command = conn.CreateCommand();
+            await using var command = await ConnectionController.GetCommandConnection();
+
+            if (command == null)
+            {
+                return false;
+            }
 
             command.CommandText = "UPDATE \"Card\" SET \"userID\" = @userID WHERE id = @id";
 
@@ -101,23 +93,11 @@ namespace MTCG.DataAccessLayer
             {
                 return await command.ExecuteNonQueryAsync() == 1;
             }
-            catch (NpgsqlException ex)
-            {
-                // Specific Npgsql exception handling
-                Console.WriteLine($"PostgreSQL error: {ex.Message}");
-            }
-            catch (DbException ex)
-            {
-                // General database exception
-                Console.WriteLine($"Database error: {ex.Message}");
-            }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Any other exceptions
-                Console.WriteLine($"Unexpected error: {ex.Message}");
+                return false;
             }
-
-            return false;
         }
 
         public Task<int> Delete(ICard entity)
@@ -132,9 +112,12 @@ namespace MTCG.DataAccessLayer
 
         public async Task<List<ICard>?> GetByUser(int userId)
         {
-            await using var conn = ConnectionController.CreateConnection();
-            await conn.OpenAsync();
-            await using var command = conn.CreateCommand();
+            await using var command = await ConnectionController.GetCommandConnection();
+
+            if (command == null)
+            {
+                return null;
+            }
 
             command.CommandText = "SELECT * FROM \"Card\" WHERE \"userID\" = @userID";
 
@@ -163,9 +146,12 @@ namespace MTCG.DataAccessLayer
 
         public async Task<List<ICard>?> GetDeckByUser(int userId)
         {
-            await using var conn = ConnectionController.CreateConnection();
-            await conn.OpenAsync();
-            await using var command = conn.CreateCommand();
+            await using var command = await ConnectionController.GetCommandConnection();
+
+            if (command == null)
+            {
+                return null;
+            }
 
             command.CommandText = "SELECT * FROM \"Card\" WHERE \"userID\" = @userID AND \"isDeck\"";
 
@@ -192,15 +178,24 @@ namespace MTCG.DataAccessLayer
             return null;
         }
 
-        public async Task<ICard?> GetById(int id)
+        public Task<ICard?> GetById(int id)
         {
-            await using var conn = ConnectionController.CreateConnection();
-            await conn.OpenAsync();
-            await using var command = conn.CreateCommand();
+            throw new NotImplementedException();
+        }
 
-            command.CommandText = "SELECT * FROM \"Card\" WHERE \"id\" = @cardID";
+        public async Task<ICard?> GetByIdAndUserId(int id, int userId)
+        {
+            await using var command = await ConnectionController.GetCommandConnection();
+
+            if (command == null)
+            {
+                return null;
+            }
+
+            command.CommandText = "SELECT * FROM \"Card\" WHERE \"id\" = @cardID AND \"userID\" = @userID";
 
             ConnectionController.AddParameterWithValue(command, "cardID", DbType.Int32, id);
+            ConnectionController.AddParameterWithValue(command, "userID", DbType.Int32, userId);
 
             await using var reader = await command.ExecuteReaderAsync();
 
@@ -219,9 +214,12 @@ namespace MTCG.DataAccessLayer
 
         public async Task<int> ClearDeckFromUser(int userId)
         {
-            await using var conn = ConnectionController.CreateConnection();
-            await conn.OpenAsync();
-            await using var command = conn.CreateCommand();
+            await using var command = await ConnectionController.GetCommandConnection();
+
+            if (command == null)
+            {
+                return -1;
+            }
 
             command.CommandText = "UPDATE \"Card\" SET \"isDeck\" = false WHERE \"userID\" = @useriD";
             ConnectionController.AddParameterWithValue(command, "userID", DbType.Int32, userId);
@@ -231,9 +229,12 @@ namespace MTCG.DataAccessLayer
 
         public async Task<int> SetDeckByCards(int[] cards, int userID)
         {
-            await using var conn = ConnectionController.CreateConnection();
-            await conn.OpenAsync();
-            await using var command = conn.CreateCommand();
+            await using var command = await ConnectionController.GetCommandConnection();
+
+            if (command == null)
+            {
+                return -1;
+            }
 
             command.CommandText = "UPDATE \"Card\" SET \"isDeck\" = true WHERE \"userID\" = @userID and \"id\" IN (@card1, @card2, @card3, @card4)";
             ConnectionController.AddParameterWithValue(command, "card1", DbType.Int32, cards[0]);

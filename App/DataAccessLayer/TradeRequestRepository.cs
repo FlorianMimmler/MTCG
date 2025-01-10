@@ -27,9 +27,12 @@ namespace MTCG.DataAccessLayer
         }
         public async Task<int> Add(TradingDealRequest entity)
         {
-            await using var conn = ConnectionController.CreateConnection();
-            await conn.OpenAsync();
-            await using var command = conn.CreateCommand();
+            await using var command = await ConnectionController.GetCommandConnection();
+
+            if (command == null)
+            {
+                return -1;
+            }
 
             command.CommandText = "INSERT INTO \"TradeRequest\" (\"offeredCard\", \"tradeID\", \"requestUserID\") VALUES (@offeredCard, @tradeID, @requestUserID) RETURNING id";
  
@@ -37,28 +40,15 @@ namespace MTCG.DataAccessLayer
             ConnectionController.AddParameterWithValue(command, "tradeID", DbType.Int32, entity.TradeId);
             ConnectionController.AddParameterWithValue(command, "requestUserID", DbType.Int32, entity.RequestUserId);
 
-            Console.WriteLine("Save to DB");
             try
             {
                 return (int)(await command.ExecuteScalarAsync() ?? -1);
             }
-            catch (NpgsqlException ex)
-            {
-                // Specific Npgsql exception handling
-                Console.WriteLine($"PostgreSQL error: {ex.Message}");
-            }
-            catch (DbException ex)
-            {
-                // General database exception
-                Console.WriteLine($"Database error: {ex.Message}");
-            }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Any other exceptions
-                Console.WriteLine($"Unexpected error: {ex.Message}");
+                return -1;
             }
-
-            return -1;
         }
 
         public Task<int> Delete(TradingDealRequest entity)
@@ -68,9 +58,12 @@ namespace MTCG.DataAccessLayer
 
         public async Task<IEnumerable<TradingDealRequest>?> GetAll()
         {
-            await using var conn = ConnectionController.CreateConnection();
-            await conn.OpenAsync();
-            await using var command = conn.CreateCommand();
+            await using var command = await ConnectionController.GetCommandConnection();
+
+            if (command == null)
+            {
+                return null;
+            }
 
             command.CommandText = "SELECT *, c.id as cardid FROM \"TradeRequest\" left join \"Card\" as c on \"TradeRequest\".\"offeredCard\" = c.id";
 
@@ -96,34 +89,21 @@ namespace MTCG.DataAccessLayer
 
                 return tradingDeals;
             }
-            catch (NpgsqlException ex)
-            {
-                // Specific Npgsql exception handling
-                Console.WriteLine($"PostgreSQL error: {ex.Message}");
-                return null;
-            }
-            catch (DbException ex)
-            {
-                // General database exception
-                Console.WriteLine($"Database error: {ex.Message}");
-                return null;
-            }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Any other exceptions
-                Console.WriteLine($"Unexpected error: {ex.Message}");
                 return null;
             }
-
-
-
         }
 
         public async Task<IEnumerable<TradingDealRequest>?> GetByTradeId(int id)
         {
-            await using var conn = ConnectionController.CreateConnection();
-            await conn.OpenAsync();
-            await using var command = conn.CreateCommand();
+            await using var command = await ConnectionController.GetCommandConnection();
+
+            if (command == null)
+            {
+                return null;
+            }
 
             command.CommandText = "SELECT *, \"TradeRequest\".id as traderequestid, c.id as cardid FROM \"TradeRequest\" left join \"Card\" as c on \"TradeRequest\".\"offeredCard\" = c.id WHERE \"TradeRequest\".\"tradeID\" = @tradeID";
             ConnectionController.AddParameterWithValue(command, "tradeID", DbType.Int32, id);
@@ -150,22 +130,9 @@ namespace MTCG.DataAccessLayer
 
                 return tradingDealRequests;
             }
-            catch (NpgsqlException ex)
-            {
-                // Specific Npgsql exception handling
-                Console.WriteLine($"PostgreSQL error: {ex.Message}");
-                return null;
-            }
-            catch (DbException ex)
-            {
-                // General database exception
-                Console.WriteLine($"Database error: {ex.Message}");
-                return null;
-            }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Any other exceptions
-                Console.WriteLine($"Unexpected error: {ex.Message}");
                 return null;
             }
         }
@@ -193,22 +160,9 @@ namespace MTCG.DataAccessLayer
                 return new TradingDealRequest(reader.GetInt32("tradeID"), reader.GetInt32("userID"), offeredCard, reader.GetInt32("traderequestid"));
 
             }
-            catch (NpgsqlException ex)
-            {
-                // Specific Npgsql exception handling
-                Console.WriteLine($"PostgreSQL error: {ex.Message}");
-                return null;
-            }
-            catch (DbException ex)
-            {
-                // General database exception
-                Console.WriteLine($"Database error: {ex.Message}");
-                return null;
-            }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Any other exceptions
-                Console.WriteLine($"Unexpected error: {ex.Message}");
                 return null;
             }
         }

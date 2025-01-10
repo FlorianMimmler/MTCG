@@ -10,7 +10,7 @@ namespace MTCG.BusinessLayer.Model.RequestObjects
     internal class TradeRequest
     {
         public int OfferedCardId { get; set; }
-        public TradingDealRequirements Requirements { get; set; }
+        public TradingDealRequirements Requirements { get; set; } = new TradingDealRequirements();
         
     }
 }

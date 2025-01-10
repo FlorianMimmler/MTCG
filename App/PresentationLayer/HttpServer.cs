@@ -13,7 +13,7 @@ namespace MTCG.PresentationLayer
         private const int ServerPort = 10001;
         private readonly RequestHandler _requestHandler = new RequestHandler();
         private bool _running = false;
-        private TcpListener _listener;
+        private TcpListener? _listener;
 
         public async Task StartAsync()
         {
@@ -67,7 +67,7 @@ namespace MTCG.PresentationLayer
                 var request = Encoding.UTF8.GetString(buffer, 0, bytesRead);
                 var requestLines = request.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
 
-                var authorizationToken = (from line in requestLines where line.StartsWith("Authorization:", StringComparison.OrdinalIgnoreCase) select line.Substring("Authorization:".Length).Trim()).FirstOrDefault();
+                var authorizationToken = (from line in requestLines where line.StartsWith("Authorization:", StringComparison.OrdinalIgnoreCase) select line.Substring("Authorization:".Length).Trim()).FirstOrDefault() ?? "";
 
                 var body = request.Split(new string[] { "\r\n\r\n", "\n\n" }, StringSplitOptions.None)[1];
 

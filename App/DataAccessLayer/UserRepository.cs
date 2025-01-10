@@ -24,9 +24,12 @@ namespace MTCG.DataAccessLayer
 
         public async Task<int> Add(User entity)
         {
-            await using var conn = ConnectionController.CreateConnection();
-            await conn.OpenAsync();
-            using var command = conn.CreateCommand();
+            await using var command = await ConnectionController.GetCommandConnection();
+
+            if (command == null)
+            {
+                return -2;
+            }
 
             command.CommandText = "INSERT INTO \"User\" (username, password, salt, \"statsID\") " +
                                   "VALUES (@username, @password, @salt, @statsID) RETURNING id";
@@ -34,6 +37,7 @@ namespace MTCG.DataAccessLayer
             ConnectionController.AddParameterWithValue(command, "password", DbType.String, entity.Credentials.Password);
             ConnectionController.AddParameterWithValue(command, "salt", DbType.String, entity.Credentials.Salt);
             ConnectionController.AddParameterWithValue(command, "statsID", DbType.Int32, entity.Stats.Id);
+
             return (int)(await command.ExecuteScalarAsync() ?? 0);
     
         }
@@ -45,9 +49,12 @@ namespace MTCG.DataAccessLayer
 
         public async Task<IEnumerable<User>?> GetAll()
         {
-            await using var conn = ConnectionController.CreateConnection();
-            await conn.OpenAsync();
-            await using var command = conn.CreateCommand();
+            await using var command = await ConnectionController.GetCommandConnection();
+
+            if (command == null)
+            {
+                return null; //TODO
+            }
 
             command.CommandText = """
                                   SELECT u.id, username, password, salt, admin, coins, stats.id as statsid, stats.eloscore, stats.wins, stats.losses
@@ -100,9 +107,13 @@ namespace MTCG.DataAccessLayer
 
         public async Task<User?> GetByUsername(string username)
         {
-            await using var conn = ConnectionController.CreateConnection();
-            await conn.OpenAsync();
-            await using var command = conn.CreateCommand();
+            
+            await using var command = await ConnectionController.GetCommandConnection();
+
+            if(command == null)
+            {
+                return new User(new Credentials("__connection__error__", ""));
+            }
 
             command.CommandText = "SELECT id, username, password, salt FROM \"User\" WHERE username = @username";
             ConnectionController.AddParameterWithValue(command, "username", DbType.String, username);
@@ -114,7 +125,8 @@ namespace MTCG.DataAccessLayer
                 var user = new User
                 {
                     Id = reader.GetInt32(reader.GetOrdinal("id")),
-                    Credentials = new Credentials() {
+                    Credentials = new Credentials()
+                    {
                         Username = reader.GetString("username"),
                     }
                 };
@@ -127,13 +139,17 @@ namespace MTCG.DataAccessLayer
 
             return null;
 
+
         }
 
         public async Task<User?> GetUserDataByUsername(string username)
         {
-            await using var conn = ConnectionController.CreateConnection();
-            await conn.OpenAsync();
-            await using var command = conn.CreateCommand();
+            await using var command = await ConnectionController.GetCommandConnection();
+
+            if (command == null)
+            {
+                return new User(new Credentials("__connection__error__", ""));
+            }
 
             command.CommandText = """
                                   SELECT u.id, username, password, salt, admin, coins, stats.id as statsid, stats.eloscore, stats.wins, stats.losses
@@ -177,9 +193,12 @@ namespace MTCG.DataAccessLayer
 
         public async Task<User?> GetByAuthToken(string authToken)
         {
-            await using var conn = ConnectionController.CreateConnection();
-            await conn.OpenAsync();
-            await using var command = conn.CreateCommand();
+            await using var command = await ConnectionController.GetCommandConnection();
+
+            if (command == null)
+            {
+                return new User(new Credentials("__connection__error__", ""));
+            }
 
             command.CommandText = """
                                    SELECT u.id, username, password, salt, admin, coins, stats.id as statsid, stats.eloscore, stats.wins, stats.losses
@@ -223,9 +242,12 @@ namespace MTCG.DataAccessLayer
 
         public async Task<bool> Update(User entity)
         {
-            await using var conn = ConnectionController.CreateConnection();
-            await conn.OpenAsync();
-            await using var command = conn.CreateCommand();
+            await using var command = await ConnectionController.GetCommandConnection();
+
+            if (command == null)
+            {
+                return false; //TODO
+            }
 
             command.CommandText =
                 "UPDATE \"User\" SET username = @username, password = @password WHERE \"id\" = @id";
@@ -237,44 +259,33 @@ namespace MTCG.DataAccessLayer
             {
                 return await command.ExecuteNonQueryAsync() == 1;
             }
-            catch (NpgsqlException ex)
-            {
-                // Specific Npgsql exception handling
-                Console.WriteLine($"PostgreSQL error: {ex.Message}");
-            }
-            catch (DbException ex)
-            {
-                // General database exception
-                Console.WriteLine($"Database error: {ex.Message}");
-            }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Any other exceptions
-                Console.WriteLine($"Unexpected error: {ex.Message}");
+                return false;
             }
-
-            return false;
         }
 
         public async Task<bool> UpdateCoins(int newCoinsCount, int userId)
         {
-            await using var conn = ConnectionController.CreateConnection();
-            await conn.OpenAsync();
-            await using var command = conn.CreateCommand();
+            await using var command = await ConnectionController.GetCommandConnection();
+
+            if (command == null)
+            {
+                return false; //TODO
+            }
 
             command.CommandText =
                 "UPDATE \"User\" SET coins = @coinsCount WHERE \"id\" = @id";
             ConnectionController.AddParameterWithValue(command, "coinsCount", DbType.Int32, newCoinsCount);
             ConnectionController.AddParameterWithValue(command, "id", DbType.Int32, userId);
-            Console.WriteLine("here");
             int result;
             try
             {
                  result = await command.ExecuteNonQueryAsync();
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Console.WriteLine(e);
                 return false;
             }
             

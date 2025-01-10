@@ -20,9 +20,12 @@ namespace MTCG.DataAccessLayer
 
         public async Task<int> Add(UserAchievement entity)
         {
-            await using var conn = ConnectionController.CreateConnection();
-            await conn.OpenAsync();
-            await using var command = conn.CreateCommand();
+            await using var command = await ConnectionController.GetCommandConnection();
+
+            if (command == null)
+            {
+                return -1;
+            }
 
             command.CommandText = """
                                    INSERT INTO "UserAchievement" ("user", achievement)

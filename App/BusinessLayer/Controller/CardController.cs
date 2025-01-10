@@ -8,7 +8,7 @@ namespace MTCG.BusinessLayer.Controller
     public class CardController : ICardController
     {
 
-        private static ICardController _instance;
+        private static ICardController? _instance;
 
         public static ICardController Instance
         {
@@ -18,12 +18,8 @@ namespace MTCG.BusinessLayer.Controller
 
         private CardController() { }
 
-        private static Random random;
-        private static readonly object syncObj = new object();
-        private static void InitRandomNumber(int seed)
-        {
-            random = new Random(seed);
-        }
+        private static Random random = new();
+        private static readonly object syncObj = new();
         private static int GenerateRandomNumber(int max)
         {
             lock (syncObj)

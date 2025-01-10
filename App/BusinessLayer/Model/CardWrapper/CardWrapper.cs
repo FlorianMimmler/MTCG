@@ -63,14 +63,6 @@ namespace MTCG.BusinessLayer.Model.CardWrapper
             return this.Cards[index];
         }
 
-        public void PrintCards()
-        {
-            foreach (var card in this.Cards)
-            {
-                Console.WriteLine(card.ToString());
-            }
-        }
-
         public bool IsEmpty()
         {
             return this.Cards.Count <= 0;

@@ -27,9 +27,12 @@ namespace MTCG.DataAccessLayer
         }
         public async Task<int> Add(TradingDeal entity)
         {
-            await using var conn = ConnectionController.CreateConnection();
-            await conn.OpenAsync();
-            await using var command = conn.CreateCommand();
+            await using var command = await ConnectionController.GetCommandConnection();
+
+            if (command == null)
+            {
+                return -1;
+            }
 
             command.CommandText = "INSERT INTO \"Trade\" (\"offeredCard\", requirements, \"userID\") VALUES (@offeredCard, @requirements, @userID) RETURNING id";
 
@@ -37,40 +40,43 @@ namespace MTCG.DataAccessLayer
             ConnectionController.AddParameterWithValue(command, "requirements", DbType.String, JsonSerializer.Serialize(entity.Requirements));
             ConnectionController.AddParameterWithValue(command, "userID", DbType.Int32, entity.OfferingUserId);
 
-            Console.WriteLine("Save to DB");
             try
             {
                 return (int)(await command.ExecuteScalarAsync() ?? -1);
             }
-            catch (NpgsqlException ex)
-            {
-                // Specific Npgsql exception handling
-                Console.WriteLine($"PostgreSQL error: {ex.Message}");
-            }
-            catch (DbException ex)
-            {
-                // General database exception
-                Console.WriteLine($"Database error: {ex.Message}");
-            }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Any other exceptions
-                Console.WriteLine($"Unexpected error: {ex.Message}");
+                return -1;
             }
 
-            return -1;
+            
         }
 
-        public Task<int> Delete(TradingDeal entity)
+        public async Task<int> Delete(TradingDeal entity)
         {
-            throw new NotImplementedException();
+            await using var command = await ConnectionController.GetCommandConnection();
+
+            if (command == null)
+            {
+                return -1;
+            }
+
+            command.CommandText = "DELETE FROM\"Trade\" WHERE id = @id";
+            ConnectionController.AddParameterWithValue(command, "id", DbType.Int32, entity.Id ?? -1);
+
+            return await command.ExecuteNonQueryAsync();
+
         }
 
         public async Task<IEnumerable<TradingDeal>?> GetAll()
         {
-            await using var conn = ConnectionController.CreateConnection();
-            await conn.OpenAsync();
-            await using var command = conn.CreateCommand();
+            await using var command = await ConnectionController.GetCommandConnection();
+
+            if (command == null)
+            {
+                return null;
+            }
 
             command.CommandText = "SELECT *, \"Trade\".id as tradeid, c.id as cardid FROM \"Trade\" left join \"Card\" as c on \"Trade\".\"offeredCard\" = c.id";
 
@@ -96,34 +102,21 @@ namespace MTCG.DataAccessLayer
 
                 return tradingDeals;
             }
-            catch (NpgsqlException ex)
-            {
-                // Specific Npgsql exception handling
-                Console.WriteLine($"PostgreSQL error: {ex.Message}");
-                return null;
-            }
-            catch (DbException ex)
-            {
-                // General database exception
-                Console.WriteLine($"Database error: {ex.Message}");
-                return null;
-            }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Any other exceptions
-                Console.WriteLine($"Unexpected error: {ex.Message}");
                 return null;
             }
-
-            
-
         }
 
         public async Task<IEnumerable<TradingDeal>?> GetByUserId(int userId)
         {
-            await using var conn = ConnectionController.CreateConnection();
-            await conn.OpenAsync();
-            await using var command = conn.CreateCommand();
+            await using var command = await ConnectionController.GetCommandConnection();
+
+            if (command == null)
+            {
+                return null;
+            }
 
             command.CommandText = "SELECT *, \"Trade\".id as tradeid, c.id as cardid FROM \"Trade\" left join \"Card\" as c on \"Trade\".\"offeredCard\" = c.id WHERE \"Trade\".\"userID\" = @userID";
             ConnectionController.AddParameterWithValue(command, "userID", DbType.Int32, userId);
@@ -150,31 +143,21 @@ namespace MTCG.DataAccessLayer
 
                 return tradingDeals;
             }
-            catch (NpgsqlException ex)
-            {
-                // Specific Npgsql exception handling
-                Console.WriteLine($"PostgreSQL error: {ex.Message}");
-                return null;
-            }
-            catch (DbException ex)
-            {
-                // General database exception
-                Console.WriteLine($"Database error: {ex.Message}");
-                return null;
-            }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Any other exceptions
-                Console.WriteLine($"Unexpected error: {ex.Message}");
                 return null;
             }
         }
 
         public async Task<TradingDeal?> GetById(int id)
         {
-            await using var conn = ConnectionController.CreateConnection();
-            await conn.OpenAsync();
-            await using var command = conn.CreateCommand();
+            await using var command = await ConnectionController.GetCommandConnection();
+
+            if (command == null)
+            {
+                return null;
+            }
 
             command.CommandText = "SELECT *, \"Trade\".id as tradeid, c.id as cardid FROM \"Trade\" left join \"Card\" as c on \"Trade\".\"offeredCard\" = c.id WHERE \"Trade\".\"id\" = @id";
             ConnectionController.AddParameterWithValue(command, "id", DbType.Int32, id);
@@ -193,22 +176,9 @@ namespace MTCG.DataAccessLayer
                     reader.GetInt32("userID"), reader.GetInt32("tradeid"));
 
             }
-            catch (NpgsqlException ex)
-            {
-                // Specific Npgsql exception handling
-                Console.WriteLine($"PostgreSQL error: {ex.Message}");
-                return null;
-            }
-            catch (DbException ex)
-            {
-                // General database exception
-                Console.WriteLine($"Database error: {ex.Message}");
-                return null;
-            }
-            catch (Exception ex)
+            catch (Exception )
             {
                 // Any other exceptions
-                Console.WriteLine($"Unexpected error: {ex.Message}");
                 return null;
             }
         }

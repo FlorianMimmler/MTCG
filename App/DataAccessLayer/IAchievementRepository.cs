@@ -10,6 +10,6 @@ namespace MTCG.DataAccessLayer
     public interface IAchievementRepository : IRepository<Achievement>
     {
 
-        public Task<List<Achievement>> GetAchievementsByUser(int userId);
+        public Task<List<Achievement>?> GetAchievementsByUser(int userId);
     }
 }

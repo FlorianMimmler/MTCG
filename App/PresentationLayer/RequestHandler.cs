@@ -6,6 +6,7 @@ using System.Text.Json;
 using MTCG.DataAccessLayer;
 using MTCG.BusinessLayer.Model.RequestObjects;
 using MTCG.BusinessLayer.Model.Trading;
+using MTCG.BusinessLayer.Interface;
 
 namespace MTCG.PresentationLayer
 {
@@ -35,6 +36,15 @@ namespace MTCG.PresentationLayer
 
                     var authToken = await AuthenticationController.Instance.Login(userCreds);
 
+                    if (authToken == null)
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.InternalServerError,
+                            ResponseText = "An error occured"
+                        };
+                    }
+
                     return authToken.Valid
                         ? new HttpResponse()
                         {
@@ -63,6 +73,15 @@ namespace MTCG.PresentationLayer
 
                     var userId = await AuthenticationController.Instance.Signup(new Credentials(signupRequest.Username, signupRequest.Password));
 
+                    if (userId == -2)
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.InternalServerError,
+                            ResponseText = "An Error occured"
+                        };
+                    }
+
                     return userId >= 0 ?
                         new HttpResponse()
                         {
@@ -88,6 +107,15 @@ namespace MTCG.PresentationLayer
                         {
                             StatusCode = HttpStatusCode.Unauthorized,
                             ResponseText = "Not authorized"
+                        };
+                    }
+
+                    if (user.GetName() == "__connection__error__")
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.InternalServerError,
+                            ResponseText = "An error occured"
                         };
                     }
 
@@ -121,6 +149,15 @@ namespace MTCG.PresentationLayer
                         };
                     }
 
+                    if (user.GetName() == "__connection__error__")
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.InternalServerError,
+                            ResponseText = "An error occured"
+                        };
+                    }
+
                     var userDeck = await CardRepository.Instance.GetDeckByUser(user.Id);
                     if (userDeck?.Count != 4)
                     {
@@ -149,6 +186,15 @@ namespace MTCG.PresentationLayer
                         {
                             StatusCode = HttpStatusCode.Unauthorized,
                             ResponseText = "Not authorized"
+                        };
+                    }
+
+                    if (user.GetName() == "__connection__error__")
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.InternalServerError,
+                            ResponseText = "An error occured"
                         };
                     }
 
@@ -197,11 +243,18 @@ namespace MTCG.PresentationLayer
                         };
                     }
 
-                    var tradeRequest = JsonSerializer.Deserialize<TradeRequest>(body);
+                    if (user.GetName() == "__connection__error__")
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.InternalServerError,
+                            ResponseText = "An error occured"
+                        };
+                    }
 
-                    Console.WriteLine(tradeRequest.Requirements.MinDamage);
+                    var tradeRequest = TradingController.Instance.ValidateTradeRequest(body);
 
-                    if (tradeRequest == null || tradeRequest.OfferedCardId < 0)
+                    if (tradeRequest == null)
                     {
                         return new HttpResponse()
                         {
@@ -210,33 +263,7 @@ namespace MTCG.PresentationLayer
                         };
                     }
 
-                    var offeredCard = await CardRepository.Instance.GetById(tradeRequest.OfferedCardId);
-                    if (offeredCard == null)
-                    {
-                        return new HttpResponse()
-                        {
-                            StatusCode = HttpStatusCode.BadRequest,
-                            ResponseText = "Invalid input data"
-                        };
-                    }
-
-                    Console.WriteLine(offeredCard.Damage);
-
-                    var newTradingDeal = new TradingDeal(offeredCard, tradeRequest.Requirements, user.Id);
-
-                    Console.WriteLine(newTradingDeal.OfferingUserId);
-
-                    var result = await TradeRepository.Instance.Add(newTradingDeal);
-
-                    if (result >= 0)
-                    {
-                        return new HttpResponse() { StatusCode = HttpStatusCode.OK, ResponseText = "Trade Created" };
-                    }   
-
-                    return new HttpResponse()
-                        { StatusCode = HttpStatusCode.InternalServerError, ResponseText = "Internal Server Error" };
-                    
-
+                    return await TradingController.Instance.CreateTrade(tradeRequest, user);
                 }
 
                 if (request == "/tradeRequest")
@@ -251,9 +278,18 @@ namespace MTCG.PresentationLayer
                         };
                     }
 
-                    var tradeRequest = JsonSerializer.Deserialize<TradeRequestRequest>(body);
+                    if (user.GetName() == "__connection__error__")
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.InternalServerError,
+                            ResponseText = "An error occured"
+                        };
+                    }
 
-                    if (tradeRequest == null || tradeRequest.OfferedCardId < 0 || tradeRequest.TradeId < 0)
+                    var tradeRequest = TradingController.Instance.ValidateTradeRequestRequest(body);
+
+                    if (tradeRequest == null)
                     {
                         return new HttpResponse()
                         {
@@ -262,40 +298,7 @@ namespace MTCG.PresentationLayer
                         };
                     }
 
-                    var offeredCard = await CardRepository.Instance.GetById(tradeRequest.OfferedCardId);
-                    if (offeredCard == null)
-                    {
-                        return new HttpResponse()
-                        {
-                            StatusCode = HttpStatusCode.BadRequest,
-                            ResponseText = "Invalid input data"
-                        };
-                    }
-
-                    var tradeOffer = await TradeRepository.Instance.GetById(tradeRequest.TradeId);
-
-                    if (tradeOffer != null && tradeOffer.OfferingUserId == user.Id)
-                    {
-                        return new HttpResponse()
-                        {
-                            StatusCode = HttpStatusCode.Conflict,
-                            ResponseText = "You can't trade with yourself"
-                        };
-                    }
-
-                    var newTradingRequest = new TradingDealRequest(tradeRequest.TradeId, user.Id, offeredCard);
-
-                    var result = await TradeRequestRepository.Instance.Add(newTradingRequest);
-
-                    if (result >= 0)
-                    {
-                        return new HttpResponse() { StatusCode = HttpStatusCode.OK, ResponseText = "TradeRequest Created" };
-                    }
-
-                    return new HttpResponse()
-                        { StatusCode = HttpStatusCode.InternalServerError, ResponseText = "Internal Server Error" };
-
-
+                    return await TradingController.Instance.CreateTradeRquest(tradeRequest, user);
                 }
             }
 
@@ -314,6 +317,15 @@ namespace MTCG.PresentationLayer
                         };
                     }
 
+                    if (user.GetName() == "__connection__error__")
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.InternalServerError,
+                            ResponseText = "An error occured"
+                        };
+                    }
+
                     var username = request[(request.LastIndexOf('/') + 1)..];
 
                     if (username != user.GetName() && !user.Admin)
@@ -324,7 +336,6 @@ namespace MTCG.PresentationLayer
                             ResponseText = "Not authorized"
                         };
                     }
-
                     var resultUser = username == user.GetName() ? user : await UserRepository.Instance.GetUserDataByUsername(username);
 
                     if (resultUser == null)
@@ -335,9 +346,7 @@ namespace MTCG.PresentationLayer
                             ResponseText = "Not authorized"
                         };
                     }
-
                     var userStack = await CardRepository.Instance.GetByUser(resultUser.Id);
-
 
                     var result = new UserDTO()
                     {
@@ -370,6 +379,15 @@ namespace MTCG.PresentationLayer
                         };
                     }
 
+                    if(user.GetName() == "__connection__error__")
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.InternalServerError,
+                            ResponseText = "An error occured"
+                        };
+                    }
+
                     var userStats = new UserStatsDTO()
                     {
                         Username = user.GetName(),
@@ -397,6 +415,15 @@ namespace MTCG.PresentationLayer
                         {
                             StatusCode = HttpStatusCode.Unauthorized,
                             ResponseText = "Not authorized"
+                        };
+                    }
+
+                    if (user.GetName() == "__connection__error__")
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.InternalServerError,
+                            ResponseText = "An error occured"
                         };
                     }
 
@@ -437,6 +464,15 @@ namespace MTCG.PresentationLayer
                         };
                     }
 
+                    if (user.GetName() == "__connection__error__")
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.InternalServerError,
+                            ResponseText = "An error occured"
+                        };
+                    }
+
                     var deck = await CardRepository.Instance.GetDeckByUser(user.Id);
 
                     if (deck is not { Count: > 0 })
@@ -471,6 +507,15 @@ namespace MTCG.PresentationLayer
                         {
                             StatusCode = HttpStatusCode.Unauthorized,
                             ResponseText = "Not authorized"
+                        };
+                    }
+
+                    if (user.GetName() == "__connection__error__")
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.InternalServerError,
+                            ResponseText = "An error occured"
                         };
                     }
 
@@ -520,7 +565,7 @@ namespace MTCG.PresentationLayer
                         };
                     }
 
-                    var result = await TradeRepository.Instance.GetAll();
+                    var result = await TradingController.Instance.GetTrades();
 
                     return result != null
                         ? new HttpResponse()
@@ -547,6 +592,15 @@ namespace MTCG.PresentationLayer
                         };
                     }
 
+                    if (user.GetName() == "__connection__error__")
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.InternalServerError,
+                            ResponseText = "An error occured"
+                        };
+                    }
+
                     var username = request[(request.LastIndexOf('/') + 1)..];
 
                     if (username != user.GetName() && !user.Admin)
@@ -569,7 +623,7 @@ namespace MTCG.PresentationLayer
                         };
                     }
 
-                    var result = await TradeRepository.Instance.GetByUserId(requestedUser.Id);
+                    var result = await TradingController.Instance.GetTradesByUser(requestedUser);
 
                     return result != null
                         ? new HttpResponse()
@@ -597,6 +651,15 @@ namespace MTCG.PresentationLayer
                         };
                     }
 
+                    if (user.GetName() == "__connection__error__")
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.InternalServerError,
+                            ResponseText = "An error occured"
+                        };
+                    }
+
                     if (!int.TryParse(request[(request.IndexOf('/', 2) + 1)..(request.LastIndexOf('/'))],
                             out var tradeId))
                         return new HttpResponse()
@@ -605,9 +668,9 @@ namespace MTCG.PresentationLayer
                             ResponseText = "Invalid input data"
                         };
 
-                    var trade = await TradeRepository.Instance.GetById(tradeId);
+                    var result = await TradingController.Instance.GetTradeRequestsForTrade(tradeId, user);
 
-                    if (trade == null || (trade.OfferingUserId != user.Id && !user.Admin))
+                    if(result.Item2 == false)
                     {
                         return new HttpResponse()
                         {
@@ -616,13 +679,11 @@ namespace MTCG.PresentationLayer
                         };
                     }
 
-                    var result = await TradeRequestRepository.Instance.GetByTradeId(tradeId);
-
-                    return result != null
+                    return result.Item1 != null
                         ? new HttpResponse()
                         {
                             StatusCode = HttpStatusCode.OK,
-                            ResponseText = JsonSerializer.Serialize(result)
+                            ResponseText = JsonSerializer.Serialize(result.Item1)
                         }
                         : new HttpResponse()
                         {
@@ -649,6 +710,15 @@ namespace MTCG.PresentationLayer
                         {
                             StatusCode = HttpStatusCode.Unauthorized,
                             ResponseText = "Not authorized"
+                        };
+                    }
+
+                    if (user.GetName() == "__connection__error__")
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.InternalServerError,
+                            ResponseText = "An error occured"
                         };
                     }
 
@@ -690,6 +760,15 @@ namespace MTCG.PresentationLayer
                         {
                             StatusCode = HttpStatusCode.Unauthorized,
                             ResponseText = "Not authorized"
+                        };
+                    }
+
+                    if (callingUser.GetName() == "__connection__error__")
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.InternalServerError,
+                            ResponseText = "An error occured"
                         };
                     }
 
@@ -754,69 +833,26 @@ namespace MTCG.PresentationLayer
                         };
                     }
 
-                    if (int.TryParse(request[(request.LastIndexOf('/') + 1)..], out var tradeRequestId))
+                    if (callingUser.GetName() == "__connection__error__")
                     {
-
-                        Console.WriteLine(tradeRequestId);
-
-                        var tradeRequest = await TradeRequestRepository.Instance.GetById(tradeRequestId);
-                        if (tradeRequest == null)
-                        {
-                            return new HttpResponse()
-                            {
-                                StatusCode = HttpStatusCode.BadRequest,
-                                ResponseText = "Bad Request"
-                            };
-                        }
-
-                        Console.WriteLine(tradeRequest.Id);
-
-                        var tradeOffer = await TradeRepository.Instance.GetById(tradeRequest.TradeId);
-                        if (tradeOffer == null)
-                        {
-                            return new HttpResponse()
-                            {
-                                StatusCode = HttpStatusCode.InternalServerError,
-                                ResponseText = "Internal Server Error"
-                            };
-                        }
-                        Console.WriteLine(tradeOffer.Id);
-
-                        if (tradeOffer.OfferingUserId != callingUser.Id && !callingUser.Admin)
-                        {
-                            return new HttpResponse()
-                            {
-                                StatusCode = HttpStatusCode.Unauthorized,
-                                ResponseText = "Not authorized"
-                            };
-                        }
-
-                        Console.WriteLine($"Trade Request offered cardid {tradeRequest.OfferedCard.Id} and should become new UserID {tradeOffer.OfferingUserId}");
-                        Console.WriteLine($"Trade Offer offered cardid {tradeOffer.OfferedCard.Id} and should become new UserID {tradeRequest.RequestUserId}");
-
-                        Console.WriteLine("execute trade");
-
-                        if (await CardRepository.Instance.UpdateUserId(tradeRequest.OfferedCard,
-                                tradeOffer.OfferingUserId))
-                        {
-                            if (await CardRepository.Instance.UpdateUserId(tradeOffer.OfferedCard,
-                                    tradeRequest.RequestUserId))
-                            {
-                                return new HttpResponse()
-                                {
-                                    StatusCode = HttpStatusCode.OK,
-                                    ResponseText = "Trade executed"
-                                };
-                            }
-                        }
-
                         return new HttpResponse()
                         {
                             StatusCode = HttpStatusCode.InternalServerError,
-                            ResponseText = "Internal Server Error"
+                            ResponseText = "An error occured"
                         };
-
                     }
+
+                    if (int.TryParse(request[(request.LastIndexOf('/') + 1)..], out var tradeRequestId))
+                    {
+
+                        return await TradingController.Instance.AcceptTradeRequest(tradeRequestId, callingUser);
+                    }
+
+                    return new HttpResponse()
+                    {
+                        StatusCode = HttpStatusCode.InternalServerError,
+                        ResponseText = "Internal Server Error"
+                    };
 
                 }
             }
