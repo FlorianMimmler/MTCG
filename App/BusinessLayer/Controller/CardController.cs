@@ -41,6 +41,11 @@ namespace MTCG.BusinessLayer.Controller
             return cards;
         }
 
+        public ICard GetCard()
+        {
+            return GenerateCard();
+        }
+
         private static Card GenerateCard()
         {
             var cardType = GenerateRandomNumber(2);

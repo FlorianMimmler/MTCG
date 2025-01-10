@@ -1,4 +1,5 @@
-﻿using MTCG.PresentationLayer;
+﻿using MTCG.BusinessLayer.Controller;
+using MTCG.PresentationLayer;
 using System;
 using System.Linq;
 using System.Net;
@@ -20,6 +21,7 @@ namespace MTCG.PresentationLayer
             _listener = new TcpListener(IPAddress.Any, ServerPort);
             _listener.Start();
             Console.WriteLine($"Server started, listening on port {ServerPort}...");
+            _ = ShopController.Instance;
 
             _running = true;
 
