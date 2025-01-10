@@ -79,7 +79,7 @@ namespace MTCG.BusinessLayer.Controller
 
             var result = await TradeRequestRepository.Instance.Add(newTradingRequest);
 
-            else if (result >= 0)
+            if (result >= 0)
             {
                 return new HttpResponse() { StatusCode = HttpStatusCode.OK, ResponseText = "TradeRequest Created" };
             }
