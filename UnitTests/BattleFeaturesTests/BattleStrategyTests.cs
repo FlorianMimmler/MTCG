@@ -1,14 +1,7 @@
-﻿using MTCG.BusinessLayer.Interface;
-using MTCG.BusinessLayer.Model.BattleStrategy;
+﻿using MTCG.BusinessLayer.Model.BattleStrategy;
 using MTCG.BusinessLayer.Model.Card;
-using MTCG.BusinessLayer.Model.User;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace MTCG_uTests
+namespace MTCG_uTests.BattleFeaturesTests
 {
     internal class BattleStrategyTests
     {

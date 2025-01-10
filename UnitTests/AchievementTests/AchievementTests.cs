@@ -1,14 +1,6 @@
-﻿using MTCG.BusinessLayer.Controller;
-using MTCG.BusinessLayer.Model.Achievements;
-using MTCG.DataAccessLayer;
-using NSubstitute;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MTCG.BusinessLayer.Model.Achievements;
 
-namespace MTCG_uTests
+namespace MTCG_uTests.AchievementTests
 {
     internal class AchievementTests
     {

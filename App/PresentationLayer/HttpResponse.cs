@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MTCG.PresentationLayer
 {
-    internal class HttpResponse
+    public class HttpResponse
     {
 
         public HttpStatusCode StatusCode { get; set; }

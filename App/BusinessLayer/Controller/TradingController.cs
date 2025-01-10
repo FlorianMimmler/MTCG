@@ -13,7 +13,7 @@ using MTCG.PresentationLayer;
 
 namespace MTCG.BusinessLayer.Controller
 {
-    internal class TradingController
+    public class TradingController
     {
         private static TradingController? _instance;
         public static TradingController Instance

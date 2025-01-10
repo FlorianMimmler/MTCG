@@ -1,16 +1,10 @@
 ﻿using MTCG.Auth;
 using MTCG.BusinessLayer.Model.User;
 using MTCG.DataAccessLayer;
-using MTCG;
 using NSubstitute;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MTCG.BusinessLayer.Controller;
 
-namespace MTCG_uTests
+namespace MTCG_uTests.UserFeaturesTests
 {
     internal class ScoreboardControllerTests
     {

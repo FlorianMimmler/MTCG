@@ -3,7 +3,7 @@ using MTCG.BusinessLayer.Model.BattleStrategy;
 using MTCG.BusinessLayer.Model.Card;
 using NSubstitute;
 
-namespace MTCG_uTests.BattleStrategy
+namespace MTCG_uTests.BattleFeaturesTests
 {
     internal class MonsterStrategyTests
     {

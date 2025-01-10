@@ -1,9 +1,7 @@
-﻿
-
-using MTCG.BusinessLayer.Controller;
+﻿using MTCG.BusinessLayer.Controller;
 using MTCG.BusinessLayer.Model.CardWrapper;
 
-namespace MTCG_uTests
+namespace MTCG_uTests.CardTests
 {
     internal class CardWrapperTests
     {

@@ -2,7 +2,7 @@
 
 namespace MTCG.BusinessLayer.Model.Trading
 {
-    internal class TradingDealRequirements
+    public class TradingDealRequirements
     {
 
         public int CardType { get; set; }

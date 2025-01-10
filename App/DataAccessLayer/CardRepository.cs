@@ -6,13 +6,17 @@ using Npgsql;
 
 namespace MTCG.DataAccessLayer
 {
-    internal class CardRepository : IRepository<ICard>
+    public class CardRepository : ICardRepository
 
     {
 
-    private static CardRepository? _instance;
+    private static ICardRepository? _instance;
 
-    public static CardRepository Instance => _instance ??= new CardRepository();
+    public static ICardRepository Instance
+        {
+            get => _instance ??= new CardRepository();
+            set => _instance = value;
+        } 
 
     private CardRepository()
     {
