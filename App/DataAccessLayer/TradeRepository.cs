@@ -64,9 +64,20 @@ namespace MTCG.DataAccessLayer
             return -1;
         }
 
-        public Task<int> Delete(TradingDeal entity)
+        public async Task<int> Delete(TradingDeal entity)
         {
-            throw new NotImplementedException();
+            await using var command = await ConnectionController.GetCommandConnection();
+
+            if (command == null)
+            {
+                return -1;
+            }
+
+            command.CommandText = "DELETE FROM\"Trade\" WHERE id = @id";
+            ConnectionController.AddParameterWithValue(command, "id", DbType.Int32, entity.Id ?? -1);
+
+            return await command.ExecuteNonQueryAsync();
+
         }
 
         public async Task<IEnumerable<TradingDeal>?> GetAll()

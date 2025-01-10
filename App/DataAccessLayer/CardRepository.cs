@@ -204,7 +204,12 @@ namespace MTCG.DataAccessLayer
             return null;
         }
 
-        public async Task<ICard?> GetById(int id)
+        public Task<ICard?> GetById(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<ICard?> GetByIdAndUserId(int id, int userId)
         {
             await using var command = await ConnectionController.GetCommandConnection();
 
@@ -213,9 +218,10 @@ namespace MTCG.DataAccessLayer
                 return null;
             }
 
-            command.CommandText = "SELECT * FROM \"Card\" WHERE \"id\" = @cardID";
+            command.CommandText = "SELECT * FROM \"Card\" WHERE \"id\" = @cardID AND \"userID\" = @userID";
 
             ConnectionController.AddParameterWithValue(command, "cardID", DbType.Int32, id);
+            ConnectionController.AddParameterWithValue(command, "userID", DbType.Int32, userId);
 
             await using var reader = await command.ExecuteReaderAsync();
 

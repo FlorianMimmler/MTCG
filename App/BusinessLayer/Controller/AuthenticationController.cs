@@ -53,7 +53,7 @@ namespace MTCG.Auth
         {
             var dbUser = await UserRepository.Instance.GetByUsername(creds.Username);
 
-            if (dbUser != null && dbUser.GetName() == "__connection__error__")
+            if (dbUser != null && dbUser.GetName() == "__connection__error__" || creds.Username == "__connection__error__")
             {
                 return -2;
             }
