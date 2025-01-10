@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MTCG.BusinessLayer.Model.RequestObjects
 {
-    internal class TradeRequestRequest
+    public class TradeRequestRequest
     {
         public int TradeId { get; set; }
         public int OfferedCardId { get; set; }

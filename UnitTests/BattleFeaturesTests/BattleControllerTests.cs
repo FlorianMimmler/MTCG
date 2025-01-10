@@ -1,13 +1,11 @@
-﻿using MTCG.Auth;
-using MTCG.BusinessLayer.Controller;
+﻿using MTCG.BusinessLayer.Controller;
 using MTCG.BusinessLayer.Interface;
 using MTCG.BusinessLayer.Model.Achievements;
 using MTCG.BusinessLayer.Model.Card;
 using MTCG.BusinessLayer.Model.CardWrapper;
-using MTCG.BusinessLayer.Model.User;
 using NSubstitute;
 
-namespace MTCG_uTests
+namespace MTCG_uTests.BattleFeaturesTests
 {
     internal class BattleControllerTests
     {

@@ -1,6 +1,6 @@
 ﻿using MTCG.Auth;
 
-namespace MTCG_uTests
+namespace MTCG_uTests.AuthTests
 {
     internal class AuthTokenTests
     {

@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MTCG.BusinessLayer.Model.User;
 
-using MTCG.BusinessLayer.Model.User;
-
-namespace MTCG_uTests
+namespace MTCG_uTests.UserFeaturesTests
 {
     internal class EloTests
     {

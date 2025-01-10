@@ -1,8 +1,7 @@
-using MTCG;
 using MTCG.Auth;
 using MTCG.BusinessLayer.Model.User;
 
-namespace MTCG_uTests
+namespace MTCG_uTests.UserFeaturesTests
 {
     public class UserTests
     {

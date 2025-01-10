@@ -2,13 +2,8 @@
 using MTCG.BusinessLayer.Model.Achievements;
 using MTCG.DataAccessLayer;
 using NSubstitute;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace MTCG_uTests
+namespace MTCG_uTests.AchievementTests
 {
     internal class AchievementControllerTests
     {
@@ -25,6 +20,13 @@ namespace MTCG_uTests
 
             AchievementController.Instance = null;
             _controller = AchievementController.Instance;
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            AchievementRepository.Instance = null;
+            AchievementController.Instance = null;
         }
 
         [Test]

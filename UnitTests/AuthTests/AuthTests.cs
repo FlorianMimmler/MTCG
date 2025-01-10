@@ -3,7 +3,7 @@ using MTCG.BusinessLayer.Model.User;
 using MTCG.DataAccessLayer;
 using MTCG.Auth;
 
-namespace MTCG_uTests
+namespace MTCG_uTests.AuthTests
 {
     public class AuthenticationControllerTests
     {
@@ -86,7 +86,7 @@ namespace MTCG_uTests
         {
             // Arrange
             var creds = new Credentials("existingUser", "password");
-            _userRepositoryMock.GetByUsername(creds.Username).Returns(Task.FromResult(new User()));
+            _userRepositoryMock.GetByUsername(creds.Username).Returns(Task.FromResult<User?>(new User()));
 
             // Act
             var result = await _controller.Signup(creds);

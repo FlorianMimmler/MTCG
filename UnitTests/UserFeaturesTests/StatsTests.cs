@@ -1,11 +1,6 @@
 ﻿using MTCG.BusinessLayer.Model.User;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace MTCG_uTests
+namespace MTCG_uTests.UserFeaturesTests
 {
     internal class StatsTests
     {

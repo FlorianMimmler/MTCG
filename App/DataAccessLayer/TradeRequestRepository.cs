@@ -15,12 +15,16 @@ using NpgsqlTypes;
 
 namespace MTCG.DataAccessLayer
 {
-    internal class TradeRequestRepository : IRepository<TradingDealRequest>
+    public class TradeRequestRepository : ITradeRequestRepository
     {
 
-        private static TradeRequestRepository? _instance;
+        private static ITradeRequestRepository? _instance;
 
-        public static TradeRequestRepository Instance => _instance ??= new TradeRequestRepository();
+        public static ITradeRequestRepository Instance
+        {
+            get => _instance ??= new TradeRequestRepository();
+            set => _instance = value;
+        } 
 
         private TradeRequestRepository()
         {

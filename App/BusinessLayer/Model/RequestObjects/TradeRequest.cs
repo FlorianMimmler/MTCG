@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace MTCG.BusinessLayer.Model.RequestObjects
 {
-    internal class TradeRequest
+    public class TradeRequest
     {
-        public int OfferedCardId { get; set; }
+        public int OfferedCardId { get; set; } = -1;
         public TradingDealRequirements Requirements { get; set; } = new TradingDealRequirements();
         
     }
