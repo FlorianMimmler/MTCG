@@ -11,7 +11,7 @@ namespace MTCG.BusinessLayer.Controller
     public class AchievementController
     {
 
-        private static AchievementController _instance;
+        private static AchievementController? _instance;
 
         public static AchievementController Instance
         {

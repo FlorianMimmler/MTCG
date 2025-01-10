@@ -10,7 +10,7 @@ namespace MTCG.PresentationLayer
     {
 
         public HttpStatusCode StatusCode { get; set; }
-        public string ResponseText { get; set; }
+        public string ResponseText { get; set; } = "";
 
         public override string ToString()
         {

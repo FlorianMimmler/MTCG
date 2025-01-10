@@ -284,7 +284,7 @@ namespace MTCG.DataAccessLayer
             {
                  result = await command.ExecuteNonQueryAsync();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return false;
             }

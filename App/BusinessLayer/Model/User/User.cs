@@ -25,27 +25,31 @@ namespace MTCG.BusinessLayer.Model.User
         public List<int>? AchievementIds { get; set; }
         public List<Achievement> NewAchievements { get; set; } = [];
 
-        public User() {}
+        public User() {
+            Credentials = new Credentials();
+            _ = LoadAchievements();
+            Token = new AuthToken();
+        }
 
         public User(Credentials creds)
         {
             Credentials = creds;
             _ = LoadAchievements();
+            Token = new AuthToken();
 
         }
 
-        private async Task<int> LoadAchievements()
+        private async Task<List<int>> LoadAchievements()
         {
-            AchievementIds = (await AchievementRepository.Instance.GetAchievementsByUser(this.Id)).Select(achievement => achievement.Id)
-                .ToList();
-            return AchievementIds.Count;
+            return (await AchievementRepository.Instance.GetAchievementsByUser(this.Id))?.Select(achievement => achievement.Id)
+                .ToList() ?? [];
         }
 
         public async Task<List<Achievement>> GetAchievements()
         {
-            AchievementIds ??= (await AchievementRepository.Instance.GetAchievementsByUser(this.Id))
+            AchievementIds ??= (await AchievementRepository.Instance.GetAchievementsByUser(this.Id))?
                     .Select(achievement => achievement.Id)
-                    .ToList();
+                    .ToList() ?? [];
 
             return AchievementController.Instance.GetAchievements()
                 .Where(achievement => AchievementIds.Contains(achievement.Id)).ToList();
@@ -118,7 +122,7 @@ namespace MTCG.BusinessLayer.Model.User
         {
             if (AchievementIds == null)
             {
-                var count = await LoadAchievements();
+                AchievementIds = await LoadAchievements();
             }
             var achievementList = AchievementController.Instance.GetAchievements() ?? [];
             var success = true;
