@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 
-namespace MTCG
+namespace MTCG.BusinessLayer.Model.CardWrapper
 {
     public interface ICardWrapper
     {

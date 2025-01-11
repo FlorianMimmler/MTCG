@@ -1,0 +1,601 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="MTCG.Auth.AuthenticationController" Collapsed="true">
+    <Position X="31" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAAAAAAAAAAAAAAIAAAAACAAAQAAQAAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Controller\AuthenticationController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MTCG.Auth.AuthToken" Collapsed="true">
+    <Position X="32.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAgBAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Model\Auth\AuthToken.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MTCG.Auth.Credentials" Collapsed="true">
+    <Position X="36.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAAAAAAAAGAAAAAQACAgAEAAAAAAACAAAAgAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Model\User\Credentials.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MTCG.BusinessLayer.Controller.AchievementController" Collapsed="true">
+    <Position X="27.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAUEAAAAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Controller\AchievementController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MTCG.BusinessLayer.Controller.BattleController" Collapsed="true">
+    <Position X="34.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAQQCAAAAIAABAC5RAIAEAAAAACBAAAAAAAAgAAAAA=</HashCode>
+      <FileName>BusinessLayer\Controller\BattleController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MTCG.BusinessLayer.Controller.BattleLogHeader" Collapsed="true">
+    <Position X="25.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAwACAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Controller\BattleController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MTCG.BusinessLayer.Controller.BattleRoundLog" Collapsed="true">
+    <Position X="27.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAIAAAAAAEAAAAAACAAAAAAAAAAAAAAAAAIAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Controller\BattleController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MTCG.BusinessLayer.Controller.BattleLobbyController" Collapsed="true">
+    <Position X="36.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAAAAAAABAAAAAAAAAAQAAAQAQAAAAAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Controller\BattleLobbyController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MTCG.BusinessLayer.Controller.CardController" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="29.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEgAAAIAAAAAAAAAAAABQAAAAAAAAAQAwAAAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Controller\CardController.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="MTCG.BusinessLayer.Controller.ScoreboardController" Collapsed="true">
+    <Position X="34.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIEAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Controller\ScoreboardController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MTCG.BusinessLayer.Controller.ShopController" Collapsed="true">
+    <Position X="36.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAEAAACIAAAAAAAAAAAAAAAAAAAQAAAQgAAAAIAAAA=</HashCode>
+      <FileName>BusinessLayer\Controller\ShopController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MTCG.BusinessLayer.Controller.TradingController" Collapsed="true">
+    <Position X="29.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEABAAAAAAAAAAAgAAAAUAAAAAQAAAQCAAAGAAAAA=</HashCode>
+      <FileName>BusinessLayer\Controller\TradingController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MTCG.BusinessLayer.Model.ShopItem" Collapsed="true">
+    <Position X="17.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAQAgAAAAAAAAAAQABAAAAAEAAQAAAAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Model\Shop\ShopItem.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="MTCG.BusinessLayer.Model.BattleStrategy.BattleStrategy" Collapsed="true">
+    <Position X="11.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Model\BattleStrategy\BattleStrategy.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="MTCG.BusinessLayer.Model.BattleStrategy.MixedBattleStrategy" Collapsed="true">
+    <Position X="11.75" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Model\BattleStrategy\MixedBattleStrategy.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MTCG.BusinessLayer.Model.BattleStrategy.MonsterBattleStrategy" Collapsed="true">
+    <Position X="14" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Model\BattleStrategy\MonsterBattleStrategy.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MTCG.BusinessLayer.Model.BattleStrategy.SpecialCaseResolver" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="29.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Model\BattleStrategy\SpecialCaseResolver.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="MTCG.BusinessLayer.Model.BattleStrategy.SpellBattleStrategy" Collapsed="true">
+    <Position X="9.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Model\BattleStrategy\SpellBattleStrategy.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MTCG.BusinessLayer.Model.Achievements.Achievement" Collapsed="true">
+    <Position X="25.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAIAQAAAAAQAAAAQAgQAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Model\Achievements\Achievement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MTCG.BusinessLayer.Model.Achievements.UserAchievement" Collapsed="true">
+    <Position X="25.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAEAAAgAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Model\Achievements\UserAchievement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MTCG.BusinessLayer.Model.Card.ElementTypeMethods" Collapsed="true">
+    <Position X="31" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Model\Card\ElementType.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MTCG.BusinessLayer.Model.Card.ElementEffectiveness" Collapsed="true">
+    <Position X="29.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Model\Card\ElementType.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MTCG.BusinessLayer.Model.Card.Card" Collapsed="true">
+    <Position X="18.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACBACAAAAAAAAEAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Model\Card\Card.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="MTCG.BusinessLayer.Model.Card.CardDTO" Collapsed="true">
+    <Position X="31" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAACAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Model\Card\CardDTO.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MTCG.BusinessLayer.Model.Card.MonsterCard" Collapsed="true">
+    <Position X="19.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Model\Card\MonsterCard.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MTCG.BusinessLayer.Model.Card.SpellCard" Collapsed="true">
+    <Position X="17.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Model\Card\SpellCard.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MTCG.BusinessLayer.Model.CardWrapper.CardWrapper" Collapsed="true">
+    <Position X="11.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAIAAIAAAEAAQAAAAAAAAIQAAAAABACAAAAAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Model\CardWrapper\CardWrapper.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="MTCG.BusinessLayer.Model.CardWrapper.Deck" Collapsed="true">
+    <Position X="9.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Model\CardWrapper\Deck.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MTCG.BusinessLayer.Model.CardWrapper.Package" Collapsed="true">
+    <Position X="11.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Model\CardWrapper\Package.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MTCG.BusinessLayer.Model.CardWrapper.Stack" Collapsed="true">
+    <Position X="14" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Model\CardWrapper\Stack.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MTCG.BusinessLayer.Model.RequestObjects.DeckRequest" Collapsed="true">
+    <Position X="25.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Model\RequestObjects\DeckRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MTCG.BusinessLayer.Model.RequestObjects.EditUsersRequest" Collapsed="true">
+    <Position X="27.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAQAAAAAAAAAAAAACAAAAAAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Model\RequestObjects\EditUsersRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MTCG.BusinessLayer.Model.RequestObjects.LoginRequest" Collapsed="true">
+    <Position X="27.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAQAAAAAAAAAAAAACAAAAAAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Model\RequestObjects\LoginRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MTCG.BusinessLayer.Model.RequestObjects.SignupRequest" Collapsed="true">
+    <Position X="27.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAQAAAAAAAAAAAAACAAAAAAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Model\RequestObjects\SignupRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MTCG.BusinessLayer.Model.RequestObjects.TradeRequest" Collapsed="true">
+    <Position X="36.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAACAAAAAAAAAAAAAIAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Model\RequestObjects\TradeRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MTCG.BusinessLayer.Model.RequestObjects.TradeRequestRequest" Collapsed="true">
+    <Position X="27.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAACAAAAAAAAAAAAAAAACAAAAAAAAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Model\RequestObjects\TradeRequestRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MTCG.BusinessLayer.Model.Shop.MysteryPack" Collapsed="true">
+    <Position X="17.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAACAQQAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAA=</HashCode>
+      <FileName>BusinessLayer\Model\Shop\MysteryPack.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MTCG.BusinessLayer.Model.Shop.MysteryResult" Collapsed="true">
+    <Position X="29.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABABAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAQAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Model\Shop\MysteryResult.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MTCG.BusinessLayer.Model.Trading.TradingDeal" Collapsed="true">
+    <Position X="31" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEACAAAAAAAAAAAAAAAAAgAAAAIAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Model\Trading\TradingDeal.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MTCG.BusinessLayer.Model.Trading.TradingDealRequest" Collapsed="true">
+    <Position X="32.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAACAAAAAAgAAAAAAACAAAAAAAAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Model\Trading\TradingDealRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MTCG.BusinessLayer.Model.Trading.TradingDealRequirements" Collapsed="true">
+    <Position X="34.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAAAAAAAAEAAAAAgCAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Model\Trading\TradingDealRequirements.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MTCG.BusinessLayer.Model.User.Elo" Collapsed="true">
+    <Position X="32.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAAABAAgAABAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Model\User\Elo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MTCG.BusinessLayer.Model.User.Stats" Collapsed="true">
+    <Position X="31" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACACAAAAAgAAAAAAAAAAAAAIAAAAAgAAAIAAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Model\User\Stats.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MTCG.BusinessLayer.Model.User.User" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="36.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EhACAAACACAQAAAAQAICDQAAgAIEgAACQEBAAAgBBAA=</HashCode>
+      <FileName>BusinessLayer\Model\User\User.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="MTCG.BusinessLayer.Model.User.UserDTO" Collapsed="true">
+    <Position X="29.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAQEAGAAAAAAAAAgAAAAAAAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Model\User\UserDTO.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MTCG.BusinessLayer.Model.User.UserStatsDTO" Collapsed="true">
+    <Position X="32.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAQEAAAAAAAAAAAggAAAAAAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Model\User\UserDTO.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MTCG.BusinessLayer.Model.User.UserToken" Collapsed="true">
+    <Position X="34.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAABAAA=</HashCode>
+      <FileName>BusinessLayer\Model\User\UserToken.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MTCG.DataAccessLayer.AchievementRepository" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="29.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAYEAAAAAAAAAAAAAAAAAAAAAAEAAAAAQgAAAAAAAIA=</HashCode>
+      <FileName>DataAccessLayer\AchievementRepository.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="MTCG.DataAccessLayer.CardRepository" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="32.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAYEAABAAAAAAAAAACAAIBAAAAEAAAAAQgAAAAAAAII=</HashCode>
+      <FileName>DataAccessLayer\CardRepository.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="MTCG.DataAccessLayer.ConnectionController" Collapsed="true">
+    <Position X="34.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAACAAAEQAAAAAAAAAAAAAAAAQCAAAAAAAAA=</HashCode>
+      <FileName>DataAccessLayer\ConnectionController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MTCG.DataAccessLayer.ShopRepository" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="25.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAYEAAAAAAAAAAAAAAAAAAAAAAEAAAAAQgAAAAAAAIA=</HashCode>
+      <FileName>DataAccessLayer\ShopRepository.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="MTCG.DataAccessLayer.StatsRepository" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="32.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAYEAAAAAAAAAAAAAAAAAAAAAAEAAAAAQgAAAAAAAIA=</HashCode>
+      <FileName>DataAccessLayer\StatsRepository.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="MTCG.DataAccessLayer.TradeRepository" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="34.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEYEAAAAAAAAAAAAAAAAAAAAAAEAAAAAQgAAAAAAAIA=</HashCode>
+      <FileName>DataAccessLayer\TradeRepository.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="MTCG.DataAccessLayer.TradeRequestRepository" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="25.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAYEAAAAAAAAEAAAAAAAAAAAAAEAAAAAQgAAAAAAAIA=</HashCode>
+      <FileName>DataAccessLayer\TradeRequestRepository.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="MTCG.DataAccessLayer.UserAchievementRepository" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="27.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAYEAAAAAAAAAAAAAAAAAAAAAAEAAAAAQgAAAAAAAIA=</HashCode>
+      <FileName>DataAccessLayer\UserAchievementRepository.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="MTCG.DataAccessLayer.UserRepository" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="31" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAYEAAAAAAAAAAgAAAAAAAACAAEAAAAAQgAAAAEAAIA=</HashCode>
+      <FileName>DataAccessLayer\UserRepository.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="MTCG.DataAccessLayer.UserTokenRepository" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="36.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAYEAAAAAAAAAAAAAAAAAAAAAAEAAAAAQgAAAAEAAIA=</HashCode>
+      <FileName>DataAccessLayer\UserTokenRepository.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="MTCG.PresentationLayer.HttpResponse" Collapsed="true">
+    <Position X="34.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAAgAAAAAAAAAAAAAIAAAAAAAAAA=</HashCode>
+      <FileName>PresentationLayer\HttpResponse.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MTCG.PresentationLayer.HttpServer" Collapsed="true">
+    <Position X="36.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAQCAAAAAABAAAAAAAAAAAAAIQAAQAAAAQA=</HashCode>
+      <FileName>PresentationLayer\HttpServer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MTCG.PresentationLayer.Program" Collapsed="true">
+    <Position X="31" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>PresentationLayer\Program.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MTCG.PresentationLayer.RequestHandler" Collapsed="true">
+    <Position X="32.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>PresentationLayer\RequestHandler.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MTCG.PresentationLayer.HttpStatusCodeExtensions" Collapsed="true">
+    <Position X="25.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>PresentationLayer\StatusCode.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="MTCG.BusinessLayer.Interface.ICard" Collapsed="true">
+    <Position X="27.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACBACAAAAAAAAEAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Interface\ICard.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="MTCG.BusinessLayer.Interface.ICardController" Collapsed="true">
+    <Position X="29.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Interface\ICardController.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="MTCG.BusinessLayer.Interface.IShopItem" Collapsed="true">
+    <Position X="32.75" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Interface\IShopItem.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="MTCG.BusinessLayer.Interface.ISpecialCaseResolver" Collapsed="true">
+    <Position X="34.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Interface\ISpecialCaseResolver.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="MTCG.BusinessLayer.Interface.IUser" Collapsed="true">
+    <Position X="36.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EhACAAAAACAQAAAAQAICDQAAgAIEgAACQABAAAABBAA=</HashCode>
+      <FileName>BusinessLayer\Interface\IUser.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="MTCG.BusinessLayer.Model.BattleStrategy.IBattleStrategy" Collapsed="true">
+    <Position X="25.75" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Interface\IBattleStrategy.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="MTCG.BusinessLayer.Model.CardWrapper.ICardWrapper" Collapsed="true">
+    <Position X="31" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAIAAIAAAEAAQAAAAAAAAIQAAAAABAAAAAAAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Interface\ICardWrapper.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="MTCG.DataAccessLayer.IAchievementRepository" Collapsed="true">
+    <Position X="9.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAA=</HashCode>
+      <FileName>DataAccessLayer\IAchievementRepository.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="MTCG.DataAccessLayer.ICardRepository" Collapsed="true">
+    <Position X="12" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAABAAAAAAAAAACAAIBAAAAAAAAAAAgAAAAAAAAI=</HashCode>
+      <FileName>DataAccessLayer\ICardRepository.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="MTCG.DataAccessLayer.IRepository&lt;T&gt;" Collapsed="true">
+    <Position X="16.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAYAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAgAAAAAAAIA=</HashCode>
+      <FileName>DataAccessLayer\IRepository.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="MTCG.DataAccessLayer.IStatsRepository" Collapsed="true">
+    <Position X="14.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DataAccessLayer\IStatsRepository.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="MTCG.DataAccessLayer.ITradeRepository" Collapsed="true">
+    <Position X="16.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DataAccessLayer\ITradeRepository.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="MTCG.DataAccessLayer.ITradeRequestRepository" Collapsed="true">
+    <Position X="18.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DataAccessLayer\ITradeRequestRepository.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="MTCG.DataAccessLayer.IUserRepository" Collapsed="true">
+    <Position X="21" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAgAAAAAAAACAAEAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>DataAccessLayer\IUserRepository.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="MTCG.DataAccessLayer.IUserTokenRepository" Collapsed="true">
+    <Position X="23.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>DataAccessLayer\IUserTokenRepository.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="MTCG.BusinessLayer.Model.ShopItemType" Collapsed="true">
+    <Position X="34.5" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAIAAA=</HashCode>
+      <FileName>BusinessLayer\Model\Shop\ShopItem.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="MTCG.BusinessLayer.Model.BattleStrategy.BattleResult" Collapsed="true">
+    <Position X="27.5" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAACAAACAAAAAAAQAAAAAAAAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Model\BattleStrategy\BattleResult.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="MTCG.BusinessLayer.Model.Achievements.AchievementTypes" Collapsed="true">
+    <Position X="25.75" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAACAAAAAAAAAAgAAAIAAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Model\Achievements\Achievement.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="MTCG.BusinessLayer.Model.Card.ElementType" Collapsed="true">
+    <Position X="29.25" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACgAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAA=</HashCode>
+      <FileName>BusinessLayer\Model\Card\ElementType.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="MTCG.BusinessLayer.Model.Card.MonsterType" Collapsed="true">
+    <Position X="32.75" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABAAAEAAAAABgAAAAAAAAAIAAAgAAAAAAAgAAA=</HashCode>
+      <FileName>BusinessLayer\Model\Card\MonsterType.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="MTCG.PresentationLayer.HttpStatusCode" Collapsed="true">
+    <Position X="31" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAEAQAAICAAAAAAwACEAAAAAAIEAAAQAACQBAAAEAAA=</HashCode>
+      <FileName>PresentationLayer\StatusCode.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

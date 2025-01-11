@@ -1,4 +1,4 @@
-﻿
+﻿namespace MTCG.BusinessLayer.Model.Card;
 public enum MonsterType
 {
     Goblin,
