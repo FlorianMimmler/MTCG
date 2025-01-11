@@ -7,6 +7,7 @@ using MTCG.DataAccessLayer;
 using MTCG.BusinessLayer.Model.RequestObjects;
 using MTCG.BusinessLayer.Model.Trading;
 using MTCG.BusinessLayer.Interface;
+using MTCG.BusinessLayer.Model;
 
 namespace MTCG.PresentationLayer
 {
@@ -299,6 +300,51 @@ namespace MTCG.PresentationLayer
                     }
 
                     return await TradingController.Instance.CreateTradeRquest(tradeRequest, user);
+                }
+
+                if (request.StartsWith("/shopitem"))
+                {
+                    var user = await UserRepository.Instance.GetByAuthToken(requestAuthToken);
+                    if (user == null)
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.Unauthorized,
+                            ResponseText = "Not authorized"
+                        };
+                    }
+
+                    if (user.GetName() == "__connection__error__")
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.InternalServerError,
+                            ResponseText = "An error occured"
+                        };
+                    }
+
+                    var rawShopItemId = request[(request.LastIndexOf('/') + 1)..];
+
+                    if (int.TryParse(rawShopItemId, out int shopItemId))
+                    {
+                        ShopController.Instance.UpdateShop();
+
+                        var result = await ShopController.Instance.BuyItem(shopItemId, user);
+
+                        //TODO create response format, also for other items like (success, message, optional stuff)
+
+                        return new HttpResponse
+                        {
+                            StatusCode = result.Item1,
+                            ResponseText = result.Item2
+                        };
+                    }
+
+                    return new HttpResponse()
+                    {
+                        StatusCode = HttpStatusCode.InternalServerError,
+                        ResponseText = "An error occured"
+                    };
                 }
             }
 
@@ -691,9 +737,47 @@ namespace MTCG.PresentationLayer
                             ResponseText = "No TradeRequests Available"
                         };
 
+                }
 
+                if (request.StartsWith("/shopitem"))
+                {
+                    var user = await UserRepository.Instance.GetByAuthToken(requestAuthToken);
+                    if (user == null)
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.Unauthorized,
+                            ResponseText = "Not authorized"
+                        };
+                    }
 
+                    if (user.GetName() == "__connection__error__")
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.InternalServerError,
+                            ResponseText = "An error occured"
+                        };
+                    }
 
+                    var result = await ShopController.Instance.GetShopItems();
+
+                    if (result == null || result.Count == 0)
+                    {
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.NoContent,
+                            ResponseText = "No Shop Items available"
+                        };
+                    } else
+                    {
+                        var concreteItems = result.Cast<ShopItem>().ToList();
+                        return new HttpResponse()
+                        {
+                            StatusCode = HttpStatusCode.OK,
+                            ResponseText = JsonSerializer.Serialize(concreteItems)
+                        };
+                    }
                 }
 
             }

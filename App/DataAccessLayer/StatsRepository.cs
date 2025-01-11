@@ -21,14 +21,19 @@ namespace MTCG.DataAccessLayer
         {
             await using var command = await ConnectionController.GetCommandConnection();
 
-            if (command == null)
+            if (command == null || command.Connection == null)
             {
                 return -1;
             }
+            try { 
+                command.CommandText = "INSERT INTO \"Stats\" default values RETURNING id";
 
-            command.CommandText = "INSERT INTO \"Stats\" default values RETURNING id";
-
-            return (int) (await command.ExecuteScalarAsync() ?? -1);
+                return (int) (await command.ExecuteScalarAsync() ?? -1);
+            }
+            finally
+            {
+                await command.Connection.CloseAsync(); // Ensure connection is closed
+            }
         }
 
         public Task<int> Delete(Stats entity)
@@ -50,19 +55,24 @@ namespace MTCG.DataAccessLayer
         {
             await using var command = await ConnectionController.GetCommandConnection();
 
-            if (command == null)
+            if (command == null || command.Connection == null)
             {
                 return false;
             }
+            try { 
+                command.CommandText = "UPDATE \"Stats\" SET wins = @wins, losses = @losses, eloscore = @eloscore WHERE id = @id";
 
-            command.CommandText = "UPDATE \"Stats\" SET wins = @wins, losses = @losses, eloscore = @eloscore WHERE id = @id";
+                ConnectionController.AddParameterWithValue(command, "wins", DbType.Int32, entity.Wins);
+                ConnectionController.AddParameterWithValue(command, "losses", DbType.Int32, entity.Losses);
+                ConnectionController.AddParameterWithValue(command, "eloscore", DbType.Int32, entity.Elo.EloScore);
+                ConnectionController.AddParameterWithValue(command, "id", DbType.Int32, entity.Id);
 
-            ConnectionController.AddParameterWithValue(command, "wins", DbType.Int32, entity.Wins);
-            ConnectionController.AddParameterWithValue(command, "losses", DbType.Int32, entity.Losses);
-            ConnectionController.AddParameterWithValue(command, "eloscore", DbType.Int32, entity.Elo.EloScore);
-            ConnectionController.AddParameterWithValue(command, "id", DbType.Int32, entity.Id);
-
-            return await command.ExecuteNonQueryAsync() == 1;
+                return await command.ExecuteNonQueryAsync() == 1;
+            }
+            finally
+            {
+                await command.Connection.CloseAsync(); // Ensure connection is closed
+            }
         }
     }
 }

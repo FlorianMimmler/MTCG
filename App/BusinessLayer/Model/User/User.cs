@@ -3,6 +3,7 @@ using MTCG.BusinessLayer.Controller;
 using MTCG.BusinessLayer.Interface;
 using MTCG.BusinessLayer.Model.Achievements;
 using MTCG.BusinessLayer.Model.CardWrapper;
+using MTCG.BusinessLayer.Model.Shop;
 using MTCG.DataAccessLayer;
 
 namespace MTCG.BusinessLayer.Model.User
@@ -181,6 +182,24 @@ namespace MTCG.BusinessLayer.Model.User
         public bool IsPasswordEqual(string password)
         {
             return this.Credentials.Password == password;
+        }
+
+        public async Task<int> ApplyMysteryResult(MysteryResult mysteryresult)
+        {
+            if (mysteryresult.RewardType == "coins" && mysteryresult.Coins > 0)
+            {
+                Coins += mysteryresult.Coins;
+                return (await UserRepository.Instance.UpdateCoins(Coins, this.Id)) ? 1 : -1;
+            }
+            else if (mysteryresult.RewardType == "card" && mysteryresult.Card != null)
+            {
+                var cardId = await CardRepository.Instance.Add(mysteryresult.Card, this.Id);
+                if (cardId < 0) return -1;
+                mysteryresult.Card.Id = cardId;
+                Stack.AddCard(mysteryresult.Card);
+                return cardId;
+            }
+            return -1;
         }
     }
 }

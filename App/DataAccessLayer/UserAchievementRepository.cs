@@ -22,20 +22,25 @@ namespace MTCG.DataAccessLayer
         {
             await using var command = await ConnectionController.GetCommandConnection();
 
-            if (command == null)
+            if (command == null || command.Connection == null)
             {
                 return -1;
             }
+            try { 
+                command.CommandText = """
+                                       INSERT INTO "UserAchievement" ("user", achievement)
+                                       VALUES(@userId, @achievementId) RETURNING id
+                                      """;
 
-            command.CommandText = """
-                                   INSERT INTO "UserAchievement" ("user", achievement)
-                                   VALUES(@userId, @achievementId) RETURNING id
-                                  """;
+                ConnectionController.AddParameterWithValue(command, "userId", DbType.Int32, entity.UserId);
+                ConnectionController.AddParameterWithValue(command, "achievementId", DbType.Int32, entity.Achievement.Id);
 
-            ConnectionController.AddParameterWithValue(command, "userId", DbType.Int32, entity.UserId);
-            ConnectionController.AddParameterWithValue(command, "achievementId", DbType.Int32, entity.Achievement.Id);
-
-            return (int)(await command.ExecuteScalarAsync() ?? 0);
+                return (int)(await command.ExecuteScalarAsync() ?? 0);
+            }
+            finally
+            {
+                await command.Connection.CloseAsync(); // Ensure connection is closed
+            }
         }
 
         public Task<int> Delete(UserAchievement entity)

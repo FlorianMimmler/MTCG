@@ -23,7 +23,7 @@ namespace MTCG.DataAccessLayer
         {
             await using var command = await ConnectionController.GetCommandConnection();
 
-            if (command == null)
+            if (command == null || command.Connection == null)
             {
                 return -1;
             }
@@ -32,8 +32,13 @@ namespace MTCG.DataAccessLayer
                                   "VALUES (@userID, @authToken) RETURNING id";
             ConnectionController.AddParameterWithValue(command, "userID", DbType.Int32, entity.UserID);
             ConnectionController.AddParameterWithValue(command, "authToken", DbType.String, entity.Token.Value);
-            
-            return (int)(await command.ExecuteScalarAsync() ?? -1);
+            try { 
+                return (int)(await command.ExecuteScalarAsync() ?? -1);
+            }
+            finally
+            {
+                await command.Connection.CloseAsync(); // Ensure connection is closed
+            }
 
         }
 
@@ -41,15 +46,20 @@ namespace MTCG.DataAccessLayer
         {
             await using var command = await ConnectionController.GetCommandConnection();
 
-            if (command == null)
+            if (command == null || command.Connection == null)
             {
                 return -1;
             }
 
             command.CommandText = "DELETE FROM \"UserToken\" WHERE \"authToken\" = @authToken";
             ConnectionController.AddParameterWithValue(command, "authToken", DbType.String, entity.Token.Value);
-
-            return (int)(await command.ExecuteNonQueryAsync());
+            try { 
+                return (int)(await command.ExecuteNonQueryAsync());
+            }
+            finally
+            {
+                await command.Connection.CloseAsync(); // Ensure connection is closed
+            }
         }
 
         public Task<IEnumerable<UserToken>?> GetAll()
@@ -66,24 +76,30 @@ namespace MTCG.DataAccessLayer
         {
             await using var command = await ConnectionController.GetCommandConnection();
 
-            if (command == null)
+            if (command == null || command.Connection == null)
             {
                 return -2;
             }
 
             command.CommandText = "SELECT \"userID\" FROM \"UserToken\" WHERE \"authToken\" = @authToken";
             ConnectionController.AddParameterWithValue(command, "authToken", DbType.String, authToken);
+            try { 
+                await using var reader = await command.ExecuteReaderAsync();
 
-            await using var reader = await command.ExecuteReaderAsync();
+                var userID = -1;
 
-            var userID = -1;
-
-            if (await reader.ReadAsync())
+                if (await reader.ReadAsync())
+                {
+                    userID = reader.GetInt32("userID");
+                }
+                return userID;
+            }
+            finally
             {
-                userID = reader.GetInt32("userID");
+                await command.Connection.CloseAsync(); // Ensure connection is closed
             }
 
-            return userID;
+            
         }
 
         public Task<bool> Update(UserToken entity)

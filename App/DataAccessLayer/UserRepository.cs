@@ -26,7 +26,7 @@ namespace MTCG.DataAccessLayer
         {
             await using var command = await ConnectionController.GetCommandConnection();
 
-            if (command == null)
+            if (command == null || command.Connection == null)
             {
                 return -2;
             }
@@ -37,9 +37,14 @@ namespace MTCG.DataAccessLayer
             ConnectionController.AddParameterWithValue(command, "password", DbType.String, entity.Credentials.Password);
             ConnectionController.AddParameterWithValue(command, "salt", DbType.String, entity.Credentials.Salt);
             ConnectionController.AddParameterWithValue(command, "statsID", DbType.Int32, entity.Stats.Id);
+            try { 
+                return (int)(await command.ExecuteScalarAsync() ?? 0);
+            }
+            finally
+            {
+                await command.Connection.CloseAsync(); // Ensure connection is closed
+            }
 
-            return (int)(await command.ExecuteScalarAsync() ?? 0);
-    
         }
 
         public Task<int> Delete(User entity)
@@ -51,7 +56,7 @@ namespace MTCG.DataAccessLayer
         {
             await using var command = await ConnectionController.GetCommandConnection();
 
-            if (command == null)
+            if (command == null || command.Connection == null)
             {
                 return null; //TODO
             }
@@ -61,40 +66,45 @@ namespace MTCG.DataAccessLayer
                                   FROM "User" as u
                                   LEFT JOIN "Stats" as stats on u."statsID" = stats."id"
                                   """;
+            try { 
+                await using var reader = await command.ExecuteReaderAsync();
 
-            await using var reader = await command.ExecuteReaderAsync();
-
-            if (await reader.ReadAsync())
-            {
-                var allUsers = new List<User>();
-                do
+                if (await reader.ReadAsync())
                 {
-                    var user = new User
+                    var allUsers = new List<User>();
+                    do
                     {
-                        Id = reader.GetInt32(reader.GetOrdinal("id")),
-                        Credentials = new Credentials()
+                        var user = new User
                         {
-                            Username = reader.GetString("username"),
-                        },
-                        Coins = reader.GetInt32("coins"),
-                        Stats = new Stats()
-                        {
-                            Elo = new Elo() { EloScore = reader.GetInt32("eloscore") },
-                            Wins = reader.GetInt32("wins"),
-                            Losses = reader.GetInt32("losses"),
-                            Id = reader.GetInt32("statsid")
-                        },
-                        Admin = reader.GetBoolean("admin")
-                    };
+                            Id = reader.GetInt32(reader.GetOrdinal("id")),
+                            Credentials = new Credentials()
+                            {
+                                Username = reader.GetString("username"),
+                            },
+                            Coins = reader.GetInt32("coins"),
+                            Stats = new Stats()
+                            {
+                                Elo = new Elo() { EloScore = reader.GetInt32("eloscore") },
+                                Wins = reader.GetInt32("wins"),
+                                Losses = reader.GetInt32("losses"),
+                                Id = reader.GetInt32("statsid")
+                            },
+                            Admin = reader.GetBoolean("admin")
+                        };
 
-                    user.Credentials.SetSalt(reader.GetString("salt"));
-                    user.Credentials.SetPassword(reader.GetString("password"));
+                        user.Credentials.SetSalt(reader.GetString("salt"));
+                        user.Credentials.SetPassword(reader.GetString("password"));
 
-                    allUsers.Add(user);
+                        allUsers.Add(user);
 
-                } while (await reader.ReadAsync());
+                    } while (await reader.ReadAsync());
 
-                return allUsers;
+                    return allUsers;
+                }
+            }
+            finally
+            {
+                await command.Connection.CloseAsync(); // Ensure connection is closed
             }
 
             return null;
@@ -118,6 +128,7 @@ namespace MTCG.DataAccessLayer
             command.CommandText = "SELECT id, username, password, salt FROM \"User\" WHERE username = @username";
             ConnectionController.AddParameterWithValue(command, "username", DbType.String, username);
 
+            try { 
             await using var reader = await command.ExecuteReaderAsync();
 
             if (await reader.ReadAsync())
@@ -136,6 +147,11 @@ namespace MTCG.DataAccessLayer
 
                 return user;
             }
+            }
+            finally
+            {
+                await command.Connection.CloseAsync(); // Ensure connection is closed
+            }
 
             return null;
 
@@ -146,7 +162,7 @@ namespace MTCG.DataAccessLayer
         {
             await using var command = await ConnectionController.GetCommandConnection();
 
-            if (command == null)
+            if (command == null || command.Connection == null)
             {
                 return new User(new Credentials("__connection__error__", ""));
             }
@@ -158,33 +174,38 @@ namespace MTCG.DataAccessLayer
                                   WHERE u."username" = @username
                                   """;
             ConnectionController.AddParameterWithValue(command, "username", DbType.String, username);
+            try { 
+                await using var reader = await command.ExecuteReaderAsync();
 
-            await using var reader = await command.ExecuteReaderAsync();
-
-            if (await reader.ReadAsync())
-            {
-                var user = new User
+                if (await reader.ReadAsync())
                 {
-                    Id = reader.GetInt32(reader.GetOrdinal("id")),
-                    Credentials = new Credentials()
+                    var user = new User
                     {
-                        Username = reader.GetString("username"),
-                    },
-                    Coins = reader.GetInt32("coins"),
-                    Stats = new Stats()
-                    {
-                        Elo = new Elo() { EloScore = reader.GetInt32("eloscore") },
-                        Wins = reader.GetInt32("wins"),
-                        Losses = reader.GetInt32("losses"),
-                        Id = reader.GetInt32("statsid")
-                    },
-                    Admin = reader.GetBoolean("admin")
-                };
+                        Id = reader.GetInt32(reader.GetOrdinal("id")),
+                        Credentials = new Credentials()
+                        {
+                            Username = reader.GetString("username"),
+                        },
+                        Coins = reader.GetInt32("coins"),
+                        Stats = new Stats()
+                        {
+                            Elo = new Elo() { EloScore = reader.GetInt32("eloscore") },
+                            Wins = reader.GetInt32("wins"),
+                            Losses = reader.GetInt32("losses"),
+                            Id = reader.GetInt32("statsid")
+                        },
+                        Admin = reader.GetBoolean("admin")
+                    };
 
-                user.Credentials.SetSalt(reader.GetString("salt"));
-                user.Credentials.SetPassword(reader.GetString("password"));
+                    user.Credentials.SetSalt(reader.GetString("salt"));
+                    user.Credentials.SetPassword(reader.GetString("password"));
 
-                return user;
+                    return user;
+                }
+            }
+            finally
+            {
+                await command.Connection.CloseAsync(); // Ensure connection is closed
             }
 
             return null;
@@ -195,7 +216,7 @@ namespace MTCG.DataAccessLayer
         {
             await using var command = await ConnectionController.GetCommandConnection();
 
-            if (command == null)
+            if (command == null || command.Connection == null)
             {
                 return new User(new Credentials("__connection__error__", ""));
             }
@@ -208,33 +229,38 @@ namespace MTCG.DataAccessLayer
                                    WHERE uT."authToken" = @authToken
                                    """;
             ConnectionController.AddParameterWithValue(command, "authToken", DbType.String, authToken);
+            try { 
+                await using var reader = await command.ExecuteReaderAsync();
 
-            await using var reader = await command.ExecuteReaderAsync();
-
-            if (await reader.ReadAsync())
-            {
-                var user = new User
+                if (await reader.ReadAsync())
                 {
-                    Id = reader.GetInt32(reader.GetOrdinal("id")),
-                    Credentials = new Credentials()
+                    var user = new User
                     {
-                        Username = reader.GetString("username"),
-                    },
-                    Coins = reader.GetInt32("coins"),
-                    Stats = new Stats()
-                    {
-                        Elo = new Elo() { EloScore = reader.GetInt32("eloscore") },
-                        Wins = reader.GetInt32("wins"),
-                        Losses = reader.GetInt32("losses"),
-                        Id = reader.GetInt32("statsid")
-                    },
-                    Admin = reader.GetBoolean("admin")
-                };
+                        Id = reader.GetInt32(reader.GetOrdinal("id")),
+                        Credentials = new Credentials()
+                        {
+                            Username = reader.GetString("username"),
+                        },
+                        Coins = reader.GetInt32("coins"),
+                        Stats = new Stats()
+                        {
+                            Elo = new Elo() { EloScore = reader.GetInt32("eloscore") },
+                            Wins = reader.GetInt32("wins"),
+                            Losses = reader.GetInt32("losses"),
+                            Id = reader.GetInt32("statsid")
+                        },
+                        Admin = reader.GetBoolean("admin")
+                    };
 
-                user.Credentials.SetSalt(reader.GetString("salt"));
-                user.Credentials.SetPassword(reader.GetString("password"));
+                    user.Credentials.SetSalt(reader.GetString("salt"));
+                    user.Credentials.SetPassword(reader.GetString("password"));
 
-                return user;
+                    return user;
+                }
+            }
+            finally
+            {
+                await command.Connection.CloseAsync(); // Ensure connection is closed
             }
 
             return null;
@@ -244,7 +270,7 @@ namespace MTCG.DataAccessLayer
         {
             await using var command = await ConnectionController.GetCommandConnection();
 
-            if (command == null)
+            if (command == null || command.Connection == null)
             {
                 return false; //TODO
             }
@@ -264,13 +290,17 @@ namespace MTCG.DataAccessLayer
                 // Any other exceptions
                 return false;
             }
+            finally
+            {
+                await command.Connection.CloseAsync(); // Ensure connection is closed
+            }
         }
 
         public async Task<bool> UpdateCoins(int newCoinsCount, int userId)
         {
             await using var command = await ConnectionController.GetCommandConnection();
 
-            if (command == null)
+            if (command == null || command.Connection == null)
             {
                 return false; //TODO
             }
@@ -288,7 +318,11 @@ namespace MTCG.DataAccessLayer
             {
                 return false;
             }
-            
+            finally
+            {
+                await command.Connection.CloseAsync(); // Ensure connection is closed
+            }
+
             return result == 1;
         }
 

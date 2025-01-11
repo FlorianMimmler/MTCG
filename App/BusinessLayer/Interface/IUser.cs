@@ -1,5 +1,6 @@
 ﻿using MTCG.Auth;
 using MTCG.BusinessLayer.Model.Achievements;
+using MTCG.BusinessLayer.Model.Shop;
 using MTCG.BusinessLayer.Model.User;
 
 namespace MTCG.BusinessLayer.Interface
@@ -27,5 +28,7 @@ namespace MTCG.BusinessLayer.Interface
         ICardWrapper GetDeck();
         string GetName();
         bool IsPasswordEqual(string password);
+
+        Task<int> ApplyMysteryResult(MysteryResult mysteryresult);
     }
 }

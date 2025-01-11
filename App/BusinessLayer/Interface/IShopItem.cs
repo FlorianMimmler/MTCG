@@ -6,11 +6,7 @@ using System.Threading.Tasks;
 
 namespace MTCG.BusinessLayer.Interface
 {
-    public interface ICardController
+    public interface IShopItem
     {
-
-        List<ICard> GetCards(int count);
-        ICard GetCard();
-
     }
 }
