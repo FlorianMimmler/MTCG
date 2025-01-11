@@ -21,6 +21,9 @@
 - **DAL (DatabaseAccessLayer)**: Handles all data-related operations such as saving and retrieving user and card information from the database.
 - **PresentationLayer**: This is the REST Server with defined endpoints that handle requests and responses.
 
+## Project Setup
+Open the MTCG Solution in Visual Studio. After Database Setup you should be ready to go and run in Visual Studio
+
 ## Database Setup
 If you want to do CURL Scripts to them before using the API because you have to reset the database
 Open a terminal and go into the **dbConfig** folder.
@@ -35,6 +38,8 @@ It is possible to test the API with CURL scripts. Here is an instruction:
 5. After that run **MTCG_battle1.curl.bat** and when the scripts stops it waits for another player so open up a second terminal and run **MTCG_battle2.curl.bat**
 6. The last script is **MTCG_trading.curl.bat**
 
+## UNIT Tests
+There are also some Unit Tests which can be run in Visual Studio.
 
 
 ## License
