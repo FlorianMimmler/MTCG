@@ -331,8 +331,6 @@ namespace MTCG.PresentationLayer
 
                         var result = await ShopController.Instance.BuyItem(shopItemId, user);
 
-                        //TODO create response format, also for other items like (success, message, optional stuff)
-
                         return new HttpResponse
                         {
                             StatusCode = result.Item1,

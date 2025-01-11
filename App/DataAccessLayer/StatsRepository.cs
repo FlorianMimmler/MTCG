@@ -32,7 +32,7 @@ namespace MTCG.DataAccessLayer
             }
             finally
             {
-                await command.Connection.CloseAsync(); // Ensure connection is closed
+                await command.Connection.CloseAsync();
             }
         }
 
@@ -71,7 +71,7 @@ namespace MTCG.DataAccessLayer
             }
             finally
             {
-                await command.Connection.CloseAsync(); // Ensure connection is closed
+                await command.Connection.CloseAsync();
             }
         }
     }

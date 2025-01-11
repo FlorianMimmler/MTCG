@@ -19,7 +19,6 @@ namespace MTCG_uTests.AuthTests
             _userTokenRepositoryMock = Substitute.For<IUserTokenRepository>();
             _statsRepositoryMock = Substitute.For<IStatsRepository>();
 
-            // Set the repository instances
             UserRepository.Instance = _userRepositoryMock;
             UserTokenRepository.Instance = _userTokenRepositoryMock;
             StatsRepository.Instance = _statsRepositoryMock;

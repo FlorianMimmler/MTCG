@@ -14,7 +14,7 @@ namespace MTCG.DataAccessLayer
         public static IUserRepository Instance
         {
             get => _instance ??= new UserRepository();
-            set => _instance = value; // Allow override for testing
+            set => _instance = value;
         }
 
 
@@ -42,7 +42,7 @@ namespace MTCG.DataAccessLayer
             }
             finally
             {
-                await command.Connection.CloseAsync(); // Ensure connection is closed
+                await command.Connection.CloseAsync();
             }
 
         }
@@ -58,7 +58,7 @@ namespace MTCG.DataAccessLayer
 
             if (command == null || command.Connection == null)
             {
-                return null; //TODO
+                return null;
             }
 
             command.CommandText = """
@@ -104,7 +104,7 @@ namespace MTCG.DataAccessLayer
             }
             finally
             {
-                await command.Connection.CloseAsync(); // Ensure connection is closed
+                await command.Connection.CloseAsync();
             }
 
             return null;
@@ -120,7 +120,7 @@ namespace MTCG.DataAccessLayer
             
             await using var command = await ConnectionController.GetCommandConnection();
 
-            if(command == null)
+            if (command == null || command.Connection == null)
             {
                 return new User(new Credentials("__connection__error__", ""));
             }
@@ -150,7 +150,7 @@ namespace MTCG.DataAccessLayer
             }
             finally
             {
-                await command.Connection.CloseAsync(); // Ensure connection is closed
+                await command.Connection.CloseAsync();
             }
 
             return null;
@@ -205,7 +205,7 @@ namespace MTCG.DataAccessLayer
             }
             finally
             {
-                await command.Connection.CloseAsync(); // Ensure connection is closed
+                await command.Connection.CloseAsync();
             }
 
             return null;
@@ -260,7 +260,7 @@ namespace MTCG.DataAccessLayer
             }
             finally
             {
-                await command.Connection.CloseAsync(); // Ensure connection is closed
+                await command.Connection.CloseAsync();
             }
 
             return null;
@@ -272,7 +272,7 @@ namespace MTCG.DataAccessLayer
 
             if (command == null || command.Connection == null)
             {
-                return false; //TODO
+                return false;
             }
 
             command.CommandText =
@@ -292,7 +292,7 @@ namespace MTCG.DataAccessLayer
             }
             finally
             {
-                await command.Connection.CloseAsync(); // Ensure connection is closed
+                await command.Connection.CloseAsync();
             }
         }
 
@@ -302,7 +302,7 @@ namespace MTCG.DataAccessLayer
 
             if (command == null || command.Connection == null)
             {
-                return false; //TODO
+                return false;
             }
 
             command.CommandText =
@@ -320,7 +320,7 @@ namespace MTCG.DataAccessLayer
             }
             finally
             {
-                await command.Connection.CloseAsync(); // Ensure connection is closed
+                await command.Connection.CloseAsync();
             }
 
             return result == 1;

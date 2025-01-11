@@ -50,12 +50,11 @@ namespace MTCG.DataAccessLayer
             }
             catch (Exception)
             {
-                // Any other exceptions
                 return -1;
             }
             finally
             {
-                await command.Connection.CloseAsync(); // Ensure connection is closed
+                await command.Connection.CloseAsync();
             }
 
 
@@ -77,7 +76,7 @@ namespace MTCG.DataAccessLayer
             }
             finally
             {
-                await command.Connection.CloseAsync(); // Ensure connection is closed
+                await command.Connection.CloseAsync();
             }
 
         }
@@ -117,12 +116,11 @@ namespace MTCG.DataAccessLayer
             }
             catch (Exception)
             {
-                // Any other exceptions
                 return null;
             }
             finally
             {
-                await command.Connection.CloseAsync(); // Ensure connection is closed
+                await command.Connection.CloseAsync();
                 }
             }
 
@@ -162,12 +160,11 @@ namespace MTCG.DataAccessLayer
             }
             catch (Exception)
             {
-                // Any other exceptions
                 return null;
             }
             finally
             {
-                await command.Connection.CloseAsync(); // Ensure connection is closed
+                await command.Connection.CloseAsync();
                 }
             }
 
@@ -199,12 +196,11 @@ namespace MTCG.DataAccessLayer
             }
             catch (Exception )
             {
-                // Any other exceptions
                 return null;
             }
             finally
             {
-                await command.Connection.CloseAsync(); // Ensure connection is closed
+                await command.Connection.CloseAsync();
             }
         }
 

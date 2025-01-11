@@ -16,7 +16,6 @@ namespace MTCG_uTests.UserFeaturesTests
         {
             _userRepositoryMock = Substitute.For<IUserRepository>();
 
-            // Override the singleton instance with the mock
             UserRepository.Instance = _userRepositoryMock;
 
             _controller = ScoreboardController.Instance;
@@ -41,9 +40,9 @@ namespace MTCG_uTests.UserFeaturesTests
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Has.Count.EqualTo(3));
-            Assert.That(result[0].Username, Is.EqualTo("Bob")); // Highest Elo
-            Assert.That(result[1].Username, Is.EqualTo("Alice")); // Second highest Elo
-            Assert.That(result[2].Username, Is.EqualTo("Charlie")); // Lowest Elo
+            Assert.That(result[0].Username, Is.EqualTo("Bob"));
+            Assert.That(result[1].Username, Is.EqualTo("Alice")); 
+            Assert.That(result[2].Username, Is.EqualTo("Charlie")); 
         }
 
         [Test]

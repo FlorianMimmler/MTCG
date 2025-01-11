@@ -15,7 +15,6 @@ namespace MTCG_uTests.AchievementTests
         {
             _achievementRepositoryMock = Substitute.For<IAchievementRepository>();
 
-            // Override the singleton instance with the mock
             AchievementRepository.Instance = _achievementRepositoryMock;
 
             AchievementController.Instance = null;
@@ -49,13 +48,12 @@ namespace MTCG_uTests.AchievementTests
             var achievements = new List<Achievement>
             {
                 new Achievement { Id = 1, Name = "First Win", Type = AchievementTypes.Wins, Value = 1 },
-                new Achievement { Id = 2, Name = "Elo Master", Type = AchievementTypes.Elo, Value = 1000 }
+                new Achievement { Id = 2, Name = "GrandMaster", Type = AchievementTypes.Elo, Value = 300 }
             };
 
             _achievementRepositoryMock.GetAll().Returns(achievements);
 
-            // Trigger LoadAchievements indirectly by creating the controller instance
-            AchievementController.Instance = null; // Reset singleton for testing
+            AchievementController.Instance = null;
             _controller = AchievementController.Instance;
 
             // Act

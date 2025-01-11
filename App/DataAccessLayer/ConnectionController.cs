@@ -41,7 +41,7 @@ namespace MTCG.DataAccessLayer
             {
                 var conn = CreateConnection();
                 await conn.OpenAsync();
-                return conn.CreateCommand(); // Return the command without disposing of the connection here
+                return conn.CreateCommand();
             }
             catch (Exception)
             {

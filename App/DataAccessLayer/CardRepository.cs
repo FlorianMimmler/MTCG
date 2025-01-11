@@ -75,16 +75,13 @@ namespace MTCG.DataAccessLayer
 
             foreach (var card in entities)
             {
-                // Add the values placeholders, appending with commas
                 if (index > 0)
                 {
-                    command.CommandText += ", "; // Add a comma to separate multiple rows
+                    command.CommandText += ", ";
                 }
 
-                // Create unique parameter names for each card
                 command.CommandText += $"(@userID{index}, @cardType{index}, @name{index}, @damage{index}, @elementType{index}, @monsterType{index})";
 
-                // Add the parameters with unique names for each card
                 ConnectionController.AddParameterWithValue(command, $"userID{index}", DbType.Int32, userID);
                 ConnectionController.AddParameterWithValue(command, $"cardType{index}", DbType.Int32, card is MonsterCard ? 1 : 2);
                 ConnectionController.AddParameterWithValue(command, $"name{index}", DbType.String, card.Name);
@@ -135,7 +132,6 @@ namespace MTCG.DataAccessLayer
             }
             catch (Exception)
             {
-                // Any other exceptions
                 return false;
             }
         }
@@ -256,7 +252,7 @@ namespace MTCG.DataAccessLayer
                 }
             finally
             {
-                await command.Connection.CloseAsync(); // Ensure connection is closed
+                await command.Connection.CloseAsync();
             }
 
         }
@@ -278,7 +274,7 @@ namespace MTCG.DataAccessLayer
             }
             finally
             {
-                await command.Connection.CloseAsync(); // Ensure connection is closed
+                await command.Connection.CloseAsync();
             }
         }
 
@@ -303,7 +299,7 @@ namespace MTCG.DataAccessLayer
             }
             finally
             {
-                await command.Connection.CloseAsync(); // Ensure connection is closed
+                await command.Connection.CloseAsync();
             }
         }
     }

@@ -32,7 +32,7 @@ namespace MTCG.BusinessLayer.Controller
                 var tcs = new TaskCompletionSource<string>();
                 _pendingResults[player.GetName()] = tcs;
                 _waitingPlayers.Add(player);
-                return await tcs.Task; // Long-polling: waits for result
+                return await tcs.Task;
             }
 
             var opponent = _waitingPlayers[0];
@@ -41,12 +41,10 @@ namespace MTCG.BusinessLayer.Controller
             player.Deck.SetCards(await CardRepository.Instance.GetDeckByUser(player.Id) ?? []);
             opponent.Deck.SetCards(await CardRepository.Instance.GetDeckByUser(opponent.Id) ?? []);
 
-            // Remove waiting opponent from pending results
             var opponentTcs = _pendingResults[opponent.GetName()];
             _pendingResults.Remove(opponent.GetName());
 
 
-            // Start battle
             var battleController = new BattleController(player, opponent);
             var result = await battleController.StartBattle();
 
@@ -56,9 +54,8 @@ namespace MTCG.BusinessLayer.Controller
                 return "An Unexcpected Error Occured";
             }
 
-            // Complete both tasks (for both players)
             opponentTcs.SetResult(battleController.GetSerializedBattleLogForPlayer(2));
-            return battleController.GetSerializedBattleLogForPlayer(1); ; // Immediate result for player B
+            return battleController.GetSerializedBattleLogForPlayer(1);
             
         }
 

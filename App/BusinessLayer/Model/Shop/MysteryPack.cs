@@ -18,7 +18,7 @@ namespace MTCG.BusinessLayer.Model.Shop
         private static readonly Random RandomGen = new Random();
         public MysteryResult GetMystery()
         {
-            int roll = RandomGen.Next(1, 101); // Random number between 1 and 100
+            int roll = RandomGen.Next(1, 101);
 
             if (roll <= CardPercentage)
             {

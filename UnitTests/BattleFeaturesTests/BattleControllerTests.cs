@@ -26,7 +26,6 @@ namespace MTCG_uTests.BattleFeaturesTests
             _player2 = Substitute.For<IUser>();
             _player2.GetName().Returns(_player2Name);
 
-            // Mock the deck for both players
             _player1.GetDeck().Returns(new Deck
             {
                 Cards = new List<ICard>

@@ -54,30 +54,6 @@ namespace MTCG.BusinessLayer.Controller
             return _shopItems;
         }
 
-        /*public string BuyItem(int itemId)
-        {
-            var item = shopItems.FirstOrDefault(i => i is ShopItem shopItem && shopItem.Id == itemId);
-
-            if (item == null)
-            {
-                return (-1, { "message" : "Item not found in the shop."});
-            }
-
-            if (item is MysteryPack mysteryPack)
-            {
-                var mysteryResult = mysteryPack.GetMystery();
-                if (mysteryResult.IsSuccess)
-                {
-                    //user.ApplyMysteryResult(mysteryResult)
-
-                    return mysteryResult.RewardType == "card" ? (1, { "message" : "you got one card", "card" : mysteryResult.Card }) : (1, { "message" : "you got " + mysteryResult.Coins + " Coins"});
-                }
-                return (0, { "message" : "you got nothing" });
-                
-            }
-
-            return (-1, { "message" : "This item is not purchasable."});
-        }*/
         public async Task<(HttpStatusCode, string)> BuyItem(int itemId, User user)
         {
             var rawItem = _shopItems.FirstOrDefault(i => i is ShopItem shopItem && shopItem.Id == itemId);

@@ -9,10 +9,10 @@ namespace MTCG.BusinessLayer.Model.Shop
 {
     public class MysteryResult
     {
-        public bool IsSuccess { get; set; } // Indicates if the user got something
-        public string RewardType { get; set; } // e.g., "Card", "Coins", or "Nothing"
-        public int Coins { get; set; } // Amount of coins (if applicable)
-        public ICard? Card { get; set; } // The card's name or ID (if applicable)
+        public bool IsSuccess { get; set; }
+        public string RewardType { get; set; }
+        public int Coins { get; set; }
+        public ICard? Card { get; set; }
 
         public MysteryResult(bool isSuccess, string rewardType, int coins = 0, ICard? card = null)
         {

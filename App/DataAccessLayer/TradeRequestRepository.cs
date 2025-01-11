@@ -50,12 +50,11 @@ namespace MTCG.DataAccessLayer
             }
             catch (Exception)
             {
-                // Any other exceptions
                 return -1;
             }
             finally
             {
-                await command.Connection.CloseAsync(); // Ensure connection is closed
+                await command.Connection.CloseAsync();
             }
         }
 
@@ -64,48 +63,9 @@ namespace MTCG.DataAccessLayer
             throw new NotImplementedException();
         }
 
-        public async Task<IEnumerable<TradingDealRequest>?> GetAll()
+        public Task<IEnumerable<TradingDealRequest>?> GetAll()
         {
-            await using var command = await ConnectionController.GetCommandConnection();
-
-            if (command == null || command.Connection == null)
-            {
-                return null;
-            }
-
-            command.CommandText = "SELECT *, c.id as cardid FROM \"TradeRequest\" left join \"Card\" as c on \"TradeRequest\".\"offeredCard\" = c.id";
-
-            try
-            {
-                await using var reader = await command.ExecuteReaderAsync();
-
-                if (!await reader.ReadAsync()) return null;
-
-                var tradingDeals = new List<TradingDealRequest>();
-                do
-                {
-/*
-                    ICard offeredCard = reader.GetInt32("cardType") == 1 ?
-                        new MonsterCard(reader.GetInt32("damage"), (ElementType)reader.GetInt32("elementType"), (MonsterType)reader.GetInt32("monsterType"), reader.GetInt32("cardid"), reader.GetString("name"))
-                        : new SpellCard(reader.GetInt32("damage"), (ElementType)reader.GetInt32("elementType"), reader.GetInt32("cardid"), reader.GetString("name"));
-
-                    tradingDeals.Add(new TradingDealRequest(offeredCard, JsonSerializer.Deserialize<TradingDealRequirements>(reader.GetString("requirements")),
-                        reader.GetInt32("userID")));
-*/
-
-                } while (await reader.ReadAsync());
-
-                return tradingDeals;
-            }
-            catch (Exception)
-            {
-                // Any other exceptions
-                return null;
-            }
-            finally
-            {
-                await command.Connection.CloseAsync(); // Ensure connection is closed
-            }
+            throw new NotImplementedException();
         }
 
         public async Task<IEnumerable<TradingDealRequest>?> GetByTradeId(int id)

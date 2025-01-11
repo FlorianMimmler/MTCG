@@ -1,5 +1,6 @@
 ﻿using MTCG.Auth;
 using MTCG.BusinessLayer.Model.Achievements;
+using MTCG.BusinessLayer.Model.CardWrapper;
 using MTCG.BusinessLayer.Model.Shop;
 using MTCG.BusinessLayer.Model.User;
 
