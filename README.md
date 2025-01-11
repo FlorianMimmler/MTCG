@@ -1,7 +1,7 @@
 # MTCG (Monster Trading Card Game)
 
 > [!NOTE]  
-> This project is still under development
+> This is a university project. Do not enter sensitive data
 
 **MTCG** is a university project built in C#. It focuses on creating a Monster Trading Card Game where players engage in card-based battles. The project is designed with a layered architecture, emphasizing separation of concerns between data access, business logic, and user interaction.
 
