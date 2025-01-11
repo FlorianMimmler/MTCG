@@ -33,7 +33,7 @@ namespace MTCG.DataAccessLayer
         {
             await using var command = await ConnectionController.GetCommandConnection();
 
-            if (command == null)
+            if (command == null || command.Connection == null)
             {
                 return -1;
             }
@@ -53,6 +53,10 @@ namespace MTCG.DataAccessLayer
                 // Any other exceptions
                 return -1;
             }
+            finally
+            {
+                await command.Connection.CloseAsync(); // Ensure connection is closed
+            }
         }
 
         public Task<int> Delete(TradingDealRequest entity)
@@ -64,7 +68,7 @@ namespace MTCG.DataAccessLayer
         {
             await using var command = await ConnectionController.GetCommandConnection();
 
-            if (command == null)
+            if (command == null || command.Connection == null)
             {
                 return null;
             }
@@ -98,13 +102,17 @@ namespace MTCG.DataAccessLayer
                 // Any other exceptions
                 return null;
             }
+            finally
+            {
+                await command.Connection.CloseAsync(); // Ensure connection is closed
+            }
         }
 
         public async Task<IEnumerable<TradingDealRequest>?> GetByTradeId(int id)
         {
             await using var command = await ConnectionController.GetCommandConnection();
 
-            if (command == null)
+            if (command == null || command.Connection == null)
             {
                 return null;
             }
@@ -139,13 +147,20 @@ namespace MTCG.DataAccessLayer
                 // Any other exceptions
                 return null;
             }
+            finally
+            {
+                await command.Connection.CloseAsync(); // Ensure connection is closed
+            }
         }
 
         public async Task<TradingDealRequest?> GetById(int id)
         {
-            await using var conn = ConnectionController.CreateConnection();
-            await conn.OpenAsync();
-            await using var command = conn.CreateCommand();
+            await using var command = await ConnectionController.GetCommandConnection();
+
+            if (command == null || command.Connection == null)
+            {
+                return null;
+            }
 
             command.CommandText = "SELECT *, \"TradeRequest\".id as traderequestid, c.id as cardid FROM \"TradeRequest\" left join \"Card\" as c on \"TradeRequest\".\"offeredCard\" = c.id WHERE \"TradeRequest\".\"id\" = @id";
             ConnectionController.AddParameterWithValue(command, "id", DbType.Int32, id);
@@ -168,6 +183,10 @@ namespace MTCG.DataAccessLayer
             {
                 // Any other exceptions
                 return null;
+            }
+            finally
+            {
+                await command.Connection.CloseAsync(); // Ensure connection is closed
             }
         }
 

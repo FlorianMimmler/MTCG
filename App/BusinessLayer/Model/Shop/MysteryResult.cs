@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MTCG.BusinessLayer.Model.Shop
 {
-    internal class MysteryResult
+    public class MysteryResult
     {
         public bool IsSuccess { get; set; } // Indicates if the user got something
         public string RewardType { get; set; } // e.g., "Card", "Coins", or "Nothing"

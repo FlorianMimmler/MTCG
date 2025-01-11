@@ -33,7 +33,7 @@ namespace MTCG.DataAccessLayer
         {
             await using var command = await ConnectionController.GetCommandConnection();
 
-            if (command == null)
+            if (command == null || command.Connection == null)
             {
                 return -1;
             }
@@ -53,23 +53,32 @@ namespace MTCG.DataAccessLayer
                 // Any other exceptions
                 return -1;
             }
+            finally
+            {
+                await command.Connection.CloseAsync(); // Ensure connection is closed
+            }
 
-            
-        }
+
+}
 
         public async Task<int> Delete(TradingDeal entity)
         {
             await using var command = await ConnectionController.GetCommandConnection();
 
-            if (command == null)
+            if (command == null || command.Connection == null)
             {
                 return -1;
             }
+            try { 
+                command.CommandText = "DELETE FROM\"Trade\" WHERE id = @id";
+                ConnectionController.AddParameterWithValue(command, "id", DbType.Int32, entity.Id ?? -1);
 
-            command.CommandText = "DELETE FROM\"Trade\" WHERE id = @id";
-            ConnectionController.AddParameterWithValue(command, "id", DbType.Int32, entity.Id ?? -1);
-
-            return await command.ExecuteNonQueryAsync();
+                return await command.ExecuteNonQueryAsync();
+            }
+            finally
+            {
+                await command.Connection.CloseAsync(); // Ensure connection is closed
+            }
 
         }
 
@@ -77,7 +86,7 @@ namespace MTCG.DataAccessLayer
         {
             await using var command = await ConnectionController.GetCommandConnection();
 
-            if (command == null)
+            if (command == null || command.Connection == null)
             {
                 return null;
             }
@@ -111,13 +120,17 @@ namespace MTCG.DataAccessLayer
                 // Any other exceptions
                 return null;
             }
-        }
+            finally
+            {
+                await command.Connection.CloseAsync(); // Ensure connection is closed
+                }
+            }
 
         public async Task<IEnumerable<TradingDeal>?> GetByUserId(int userId)
         {
             await using var command = await ConnectionController.GetCommandConnection();
 
-            if (command == null)
+            if (command == null || command.Connection == null)
             {
                 return null;
             }
@@ -152,13 +165,17 @@ namespace MTCG.DataAccessLayer
                 // Any other exceptions
                 return null;
             }
-        }
+            finally
+            {
+                await command.Connection.CloseAsync(); // Ensure connection is closed
+                }
+            }
 
         public async Task<TradingDeal?> GetById(int id)
         {
             await using var command = await ConnectionController.GetCommandConnection();
 
-            if (command == null)
+            if (command == null || command.Connection == null)
             {
                 return null;
             }
@@ -184,6 +201,10 @@ namespace MTCG.DataAccessLayer
             {
                 // Any other exceptions
                 return null;
+            }
+            finally
+            {
+                await command.Connection.CloseAsync(); // Ensure connection is closed
             }
         }
 

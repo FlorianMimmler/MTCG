@@ -36,7 +36,7 @@ namespace MTCG.DataAccessLayer
         {
             await using var command = await ConnectionController.GetCommandConnection();
 
-            if (command == null)
+            if (command == null || command.Connection == null)
             {
                 return null;
             }
@@ -56,7 +56,7 @@ namespace MTCG.DataAccessLayer
                 }
                 
             }
-
+            await command.Connection.CloseAsync();
             return shopItems;
         }
 

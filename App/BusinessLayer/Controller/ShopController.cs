@@ -1,12 +1,15 @@
 ﻿using MTCG.BusinessLayer.Interface;
 using MTCG.BusinessLayer.Model;
 using MTCG.BusinessLayer.Model.Shop;
+using MTCG.BusinessLayer.Model.User;
 using MTCG.DataAccessLayer;
+using MTCG.PresentationLayer;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace MTCG.BusinessLayer.Controller
@@ -75,29 +78,42 @@ namespace MTCG.BusinessLayer.Controller
 
             return (-1, { "message" : "This item is not purchasable."});
         }*/
-        public string BuyItem(int itemId)
+        public async Task<(HttpStatusCode, string)> BuyItem(int itemId, User user)
         {
-            var item = _shopItems.FirstOrDefault(i => i is ShopItem shopItem && shopItem.Id == itemId);
+            var rawItem = _shopItems.FirstOrDefault(i => i is ShopItem shopItem && shopItem.Id == itemId);
 
-            if (item == null)
+            if (rawItem == null)
             {
-                return "Item not found in the shop.";
+                return (HttpStatusCode.NotFound, "Item not found in the shop.");
             }
+
+            var item = (ShopItem)rawItem;
+            if(item.Price > user.Coins)
+            {
+                return (HttpStatusCode.Forbidden, "Not enough coins.");
+            }
+
+            user.Coins -= item.Price;
+            _ = await UserRepository.Instance.UpdateCoins(user.Coins, user.Id);
+
 
             if (item is MysteryPack mysteryPack)
             {
                 var mysteryResult = mysteryPack.GetMystery();
                 if (mysteryResult.IsSuccess)
                 {
-                    //user.ApplyMysteryResult(mysteryResult)
+                    Console.WriteLine(mysteryResult);
+                    var result = await user.ApplyMysteryResult(mysteryResult);
 
-                    
+                    if (result < 0)
+                    {
+                        return (HttpStatusCode.InternalServerError, "An error occured.");
+                    }
                 }
-                return mysteryResult.ToString();
-
+                return (HttpStatusCode.OK, JsonSerializer.Serialize(mysteryResult));
             }
 
-            return "This item is not purchasable.";
+            return (HttpStatusCode.BadRequest, "This item is not purchasable.");
         }
     }
 }

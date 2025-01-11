@@ -329,14 +329,14 @@ namespace MTCG.PresentationLayer
                     {
                         ShopController.Instance.UpdateShop();
 
-                        var result = ShopController.Instance.BuyItem(shopItemId);
+                        var result = await ShopController.Instance.BuyItem(shopItemId, user);
 
                         //TODO create response format, also for other items like (success, message, optional stuff)
 
                         return new HttpResponse
                         {
-                            StatusCode = HttpStatusCode.OK,
-                            ResponseText = JsonSerializer.Serialize(result)
+                            StatusCode = result.Item1,
+                            ResponseText = result.Item2
                         };
                     }
 

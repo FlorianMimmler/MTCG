@@ -10,6 +10,7 @@ namespace MTCG.DataAccessLayer
 {
     public interface ICardRepository : IRepository<ICard>
     {
+        public Task<int> Add(ICard entity, int userID);
         public Task<bool> AddMultiple(List<ICard> entities, int userID);
         public Task<bool> UpdateUserId(ICard entity, int newUserId);
         public Task<List<ICard>?> GetByUser(int userId);
